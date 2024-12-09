@@ -1,0 +1,39 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "map.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 478,
+                "y": -1130
+            }
+        }
+    },
+    "last.exportedFilePath": "C:/Users/Beyonddd/Documents/ProgrammingStuff/PortofolioWeb/assets",
+    "last.imagePath": "C:/Users/Beyonddd/Documents/ProgrammingStuff/PortofolioWeb/assets",
+    "lastUsedTilesetExportFilter": "All Files (*)",
+    "map.fixedSize": true,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "mapScene.enableWorlds": true,
+    "openFiles": [
+    ],
+    "project": "test.tiled-project",
+    "recentFiles": [
+        "map.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    }
+}
