@@ -7,11 +7,11 @@
 - Integrate with other tools for game making tools. so it'll not bloat the framework.
 
 ### ToDo List
-[x] Base proper game loop
-[x] Base grid
-[] Asset system
-[] Scene system
-[] More component
-[] Input mapping
-[] **Physics** implementation
-[] Tiled/OGMO editor integration
+- [x] Base proper game loop
+- [x] Base grid
+- [] Asset system
+- [] Scene system
+- [] More component
+- [] Input mapping
+- [] **Physics** implementation
+- [] Tiled/OGMO editor integration
