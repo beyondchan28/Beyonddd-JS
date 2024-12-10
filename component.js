@@ -2,9 +2,10 @@ let cTransfroms = new Array(ENTITES_AMOUNT);
 
 //component interface
 class Transform {
-	constructor(pos, rot) {
+	constructor(pos, rot, scale) {
 		this.pos = (pos === undefined) ? new Vector2() : pos;
-		this.rot = (rot === undefined) ? 0 : rot; 
+		this.rot = (rot === undefined) ? 0 : rot;
+		this.scale = (scale === undefined) ? 1 : scale;
 	}
 }
 

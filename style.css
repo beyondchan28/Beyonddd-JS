@@ -6,6 +6,12 @@ body {
   margin: 0; /* Remove default margin */
 }
 
+#canvas {
+  border: 1px solid black;
+  display: block;
+  margin: 0;
+}
+
 div.center {
   width: 800px; /* Optional width */
   height: 600px; /* Optional height */

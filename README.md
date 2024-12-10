@@ -9,9 +9,9 @@
 ### ToDo List
 - [x] Base proper game loop
 - [x] Base grid
+- [X] Input mapping
 - [] Asset system
 - [] Scene system
 - [] More component
-- [] Input mapping
 - [] **Physics** implementation
 - [] Tiled/OGMO editor integration

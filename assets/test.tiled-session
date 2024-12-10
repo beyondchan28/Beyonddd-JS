@@ -3,17 +3,26 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "map.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "map.tmx": {
-            "scale": 0.5,
+            "scale": 0.41760416666666667,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 478,
-                "y": -1130
+                "x": 960.2394612122724,
+                "y": 639.3614367672736
             }
+        },
+        "test.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "winter.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
         }
     },
     "last.exportedFilePath": "C:/Users/Beyonddd/Documents/ProgrammingStuff/PortofolioWeb/assets",
@@ -26,9 +35,14 @@
     "map.tileWidth": 64,
     "mapScene.enableWorlds": true,
     "openFiles": [
+        "test.tsx",
+        "winter.tsx",
+        "map.tmx"
     ],
     "project": "test.tiled-project",
     "recentFiles": [
+        "test.tsx",
+        "winter.tsx",
         "map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
