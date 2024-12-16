@@ -10,6 +10,7 @@
 - [x] Base proper game loop
 - [x] Base grid
 - [X] Input mapping
+- [] Physics system
 - [] Asset system
 - [] Scene system
 - [] More component

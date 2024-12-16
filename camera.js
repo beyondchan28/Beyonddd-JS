@@ -2,6 +2,7 @@ let camera = {
     transform: new Transform(),
 }
 
+//TODO: not really understand on how this works
 function camera_moveTo(end) {
     // console.log(end);
     if (end.x === -canvas.width/2) {

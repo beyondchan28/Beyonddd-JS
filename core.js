@@ -8,15 +8,14 @@ const ctx = canvas.getContext("2d");
 window.onload = init; //start the game
 
 //For calculating FPS
-let secondsPassed = 0;
+let secondsPassed = 0; //also use as delta time
 let oldTimeStamp = 0;
 let fps = 0;
-
-const playerSprite = document.getElementById("player");
 
 function init() {
 	components_setup();
 	entities_setup();
+	assets_setup();
 	grid_generate_data(64);
 	input_setup();
 
@@ -24,15 +23,14 @@ function init() {
 }
 
 function game_loop(timeStamp) {
-	input_process();
-	draw(timeStamp);
+	input_process(secondsPassed);
+	draw();
 	calculate_FPS(timeStamp);
+
 	window.requestAnimationFrame(game_loop);
 }
 
-
-
-function draw(ts) {
+function draw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = "lightblue";
 	ctx.fillRect(0, 0, canvas.width, canvas.height); //background
@@ -41,11 +39,10 @@ function draw(ts) {
 
 	draw_circle(new Vector2(200, 100), 20, "black", "red");
 
-	ctx.fillStyle = "green";
-	ctx.fillRect(10,10,150,100);
-	ctx.drawImage(playerSprite, entities[0].transform.pos.x, entities[0].transform.pos.y);
+
+	asset_process();
 	
-	grid_draw();
+	// grid_draw();
 
 	ctx.restore();
 }
@@ -88,3 +85,6 @@ function draw_text(font, text, pos, tint) {
 	ctx.fillText(text, pos.x, pos.y);
 }
 
+function draw_image(sprite) {
+	ctx.drawImage(sprite.img, sprite.spos.x, sprite.spos.y, sprite.ssize.x, sprite.ssize.y, sprite.pos.x, sprite.pos.y, sprite.size.x, sprite.size.y);
+}

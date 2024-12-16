@@ -14,18 +14,21 @@
 	<!-- load assets here -->
 	<div style="display:none">
 		<img id="player" src="assets/icon.png">
+		<img id="atlas" src="assets/Spritesheet/roguelikeChar_transparent.png">
 	</div>
 	
 	<div class="center">
-		<canvas id="canvas"></canvas>
+		<canvas id="canvas" tabindex=0></canvas>
 	</div>
 
 	<!-- import javascript here -->
+	<script type="text/javascript" src="game_settings.js"></script>
 	<script type="text/javascript" src="vector2.js"></script>
+	<script type="text/javascript" src="component.js"></script>
+	<script type="text/javascript" src="entity.js"></script>
+	<script type="text/javascript" src="asset.js"></script>
 	<script type="text/javascript" src="physics.js"></script>
 	<script type="text/javascript" src="grid.js"></script>
-	<script type="text/javascript" src="entity.js"></script>
-	<script type="text/javascript" src="component.js"></script>
 	<script type="text/javascript" src="camera.js"></script>
 	<script type="text/javascript" src="input.js"></script>
 	<script type="text/javascript" src="core.js"></script>
