@@ -15,5 +15,6 @@
 - [] Physics system
 - [] Asset system
 - [] Scene system
+- [] Animation system
 - [] **Physics** implementation
 - [] Tiled/OGMO editor integration
