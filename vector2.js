@@ -22,6 +22,9 @@ class Vector2 {
 	dot(vector) {
 		return (this.x * vector.x + this.y + vector.y);
 	}
+	delta(vector) {
+		return new Vector2(Math.abs(this.x - vector.x), Math.abs(this.y - vector.y));
+	}
 	moveTowards(vector, t) {
 		// Linearly interpolates between vectors A and B by t.
 		// t = 0 returns A, t = 1 returns B

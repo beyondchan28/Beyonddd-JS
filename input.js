@@ -16,7 +16,7 @@ function input_create(key, type) {
 	return input;
 }
 
-function input_process(dt) {
+function input_process() {
 	for (let inp of inputs) {
 		switch (inp.type) {
 			case "press":
@@ -45,8 +45,7 @@ function input_process(dt) {
 			case "down":
 				document.addEventListener("keydown", (event) => {
 					if (!inp.active && event.key === inp.key) {
-						// console.log("DOWN");
-						entities[0].transform.pos.x += 1 * dt;
+						console.log("DOWN");
 					}
 				});
 				break;

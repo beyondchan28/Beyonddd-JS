@@ -3,18 +3,13 @@ const atlas = document.getElementById("atlas");
 
 //setup games assets here
 function assets_setup() {
-	let pos = new Vector2(10, 10);
-	let sprite = new Sprite(playerImg, pos);
-	console.log(sprite);
-	cSprites.push(sprite);
-	entities[0].sprite = sprite;
-	console.log(cSprites);
+	let sprite = new Sprite(playerImg, cTransforms[0].pos);
+	cSprites[0] = sprite;
 }
 
 //TODO: load atlas
-
 function asset_process() {
-	for (let e of entities) {
-		draw_image(e.sprite);
+	for (let s of cSprites) {
+		draw_image(s);
 	}
 }
