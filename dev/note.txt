@@ -1,0 +1,4 @@
+BUG: 
+- [] animation size bug
+- [] need a better game loop. current is way too fast
+- [] 

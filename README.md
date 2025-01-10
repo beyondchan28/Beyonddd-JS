@@ -12,9 +12,9 @@
 - [x] Base grid
 - [X] Input mapping
 - [X] More component
+- [] Animation system
 - [] Physics system
 - [] Asset system
 - [] Scene system
-- [] Animation system
 - [] **Physics** implementation
 - [] Tiled/OGMO editor integration
