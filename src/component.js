@@ -57,6 +57,7 @@ class Animation {
 		this.currentFrame = (currentFrame === undefined) ? 0.0 : currentFrame;
 		this.speed = (speed === undefined) ? 1 : speed;
 		this.sprite.ssize = (size === undefined) ? new Vector2(this.sprite.img.width/this.frameCount, this.sprite.img.height) : size;
+		this.sprite.size = (size === undefined) ? new Vector2(this.sprite.img.width/this.frameCount, this.sprite.img.height) : size;
 	}
 }
 

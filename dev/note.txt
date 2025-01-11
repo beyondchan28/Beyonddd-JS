@@ -1,4 +1,4 @@
 BUG: 
-- [] animation size bug
-- [] need a better game loop. current is way too fast
-- [] 
+- [X] animation size bug.
+- [X] need a better game loop. current is way too fast.
+	+ the problem is not the game loop. the implementation is right, just need to do it.

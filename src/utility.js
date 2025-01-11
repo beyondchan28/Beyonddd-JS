@@ -15,7 +15,6 @@ function calculate_FPS(ts) {
 	oldTimeStamp = ts;
 
 	fps = Math.round(1 / secondsPassed);
-	
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, canvas.height, 200, 100);
 	ctx.font = "25px Arial";

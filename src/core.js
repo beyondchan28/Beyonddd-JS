@@ -16,7 +16,7 @@ function game_loop(timeStamp) {
 	input_process();
 	update();
 	draw();
-	animation_update(cAnimations[0], timeStamp);
+	animation_update(cAnimations[0]);
 	calculate_FPS(timeStamp);
 
 	window.requestAnimationFrame(game_loop);
