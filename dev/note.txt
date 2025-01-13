@@ -2,3 +2,15 @@ BUG:
 - [X] animation size bug.
 - [X] need a better game loop. current is way too fast.
 	+ the problem is not the game loop. the implementation is right, just need to do it.
+- [] proper type checking for every parameters for better debugging.
+- [] create scene system as an object.
+- [] start building the game.
+
+NOTE:
+- Scene system
+	+ has its own update function
+	+ has its own draw function
+	+ has its own input function
+	+ has its own logic function
+	+ in short, it has its own data uniquely to every scene
+- Learn about javascripts import mechanism, so only add one tag script in the HTML

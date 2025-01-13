@@ -1,15 +1,9 @@
-let playerImg = load_image("assets/icon.png");
-let atlas = load_image("assets/Spritesheet/roguelikeChar_transparent.png");
+const asset_image_map = new Map();
 
-//setup games assets here
-function assets_setup() {
-	let sprite = new Sprite(playerImg, cTransforms[0].pos);
-	cSprites[0] = sprite;
-}
-
-function load_image(src) {
+function asset_load_image(name, src) {
 	let img = new Image();
 	img.src = src;
+	asset_image_map.set(name, img);
 	return img;
 }
 

@@ -17,9 +17,9 @@ function camera_moveTo(end) {
     ctx.translate(end.x, end.y);
 }
 
-function camera_process() {
-    camera.transform.pos.x -= 0.01 * ts;
-    camera.transform.pos.y -= 0.01 * ts;
+function camera_process(ts) {
+    camera.transform.pos.x -= 0.0001 * ts;
+    camera.transform.pos.y -= 0.0001 * ts;
     camera.transform.pos.normalize();
     camera_moveTo(camera.transform.pos);
 }

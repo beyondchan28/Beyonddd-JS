@@ -1,25 +1,19 @@
 window.onload = init; //start the game
 
 function init() {
-	components_setup();
-	entities_setup();
-	// assets_setup();
-	animation_setup();
-	collision_rect_setup();
-	grid_generate_data(64);
-	input_setup();
-
-	window.requestAnimationFrame(game_loop);
+	component_default_setup();
+	game_setup();
+	window.requestAnimationFrame(update);
 }
 
-function game_loop(timeStamp) {
+function update(timeStamp) {
 	input_process();
-	update();
+	game_update();
 	draw();
 	animation_update(cAnimations[0]);
 	calculate_FPS(timeStamp);
 
-	window.requestAnimationFrame(game_loop);
+	window.requestAnimationFrame(update);
 }
 
 function draw() {
@@ -29,15 +23,13 @@ function draw() {
 	
 	ctx.save();
 
-	collision_rect_debug(0, 1);
+
+	for (let ent of entity_map.values()) {
+		collision_rect_debug(ent.id);
+	}
 	// asset_process();
 	
 	// grid_draw();
 
-
 	ctx.restore();
 }
-
-
-
-

@@ -13,8 +13,9 @@
 - [X] Input mapping
 - [X] More component
 - [X] Animation system
-- [] Physics system
-- [] Asset system
+- [] Particle system
 - [] Scene system
+- [] Asset system
+- [] Physics system
 - [] **Physics** implementation
 - [] Tiled/OGMO editor integration
