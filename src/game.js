@@ -1,3 +1,22 @@
+/* 
+	architeture for making a level/scene 
+		GameSettings
+		
+		READY : 
+			> component setup
+			> asset setup
+			> animation setup
+			> collision setup
+			> input setup
+			> entity setup
+		PROCESS :
+			> input process
+			> as
+			> game_logic
+
+
+*/
+
 //setup games assets here
 function assets_setup() {
 	asset_load_image("player", "assets/icon.png");
@@ -23,7 +42,7 @@ function collision_rect_setup() {
 }
 
 function animation_setup() {
-	let animSprite = new Sprite(asset_image_map.get("walk_anim"), cTransforms[0].pos);
+	let animSprite = new Sprite(assetImageMap.get("walk_anim"), cTransforms[0].pos);
 	cSprites[0] = animSprite;
 	let playerAnim = new Animation("walk", cSprites[0], 6, 0, 5);
 	cAnimations[0] = playerAnim;
@@ -39,20 +58,20 @@ function entity_setup() {
 }
 
 function game_setup() {
-	entity_setup();
-	assets_setup();
-	animation_setup();
-	collision_rect_setup();
-	grid_generate_data(64);
+	// entity_setup();
+	// assets_setup();
+	// animation_setup();
+	// collision_rect_setup();
+	// grid_generate_data(64);
 }
 
 
 function game_update() {
-	player_input();
+	// player_input();
 }
 
 function player_input() {
-	for (let i of input_map.values()) {
+	for (let i of inputMap.values()) {
 		if (i.type === "START") {
 			if (i.name == "UP") {
 				console.log("pressed");

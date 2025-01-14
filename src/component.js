@@ -1,20 +1,3 @@
-//component interface
-const ENTITIES_AMOUNT = 3;
-
-const cTransforms = new Array(ENTITIES_AMOUNT);
-const cBoundingBoxes = new Array(ENTITIES_AMOUNT);
-const cSprites = new Array(ENTITIES_AMOUNT);
-const cAnimations = new Array(ENTITIES_AMOUNT);
-
-function component_default_setup() {
-	for (let i = 0; i < ENTITIES_AMOUNT; i += 1) {
-		cTransforms[i] = new Transform();
-		cBoundingBoxes[i] = new BoundingBox();
-		cSprites[i] = new Sprite();
-		cAnimations[i] = new Animation();
-	}
-}
-
 class Component {
 	constructor() {
 		this.userId = -1; // -1 means no entity using this component

@@ -2,8 +2,10 @@ BUG:
 - [X] animation size bug.
 - [X] need a better game loop. current is way too fast.
 	+ the problem is not the game loop. the implementation is right, just need to do it.
+- [X] wrap all engine functions to a single file.
+- [X] create scene system as an object.
+- [] engine object to store all the engine property such as currScene, pause, draw, debug, etc.
 - [] proper type checking for every parameters for better debugging.
-- [] create scene system as an object.
 - [] start building the game.
 
 NOTE:

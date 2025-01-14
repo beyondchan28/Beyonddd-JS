@@ -1,16 +1,15 @@
 window.onload = init; //start the game
 
 function init() {
-	component_default_setup();
 	game_setup();
 	window.requestAnimationFrame(update);
 }
 
 function update(timeStamp) {
-	input_process();
+	// input_process();
 	game_update();
 	draw();
-	animation_update(cAnimations[0]);
+	// animation_update(cAnimations[0]);
 	calculate_FPS(timeStamp);
 
 	window.requestAnimationFrame(update);
@@ -24,9 +23,9 @@ function draw() {
 	ctx.save();
 
 
-	for (let ent of entity_map.values()) {
-		collision_rect_debug(ent.id);
-	}
+	// for (let ent of entityMap.values()) {
+	// 	collision_rect_debug(ent.id);
+	// }
 	// asset_process();
 	
 	// grid_draw();

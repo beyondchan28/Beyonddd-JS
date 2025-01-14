@@ -1,11 +1,8 @@
-const entity_map = new Map();
-let entity_created_count = 0;
-
 /* 
 	Note :
 	the problem with Class approach (putting all the 
 	components inside every entity) is
-	when iterating through entity_map to access
+	when iterating through entityMap to access
 	one specific component, it loads all the thing inside the
 	entity, so it required a lot more time to call
 	rather than grouped every component on its own
@@ -26,18 +23,17 @@ class Entity {
 	}
 }
 
-function entity_create(name) {
-	console.assert(entity_map.size < ENTITIES_AMOUNT, "Out of max amount of entity.") // called if false
-	let new_entity = new Entity(name);
-	new_entity.id = entity_created_count;
-	entity_created_count += 1;
-	entity_map.set(name, new_entity);
-	return new_entity;
+function entity_create(name, entMap, entCount) {
+	let newEntity = new Entity(name);
+	newEntity.id = entCount;
+	entCount += 1;
+	entMap.set(name, newEntity);
+	return newEntity;
 }
 
-function entity_remove(name) {
-	entity_map.delete(name);
-	entity_created_count -= 1;
+function entity_remove(name, entMap, entCount) {
+	entMap.delete(name);
+	entCount -= 1;
 }
 
 
