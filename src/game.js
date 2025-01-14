@@ -13,8 +13,6 @@
 			> input process
 			> as
 			> game_logic
-
-
 */
 
 //setup games assets here

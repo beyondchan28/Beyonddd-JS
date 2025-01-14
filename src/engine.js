@@ -1,3 +1,23 @@
+class EngineSettings {
+	constructor() {
+		this.isPaused = false;
+		this.isDrawImage = true;
+		this.isDrawCollisionShape = false;
+		this.showFPS = true;
+
+		this.sceneMap = new Map();
+		this.currentScene = null;
+	}
+	change_scene(scene) {
+		this.currentScene = scene;
+	}
+	get_current_scene(scene) {
+		return this.scene;
+	}
+}
+
+const gameSettings = new EngineSettings();
+
 function asset_load_image(name, src, assImgMap) {
 	let img = new Image();
 	img.src = src;
@@ -5,10 +25,10 @@ function asset_load_image(name, src, assImgMap) {
 	return img;
 }
 
-function input_create(name, key, type, inpMap) {
+function input_create(name, key, inpMap) {
 	let input = {
 		key: key,
-		type: (type === undefined) ? "NONE" : type,
+		type: "NONE",
 	}
 	inpMap.set(name, input);
 }

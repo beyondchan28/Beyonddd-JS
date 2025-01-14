@@ -1,5 +1,3 @@
-const sceneMap = new Map();
-
 class Scene {
 	component_default_setup() {
 		for (let i = 0; i < this.ENTITIES_AMOUNT; i += 1) {
@@ -24,11 +22,12 @@ class Scene {
 		this.cAnimations = new Array(this.ENTITIES_AMOUNT);
 		
 		this.component_default_setup();
+		// add camera object ?
 	}
 }
 
-function scene_create(name, entAmount) {
+function scene_create(name, entAmount, scnMap) {
 	const newScene = new Scene(entAmount);
-	sceneMap.set(name, newScene);
+	scnMap.set(name, newScene);
 	return newScene;
 }

@@ -1,3 +1,9 @@
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = 800;
+canvas.height = 600;
+
 window.onload = init; //start the game
 
 function init() {
@@ -6,27 +12,35 @@ function init() {
 }
 
 function update(timeStamp) {
-	// input_process();
-	game_update();
+	// if (!gameSettings.isPaused) {
+	// 	input_process();
+	// 	game_update();
+	// }
+	
 	draw();
 	// animation_update(cAnimations[0]);
-	calculate_FPS(timeStamp);
+	
+	if (gameSettings.showFPS) {
+		calculate_FPS(timeStamp);
+	}
 
 	window.requestAnimationFrame(update);
 }
 
-function draw() {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = "lightblue";
-	ctx.fillRect(0, 0, canvas.width, canvas.height); //background
-	
+function draw() {	
+	clear_background("brown");
+
 	ctx.save();
-
-
-	// for (let ent of entityMap.values()) {
-	// 	collision_rect_debug(ent.id);
+	
+	// if (gameSettings.isDrawImage) {
+	// 	asset_process();
 	// }
-	// asset_process();
+
+	// if (gameSettings.isDrawCollisionShape) {
+	// 	for (let ent of entityMap.values()) {
+	// 		collision_rect_debug(ent.id);
+	// 	}
+	// }
 	
 	// grid_draw();
 

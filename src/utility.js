@@ -1,14 +1,7 @@
-const canvas = document.getElementById("canvas");
-canvas.width = 800;
-canvas.height = 600;
-
-const ctx = canvas.getContext("2d");
-
 //For calculating FPS
 let secondsPassed = 0;
 let oldTimeStamp = 0;
 let fps = 0;
-
 
 function calculate_FPS(ts) {
 	secondsPassed = (ts - oldTimeStamp) / 1000;
@@ -20,6 +13,12 @@ function calculate_FPS(ts) {
 	ctx.font = "25px Arial";
 	ctx.fillStyle = "black";
 	ctx.fillText("FPS: " + fps, canvas.width - 100, 30);
+}
+
+function clear_background(col) {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = col;
+	ctx.fillRect(0, 0, canvas.width, canvas.height); //background
 }
 
 function draw_line(start, end) {
