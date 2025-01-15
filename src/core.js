@@ -12,7 +12,7 @@ function init() {
 }
 
 function update(timeStamp) {
-	// if (!gameSettings.isPaused) {
+	// if (!es.isPaused) {
 	// 	input_process();
 	// 	game_update();
 	// }
@@ -20,7 +20,7 @@ function update(timeStamp) {
 	draw();
 	// animation_update(cAnimations[0]);
 	
-	if (gameSettings.showFPS) {
+	if (es.showFPS) {
 		calculate_FPS(timeStamp);
 	}
 
@@ -32,11 +32,14 @@ function draw() {
 
 	ctx.save();
 	
-	// if (gameSettings.isDrawImage) {
-	// 	asset_process();
-	// }
+	if (es.isDrawImage) {
+		let currSceneAnim = es.currentScene.cAnimations
+		for (let anim of currSceneAnim) {
+			animation_update(anim);
+		}
+	}
 
-	// if (gameSettings.isDrawCollisionShape) {
+	// if (es.isDrawCollisionShape) {
 	// 	for (let ent of entityMap.values()) {
 	// 		collision_rect_debug(ent.id);
 	// 	}

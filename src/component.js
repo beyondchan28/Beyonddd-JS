@@ -58,4 +58,29 @@ class Animation extends Component {
 	}
 }
 
-
+function component_add(ent, compType, scene) {
+	switch (compType) {
+		case "t":
+			let t = new Transform();
+			scene.cTransforms.push(t);
+			ent.transformIdx = scene.cTransforms.length - 1;
+			break;
+		case "s":
+			let s = new Sprite();
+			scene.cSprites.push(s);
+			ent.spriteIdx = scene.cSprites.length - 1;
+			break;
+		case "a":
+			let a = new Animation();
+			scene.cAnimations.push(a);
+			ent.animationIdx = scene.cAnimations.length - 1;
+			break;
+		case "bb":
+			let bb = new BoundingBox();
+			scene.cBoundingBoxes.push(bb);
+			ent.boundingBoxIdx = scene.cBoundingBoxes.length - 1;
+			break;
+		default:
+			console.log("wrong component. typed the first letter on every word inserted.");
+	}
+}

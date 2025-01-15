@@ -2,7 +2,8 @@
 	architeture for making a level/scene 
 		GameSettings
 		
-		READY : 
+		READY :
+			> scene setup 
 			> component setup
 			> asset setup
 			> animation setup
@@ -15,12 +16,6 @@
 			> game_logic
 */
 
-//setup games assets here
-function assets_setup() {
-	asset_load_image("player", "assets/icon.png");
-	asset_load_image("atlas", "assets/Spritesheet/roguelikeChar_transparent.png");
-	asset_load_image("walk_anim", "assets/Spritesheet/walk.png");
-}
 
 //for setup its default values
 function components_setup() {
@@ -55,7 +50,29 @@ function entity_setup() {
 	entity_create("player");
 }
 
+const es = new EngineSettings();
+
 function game_setup() {
+	let newScene = scene_create("Menu", es.sceneMap);
+	let player = entity_create("Player", newScene);
+	let enemy = entity_create("Enemy", newScene);
+
+	asset_load_image("anim_walk", "assets/Spritesheet/walk.png", es.assetImageMap);
+	console.log(es.assetImageMap);
+
+	let newTransform = new Transform();
+	let newSprite = new Sprite();
+	let newAnimation = new Animation();
+
+	component_add(player, "t", newScene);
+	component_add(player, "s", newScene);
+	component_add(player, "a", newScene);
+
+	console.log(newScene.cTransforms);
+	console.log(newScene.entityMap);
+	console.log(es.sceneMap);
+
+	es.currentScene = newScene;
 	// entity_setup();
 	// assets_setup();
 	// animation_setup();

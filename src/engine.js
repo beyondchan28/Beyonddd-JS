@@ -6,6 +6,9 @@ class EngineSettings {
 		this.showFPS = true;
 
 		this.sceneMap = new Map();
+		this.assetImageMap = new Map();
+		this.inputMap = new Map();
+
 		this.currentScene = null;
 	}
 	change_scene(scene) {
@@ -15,8 +18,6 @@ class EngineSettings {
 		return this.scene;
 	}
 }
-
-const gameSettings = new EngineSettings();
 
 function asset_load_image(name, src, assImgMap) {
 	let img = new Image();

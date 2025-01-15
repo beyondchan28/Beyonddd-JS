@@ -23,16 +23,16 @@ class Entity {
 	}
 }
 
-function entity_create(name, entMap, entCount) {
+function entity_create(name, scene) {
 	let newEntity = new Entity(name);
-	newEntity.id = entCount;
-	entCount += 1;
-	entMap.set(name, newEntity);
+	newEntity.id = scene.enetityCreatedCount;
+	scene.enetityCreatedCount += 1;
+	scene.entityMap.set(name, newEntity);
 	return newEntity;
 }
 
-function entity_remove(name, entMap, entCount) {
-	entMap.delete(name);
+function entity_remove(name, scene) {
+	scene.entityMap.delete(name);
 	entCount -= 1;
 }
 
