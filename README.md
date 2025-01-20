@@ -17,5 +17,4 @@
 - [] Particle system
 - [] Asset system
 - [] Physics system
-- [] **Physics** implementation
 - [] Tiled/OGMO editor integration

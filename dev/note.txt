@@ -4,9 +4,10 @@ BUG:
 	+ the problem is not the game loop. the implementation is right, just need to do it.
 - [X] wrap all engine functions to a single file.
 - [X] create scene system as an object.
-- [] engine object to store all the engine property such as currScene, pause, draw, debug, etc.
-- [] proper type checking for every parameters for better debugging.
+- [X] engine object to store all the engine property such as currScene, pause, draw, debug, etc.
 - [] start building the game.
+- [] organize as modules.
+- [] proper type checking for every parameters for better debugging.
 
 NOTE:
 - Scene system
