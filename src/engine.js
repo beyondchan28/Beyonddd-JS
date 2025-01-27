@@ -122,6 +122,9 @@ function component_add(ent, compType) {
 
 function sprite_set(sprId, imgName) {
 	currScene.cSprites[sprId].image = asset_get_image(imgName);
+	currScene.cSprites[sprId].set_size();
+	// currScene.cSprites[sprId].set_origin();
+	console.log(currScene.cSprites[sprId]);
 }
 
 function component_get(compId, type) {
@@ -143,4 +146,3 @@ function component_get(compId, type) {
 			break;
 	}
 }
-//TODO: implement camera movement e.g camera_trap

@@ -55,6 +55,10 @@ function draw_stroke_rect(pos, size, strokeTint) {
 }
 
 function draw_image(sprite) {
-	ctx.drawImage(sprite.image, sprite.spos.x, sprite.spos.y, sprite.ssize.x, sprite.ssize.y, sprite.pos.x, sprite.pos.y, sprite.size.x, sprite.size.y);
+	ctx.drawImage(sprite.image, 
+		sprite.spos.x, sprite.spos.y, 
+		sprite.ssize.x, sprite.ssize.y, 
+		sprite.pos.x + sprite.halfSize.x, sprite.pos.y + sprite.halfSize.y, 
+		sprite.size.x, sprite.size.y);
 }
 

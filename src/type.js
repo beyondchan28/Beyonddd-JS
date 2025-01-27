@@ -11,6 +11,10 @@ class Vector2 {
 		return new Vector2(this.x, this.y)
 	}
 	add(vector) {
+		this.x += vector.x;
+		this.y += vector.y;
+	}
+	addAndCopy(vector) {
 		return new Vector2(this.x + vector.x, this.y + vector.y);
 	}
 	subtract(vector) {
@@ -125,6 +129,16 @@ class Sprite extends Component {
 		this.size = (size === undefined) ? new Vector2(this.image.width, this.image.height) : size;
 		this.spos = (spos === undefined) ? new Vector2() : spos;
 		this.ssize = (ssize === undefined) ? new Vector2(this.image.width, this.image.height) : ssize;
+ 		this.halfSize = new Vector2();
+ 	}
+ 	set_size() {
+ 		this.size = new Vector2(this.image.width, this.image.height);
+		this.ssize = new Vector2(this.image.width, this.image.height);
+		this.halfSize.set(this.image.width*0.5, this.image.height*0.5);
+ 	}
+
+ 	set_origin() {
+ 		this.pos.add(this.size.scale(0.5));
  	}
 }
 
@@ -146,6 +160,7 @@ class Animation extends Component {
 		this.speed = speed;
 		this.sprite.ssize = new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height);
 		this.sprite.size = new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height);
+		this.sprite.halfSize.set(this.sprite.size.x*0.5, this.sprite.size.y*0.5);
 	}
 }
 

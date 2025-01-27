@@ -38,6 +38,7 @@ function game_setup() {
 	component_add(enemy, "t");
 	let enemyT = component_get(enemy.transformIdx, "t");
 	enemyT.pos.y += 10;
+	enemyT.pos.x += 10;
 
 	component_add(player, "s");
 	component_add(enemy, "s");
@@ -55,6 +56,7 @@ function game_setup() {
 	// console.log(currScene.cAnimations[player.spriteIdx].sprite.image.src);
 	// console.log(newScene.entityMap);
 	// console.log(es.sceneMap);
+	
 
 }
 
@@ -102,7 +104,7 @@ function update(timeStamp) {
 function draw() {	
 	clear_background("lightblue");
 
-	ctx.save();
+	// ctx.save();
 	
 	if (es.isDrawImage) {
 		const sortedEntities = entities_y_sorted();
@@ -122,7 +124,7 @@ function draw() {
 	// }
 	
 
-	ctx.restore();
+	// ctx.restore();
 }
 
 /* 
@@ -133,9 +135,10 @@ function draw() {
 	component's array.
 */
 function entities_y_sorted() {
-	const sortedEntities = new Map([...currScene.entityMap].sort((e1, e2) => 
-		currScene.cTransforms[e1[1].transformIdx].pos.y - 
-		currScene.cTransforms[e2[1].transformIdx].pos.y)
+	const sortedEntities = new Map([...currScene.entityMap]
+		.sort((e1, e2) => 
+			currScene.cTransforms[e1[1].transformIdx].pos.y - 
+			currScene.cTransforms[e2[1].transformIdx].pos.y)
 		);
 	return sortedEntities;
 }
