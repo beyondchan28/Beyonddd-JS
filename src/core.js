@@ -126,11 +126,11 @@ function draw() {
 }
 
 /* 
-NOTE: 
-using sorted entitis despite of the component array for the y_pos sort
-because there's sprites and animations that need to be sorted along side
-by its y position, so its more efficient if sort the entity rather than
-component's array.
+	NOTE: 
+	using sorted entitis despite of the component array for the y_pos sort
+	because there's sprites and animations that need to be sorted along side
+	by its y position, so its more efficient if sort the entity rather than
+	component's array.
 */
 function entities_y_sorted() {
 	const sortedEntities = new Map([...currScene.entityMap].sort((e1, e2) => 
