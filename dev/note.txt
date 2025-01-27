@@ -5,6 +5,7 @@ BUG:
 - [X] wrap all engine functions to a single file.
 - [X] create scene system as an object.
 - [X] engine object to store all the engine property such as currScene, pause, draw, debug, etc.
+- [] the sprite/animation didnt show when pressing `CTRL + F5`. maybe due to opening the scene first before adding the sprite/animation data. or maybe it should be load asynchrodnously.
 - [] start building the game.
 - [] organize as modules.
 - [] proper type checking for every parameters for better debugging.
@@ -17,3 +18,4 @@ NOTE:
 	+ has its own logic function
 	+ in short, it has its own data uniquely to every scene
 - Learn about javascripts import mechanism, so only add one tag script in the HTML
+- for the Y-Sort, just need to sort the entity obj, its cheaper and didnt the order wasnt really matter, bcs it is a map anyway.

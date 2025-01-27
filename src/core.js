@@ -35,23 +35,27 @@ function game_setup() {
 	console.log(es.assetImageMap);
 
 	component_add(player, "t");
-	
+	component_add(enemy, "t");
+	let enemyT = component_get(enemy.transformIdx, "t");
+	enemyT.pos.y += 10;
+
 	component_add(player, "s");
-	component_sprite_set(player.spriteIdx, "anim_walk");
+	component_add(enemy, "s");
+	sprite_set(player.spriteIdx, "anim_walk");
+	sprite_set(enemy.spriteIdx, "anim_walk");
 	
 	component_add(player, "a");
 	animation_set_sprite(player.animationIdx, player.spriteIdx);
 	animation_setup(player.animationIdx, "PlayerWalk", 6, 5);
 
-	console.log(currScene.cAnimations[player.spriteIdx].sprite.image.src);
-	console.log(newScene.entityMap);
-	console.log(es.sceneMap);
+	component_add(enemy, "a");
+	animation_set_sprite(enemy.animationIdx, enemy.spriteIdx);
+	animation_setup(enemy.animationIdx, "EnemyWalk", 6, 20);
 
-	// entity_setup();
-	// assets_setup();
-	// animation_setup();
-	// collision_rect_setup();
-	// grid_generate_data(64);
+	// console.log(currScene.cAnimations[player.spriteIdx].sprite.image.src);
+	// console.log(newScene.entityMap);
+	// console.log(es.sceneMap);
+
 }
 
 function init() {
@@ -96,17 +100,20 @@ function update(timeStamp) {
 }
 
 function draw() {	
-	clear_background("brown");
+	clear_background("lightblue");
 
 	ctx.save();
 	
 	if (es.isDrawImage) {
-		let currSceneAnim = es.currentScene.cAnimations
-		for (let anim of currSceneAnim) {
-			// console.log(anim);
-			animation_update(anim);
+		const sortedEntities = entities_y_sorted();
+		const currSceneAnim = es.currentScene.cAnimations;
+		const currSceneSpr = es.currentScene.cSprites;
+		
+		for (let ent of sortedEntities.values()) {
+			animation_update(currSceneAnim[ent.animationIdx]);
 		}
 	}
+	// grid_draw();
 
 	// if (es.isDrawCollisionShape) {
 	// 	for (let ent of entityMap.values()) {
@@ -114,7 +121,21 @@ function draw() {
 	// 	}
 	// }
 	
-	// grid_draw();
 
 	ctx.restore();
+}
+
+/* 
+NOTE: 
+using sorted entitis despite of the component array for the y_pos sort
+because there's sprites and animations that need to be sorted along side
+by its y position, so its more efficient if sort the entity rather than
+component's array.
+*/
+function entities_y_sorted() {
+	const sortedEntities = new Map([...currScene.entityMap].sort((e1, e2) => 
+		currScene.cTransforms[e1[1].transformIdx].pos.y - 
+		currScene.cTransforms[e2[1].transformIdx].pos.y)
+		);
+	return sortedEntities;
 }

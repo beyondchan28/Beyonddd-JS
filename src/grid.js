@@ -4,6 +4,7 @@ let grid_data = {
 	size: 0
 }
 
+
 function grid_coordinate() {
 	for (let x = 0; x < canvas.width; x += grid_data.size) {
 		for (let y = 0; y < canvas.height; y += grid_data.size) {
@@ -12,6 +13,7 @@ function grid_coordinate() {
 	}
 }
 
+// BUG: maybe bcs of the draw API
 function grid_draw() {
 	for (let grid of grid_data.horizontal) {
 		draw_line(grid.start_point, grid.end_point);

@@ -77,6 +77,7 @@ function scene_change(name) {
 function entity_create(name) {
 	let newEntity = new Entity(name);
 	newEntity.id = currScene.entityCreatedCount;
+	newEntity.name = name;
 	currScene.entityCreatedCount += 1;
 	currScene.entityMap.set(name, newEntity);
 	return newEntity;
@@ -97,6 +98,7 @@ function component_add(ent, compType) {
 			break;
 		case "s":
 			let s = new Sprite();
+			s.pos = currScene.cTransforms[ent.id].pos;
 			currScene.cSprites.push(s);
 			ent.spriteIdx = currScene.cSprites.length - 1;
 			s.set_user(ent.id);
@@ -118,7 +120,27 @@ function component_add(ent, compType) {
 	}
 }
 
-function component_sprite_set(sprId, imgName) {
+function sprite_set(sprId, imgName) {
 	currScene.cSprites[sprId].image = asset_get_image(imgName);
+}
+
+function component_get(compId, type) {
+	switch (type) {
+		case "a":
+			return currScene.cAnimations[compId];
+			break;
+		case "t":
+			return currScene.cTransforms[compId];
+			break;
+		case "s":
+			return currScene.cSprites[compId];
+			break;
+		case "bb":
+			return currScene.cBoundingBoxes[compId];
+			break;
+		default:
+			console.log("wrong component type passed.");
+			break;
+	}
 }
 //TODO: implement camera movement e.g camera_trap
