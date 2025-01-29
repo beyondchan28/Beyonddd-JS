@@ -38,10 +38,12 @@ function game_setup() {
 	component_add(enemy, "t");
 	let enemyT = component_get(enemy.transformIdx, "t");
 	enemyT.pos.y += 10;
-	enemyT.pos.x += 10;
+	enemyT.pos.x += 50;
 
 	component_add(player, "s");
 	component_add(enemy, "s");
+	let enemyS = component_get(enemy.spriteIdx, "s");
+	enemyS.flipH = true;
 	sprite_set(player.spriteIdx, "anim_walk");
 	sprite_set(enemy.spriteIdx, "anim_walk");
 	
@@ -137,8 +139,8 @@ function draw() {
 function entities_y_sorted() {
 	const sortedEntities = new Map([...currScene.entityMap]
 		.sort((e1, e2) => 
-			currScene.cTransforms[e1[1].transformIdx].pos.y - 
-			currScene.cTransforms[e2[1].transformIdx].pos.y)
+			(currScene.cTransforms[e1[1].transformIdx].pos.y + currScene.cSprites[e1[1].spriteIdx].halfSize) - 
+			(currScene.cTransforms[e2[1].transformIdx].pos.y + currScene.cSprites[e2[1].spriteIdx].halfSize))
 		);
 	return sortedEntities;
 }

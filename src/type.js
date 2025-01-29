@@ -130,6 +130,7 @@ class Sprite extends Component {
 		this.spos = (spos === undefined) ? new Vector2() : spos;
 		this.ssize = (ssize === undefined) ? new Vector2(this.image.width, this.image.height) : ssize;
  		this.halfSize = new Vector2();
+ 		this.flipH = false;
  	}
  	set_size() {
  		this.size = new Vector2(this.image.width, this.image.height);
