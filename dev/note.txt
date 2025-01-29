@@ -9,10 +9,10 @@ BUG:
 
 TODO:
 - [X] set the origin at the center of the entity.
-- [] start building the game.
+- [X] flip sprite horizontally.
 - [] organize as modules.
+- [] start building the game.
 - [] proper type checking for every parameters for better debugging.
-- [] flip sprite horizontally.
 - [] implement camera.
 
 NOTE:
