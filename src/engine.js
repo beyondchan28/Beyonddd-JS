@@ -14,8 +14,9 @@ function asset_get_image(name) {
 }
 
 function input_create(name, code) {
-	let input = {
+	const input = {
 		name: name,
+		active: true,
 		code: code,
 		type: "NONE",
 	}
@@ -23,18 +24,23 @@ function input_create(name, code) {
 }
 
 function input_process() {
-	for (let inp of es.inputArr) {	
-		document.addEventListener("keydown", (event) => {
-			if (inp.type !== "START" && event.code === inp.code) {
+	document.addEventListener("keydown", (event) => {
+		for (let inp of es.inputArr) {	
+			if (event.code === inp.code) {
 				inp.type = "START";
+				break;
 			}
-		});
-		document.addEventListener("keyup", (event) => {
-			if (inp.type !== "END" && event.code === inp.code) {
+		}
+	});
+	document.addEventListener("keyup", (event) => {
+		for (let inp of es.inputArr) {	
+			if (event.code === inp.code) {
 				inp.type = "END";
+				break;
 			}
-		});
-	}
+		}
+	});
+	
 }
 
 function animation_update(anim) {

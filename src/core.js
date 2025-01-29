@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 600;
 
-window.onload = init; //start the game
+window.onload = _init; //start the game
 
 /* 
 	architeture for making a level/scene 
@@ -63,16 +63,16 @@ function game_setup() {
 
 }
 
-function init() {
+function _init() {
 	game_setup();
-	window.requestAnimationFrame(update);
+	window.requestAnimationFrame(_update);
 }
 
 function game_update() {
-	player_input();
+	
 }
 
-function player_input() {
+function _input() {
 	for (let i of es.inputArr) {
 		if (i.type === "START") {
 			if (i.name == "UP") {
@@ -83,6 +83,7 @@ function player_input() {
 					enemyS.flipH = false;
 				} else {
 					enemyS.flipH = true;
+
 				}
 			}
 		}
@@ -92,25 +93,29 @@ function player_input() {
 				console.log("release");
 			}
 		}
+
+		i.type = "NONE";
 	}
 }
 
-function update(timeStamp) {
+function _update(timeStamp) {
 	if (!es.isPaused) {
 		input_process();
-		game_update();
+		_input();
+		
+		// game_update();
 	}
 	
-	draw();
+	_draw();
 	
 	if (es.showFPS) {
 		calculate_FPS(timeStamp);
 	}
 
-	window.requestAnimationFrame(update);
+	window.requestAnimationFrame(_update);
 }
 
-function draw() {	
+function _draw() {	
 	clear_background("lightblue");
 
 	// ctx.save();

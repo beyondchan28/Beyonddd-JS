@@ -234,4 +234,5 @@ class EngineSettings {
 	get_current_scene() {
 		return this.scene;
 	}
+	
 }

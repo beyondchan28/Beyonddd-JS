@@ -10,7 +10,7 @@ BUG:
 TODO:
 - [X] set the origin at the center of the entity.
 - [X] flip sprite horizontally.
-- [] organize as modules.
+- [] organize as modules and using advance keyword such static.
 - [] adding support for unrepeatable when pressing input.
 - [] start building the game.
 - [] proper type checking for every parameters for better debugging.
