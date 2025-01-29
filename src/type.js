@@ -1,4 +1,4 @@
-class Vector2 {
+export class Vector2 {
 	constructor(x, y) {
 		this.x = (x === undefined) ? 0 : x;
 		this.y = (y === undefined) ? 0 : y;
@@ -104,7 +104,7 @@ class Component {
 	}
 }
 
-class Transform extends Component {
+export class Transform extends Component {
 	constructor(pos, rot, scale) {
 		super();
 		this.pos = (pos === undefined) ? new Vector2() : pos;
@@ -113,7 +113,7 @@ class Transform extends Component {
 	}
 }
 
-class BoundingBox extends Component {
+export class BoundingBox extends Component {
 	constructor(size, halfSize) {
 		super();
 		this.size = (size === undefined) ? new Vector2() : size;
@@ -121,7 +121,7 @@ class BoundingBox extends Component {
 	}
 }
 
-class Sprite extends Component {
+export class Sprite extends Component {
 	constructor(image, pos, size, spos, ssize) {
 		super();
 		this.image = (image === undefined) ? new Image() : image;
@@ -142,7 +142,7 @@ class Sprite extends Component {
  	}
 }
 
-class Animation extends Component {
+export class Animation extends Component {
 	constructor(name, sprite, frameCount, currentFrame, speed, size) {
 		super();
 		this.name = (name === undefined) ? "" : name;
@@ -175,7 +175,7 @@ class Animation extends Component {
 	data structure such as array. But its nicer to organized .
 */
 
-class Entity {
+export class Entity {
 	constructor(id, name, active) {
 		this.id = (typeof id !== "number") ? 0 : id;
 		this.name = (typeof name !== "string") ? "" : name;
@@ -189,7 +189,7 @@ class Entity {
 	}
 }
 
-class Scene {
+export class Scene {
 	// component_default_setup() {
 	// 	for (let i = 0; i < this.ENTITIES_AMOUNT; i += 1) {
 	// 		this.cTransforms[i] = new Transform();
@@ -215,7 +215,7 @@ class Scene {
 	}
 }
 
-class EngineSettings {
+export class EngineSettings {
 	constructor() {
 		this.isPaused = false;
 		this.isDrawImage = true;
@@ -234,5 +234,5 @@ class EngineSettings {
 	get_current_scene() {
 		return this.scene;
 	}
-	
+
 }

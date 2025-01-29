@@ -1,31 +1,34 @@
-const es = new EngineSettings();
-let currScene = es.get_current_scene();
+import * as type from "./type.js";
+import * as util from "./utility.js";
+
+export const settings = new type.EngineSettings();
+export let currScene = settings.get_current_scene();
 
 
-function asset_load_image(name, src) {
+export function asset_load_image(name, src) {
 	let img = new Image();
 	img.src = src;
-	es.assetImageMap.set(name, img);
+	settings.assetImageMap.set(name, img);
 	return img;
 }
 
-function asset_get_image(name) {
-	return es.assetImageMap.get(name);
+export function asset_get_image(name) {
+	return settings.assetImageMap.get(name);
 }
 
-function input_create(name, code) {
+export function input_create(name, code) {
 	const input = {
 		name: name,
 		active: true,
 		code: code,
 		type: "NONE",
 	}
-	es.inputArr.push(input);
+	settings.inputArr.push(input);
 }
 
-function input_process() {
+export function input_process() {
 	document.addEventListener("keydown", (event) => {
-		for (let inp of es.inputArr) {	
+		for (let inp of settings.inputArr) {	
 			if (event.code === inp.code) {
 				inp.type = "START";
 				break;
@@ -33,7 +36,7 @@ function input_process() {
 		}
 	});
 	document.addEventListener("keyup", (event) => {
-		for (let inp of es.inputArr) {	
+		for (let inp of settings.inputArr) {	
 			if (event.code === inp.code) {
 				inp.type = "END";
 				break;
@@ -43,46 +46,46 @@ function input_process() {
 	
 }
 
-function animation_update(anim) {
+export function animation_update(anim) {
 	anim.currentFrame++;
 	let animFrame = Math.floor((anim.currentFrame / anim.speed) % anim.frameCount);
 	let spriteXSSize = anim.sprite.ssize.x;
 	anim.sprite.spos.x = animFrame * spriteXSSize;	
-	draw_image(anim.sprite);
+	util.draw_image(anim.sprite);
 }
 
-function animation_set_sprite(animId, spriteId) {
+export function animation_set_sprite(animId, spriteId) {
 	currScene.cAnimations[animId].sprite = currScene.cSprites[spriteId];
 }
 
-function animation_setup(animIdx, name, frameCount, speed) {
+export function animation_setup(animIdx, name, frameCount, speed) {
 	currScene.cAnimations[animIdx].setup(name,frameCount, speed);
 }
 
-function collision_rect_debug(id) {
-	draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, "black");
+export function collision_rect_debug(id) {
+	util.draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, "black");
 }
 
-function collision_rect_check(id1, id2) {
+export function collision_rect_check(id1, id2) {
 	let dpos = currScene.cTransfroms[id1].pos.delta(currScene.cTransfroms[id2].pos);
 	let overlap = currScene.cBoundingBoxes[id2].halfSize.add(currScene.cBoundingBoxes[id2].halfSize).subtract(dpos);
 	return (overlap.x > 0.0 && overlap.y > 0.0) ? true : false;
 }
 
-function scene_create(name) {
-	const newScene = new Scene();
-	es.sceneMap.set(name, newScene);
+export function scene_create(name) {
+	const newScene = new type.Scene();
+	settings.sceneMap.set(name, newScene);
 	return newScene;
 }
 
-function scene_change(name) {
-	es.currentScene = es.sceneMap.get(name);
-	currScene = es.currentScene;
+export function scene_change(name) {
+	settings.currentScene = settings.sceneMap.get(name);
+	currScene = settings.currentScene;
 	console.log(currScene);
 }
 
-function entity_create(name) {
-	let newEntity = new Entity(name);
+export function entity_create(name) {
+	let newEntity = new type.Entity(name);
 	newEntity.id = currScene.entityCreatedCount;
 	newEntity.name = name;
 	currScene.entityCreatedCount += 1;
@@ -90,38 +93,38 @@ function entity_create(name) {
 	return newEntity;
 }
 
-function entity_get(name) {
+export function entity_get(name) {
 	return currScene.entityMap.get(name);
 }
 
-function entity_remove(name) {
+export function entity_remove(name) {
 	currScene.entityMap.delete(name);
 	entCount -= 1;
 }
 
-function component_add(ent, compType) {
+export function component_add(ent, compType) {
 	switch (compType) {
 		case "t":
-			let t = new Transform();
+			let t = new type.Transform();
 			currScene.cTransforms.push(t);
 			ent.transformIdx = currScene.cTransforms.length - 1;
 			t.set_user(ent.id);
 			break;
 		case "s":
-			let s = new Sprite();
+			let s = new type.Sprite();
 			s.pos = currScene.cTransforms[ent.id].pos;
 			currScene.cSprites.push(s);
 			ent.spriteIdx = currScene.cSprites.length - 1;
 			s.set_user(ent.id);
 			break;
 		case "a":
-			let a = new Animation();
+			let a = new type.Animation();
 			currScene.cAnimations.push(a);
 			ent.animationIdx = currScene.cAnimations.length - 1;
 			a.set_user(ent.id);
 			break;
 		case "bb":
-			let bb = new BoundingBox();
+			let bb = new type.BoundingBox();
 			currScene.cBoundingBoxes.push(bb);
 			ent.boundingBoxIdx = currScene.cBoundingBoxes.length - 1;
 			bb.set_user(ent.id);
@@ -131,14 +134,14 @@ function component_add(ent, compType) {
 	}
 }
 
-function sprite_set(sprId, imgName) {
+export function sprite_set(sprId, imgName) {
 	currScene.cSprites[sprId].image = asset_get_image(imgName);
 	currScene.cSprites[sprId].set_size();
 	// currScene.cSprites[sprId].set_origin();
 	console.log(currScene.cSprites[sprId]);
 }
 
-function component_get(compId, type) {
+export function component_get(compId, type) {
 	switch (type) {
 		case "a":
 			return currScene.cAnimations[compId];

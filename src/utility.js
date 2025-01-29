@@ -1,9 +1,16 @@
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = 800;
+canvas.height = 600;
+
 //For calculating FPS
 let secondsPassed = 0;
 let oldTimeStamp = 0;
 let fps = 0;
 
-function calculate_FPS(ts) {
+
+export function calculate_FPS(ts) {
 	secondsPassed = (ts - oldTimeStamp) / 1000;
 	oldTimeStamp = ts;
 
@@ -15,13 +22,13 @@ function calculate_FPS(ts) {
 	ctx.fillText("FPS: " + fps, canvas.width - 100, 30);
 }
 
-function clear_background(col) {
+export function clear_background(col) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = col;
 	ctx.fillRect(0, 0, canvas.width, canvas.height); //background
 }
 
-function draw_line(start, end) {
+export function draw_line(start, end) {
 	ctx.beginPath();
 	ctx.moveTo(start.x, start.y);
 	ctx.lineTo(end.x, end.y);
@@ -29,7 +36,7 @@ function draw_line(start, end) {
 	ctx.stroke();
 }
 
-function draw_circle(center, radius, outlineTint, fillTint) {
+export function draw_circle(center, radius, outlineTint, fillTint) {
 	ctx.beginPath();
 	ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 	ctx.strokeStyle = outlineTint;
@@ -38,23 +45,23 @@ function draw_circle(center, radius, outlineTint, fillTint) {
 	ctx.fill();
 }
 
-function draw_text(font, text, pos, tint) {
+export function draw_text(font, text, pos, tint) {
 	ctx.font = font;
 	ctx.fillStyle = tint;
 	ctx.fillText(text, pos.x, pos.y);
 }
 
-function draw_rect(pos, size, fillTint) {
+export function draw_rect(pos, size, fillTint) {
 	ctx.fillStyle = fillTint;
 	ctx.fillRect(pos.x, pos.y, size.x, size.y);
 }
 
-function draw_stroke_rect(pos, size, strokeTint) {
+export function draw_stroke_rect(pos, size, strokeTint) {
 	ctx.strokeStyle = strokeTint;
 	ctx.strokeRect(pos.x, pos.y, size.x, size.y);
 }
 
-function draw_image(sprite) {
+export function draw_image(sprite) {
 	if (sprite.flipH) {
 		ctx.save();
 		ctx.translate(sprite.pos.x, sprite.pos.y);

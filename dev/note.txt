@@ -10,8 +10,9 @@ BUG:
 TODO:
 - [X] set the origin at the center of the entity.
 - [X] flip sprite horizontally.
-- [] organize as modules and using advance keyword such static.
-- [] adding support for unrepeatable when pressing input.
+- [X] organize as modules and using advance keyword such static.
+- [X] adding support for unrepeatable when pressing input.
+- [] making SceneMenu.
 - [] start building the game.
 - [] proper type checking for every parameters for better debugging.
 - [] implement camera.
