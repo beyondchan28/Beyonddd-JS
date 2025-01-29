@@ -1,8 +1,13 @@
+/*
+	This script includes all the APIs for the engine.
+*/
+
+
 import * as type from "./type.js";
 import * as util from "./utility.js";
 
 export const settings = new type.EngineSettings();
-export let currScene = settings.get_current_scene();
+let currScene = settings.get_current_scene();
 
 
 export function asset_load_image(name, src) {
@@ -100,6 +105,22 @@ export function entity_get(name) {
 export function entity_remove(name) {
 	currScene.entityMap.delete(name);
 	entCount -= 1;
+}
+
+/* 
+	NOTE: 
+	using sorted entitis despite of the component array for the y_pos sort
+	because there's sprites and animations that need to be sorted along side
+	by its y position, so its more efficient if sort the entity rather than
+	component's array.
+*/
+export function entities_y_sorted() {
+	const sortedEntities = new Map([...currScene.entityMap]
+		.sort((e1, e2) => 
+			(currScene.cTransforms[e1[1].transformIdx].pos.y + currScene.cSprites[e1[1].spriteIdx].halfSize) - 
+			(currScene.cTransforms[e2[1].transformIdx].pos.y + currScene.cSprites[e2[1].spriteIdx].halfSize))
+		);
+	return sortedEntities;
 }
 
 export function component_add(ent, compType) {

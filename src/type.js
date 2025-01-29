@@ -1,3 +1,9 @@
+/*
+	This script includes all the pre-defined data types,
+	Including Entity, Component, Scene, and Vector.
+*/
+
+
 export class Vector2 {
 	constructor(x, y) {
 		this.x = (x === undefined) ? 0 : x;

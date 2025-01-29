@@ -1,8 +1,3 @@
-import * as engine from "./engine.js";
-import * as util from "./utility.js";
-
-window.onload = _init; //start the game
-
 /* 
 	architeture for making a level/scene 
 		GameSettings
@@ -21,7 +16,16 @@ window.onload = _init; //start the game
 			> game_logic
 */
 
+import * as engine from "./engine.js";
+import * as util from "./utility.js";
+
+window.onload = _init; //start the game
+
+
 function game_setup() {
+	util.context_setup("canvas");
+	util.canvas_set_size(800, 600);
+
 	engine.input_create("UP", "Space");
 
 	let newScene = engine.scene_create("Menu");
@@ -118,7 +122,7 @@ function _draw() {
 	// ctx.save();
 	
 	if (engine.settings.isDrawImage) {
-		const sortedEntities = entities_y_sorted();
+		const sortedEntities = engine.entities_y_sorted();
 		const currSceneAnim = engine.settings.currentScene.cAnimations;
 		const currSceneSpr = engine.settings.currentScene.cSprites;
 		
@@ -138,19 +142,3 @@ function _draw() {
 	// ctx.restore();
 }
 
-/* 
-	NOTE: 
-	using sorted entitis despite of the component array for the y_pos sort
-	because there's sprites and animations that need to be sorted along side
-	by its y position, so its more efficient if sort the entity rather than
-	component's array.
-*/
-function entities_y_sorted() {
-	const currScene = engine.settings.currentScene;
-	const sortedEntities = new Map([...currScene.entityMap]
-		.sort((e1, e2) => 
-			(currScene.cTransforms[e1[1].transformIdx].pos.y + currScene.cSprites[e1[1].spriteIdx].halfSize) - 
-			(currScene.cTransforms[e2[1].transformIdx].pos.y + currScene.cSprites[e2[1].spriteIdx].halfSize))
-		);
-	return sortedEntities;
-}

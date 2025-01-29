@@ -12,8 +12,8 @@ TODO:
 - [X] flip sprite horizontally.
 - [X] organize as modules and using advance keyword such static.
 - [X] adding support for unrepeatable when pressing input.
+- [X] setup the canvas.
 - [] making SceneMenu.
-- [] setup the canvas.
 - [] start building the game.
 - [] proper type checking for every parameters for better debugging.
 - [] implement camera.

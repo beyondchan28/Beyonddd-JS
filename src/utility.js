@@ -1,14 +1,27 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+/* 
+	This script have all the API from the canvas/window.
+	including draw/render stuff to screen and FPS.
+*/
 
-canvas.width = 800;
-canvas.height = 600;
+
+let canvas
+let ctx 
+
 
 //For calculating FPS
 let secondsPassed = 0;
 let oldTimeStamp = 0;
 let fps = 0;
 
+export function context_setup(ctxId) {
+	canvas =  document.getElementById(ctxId);
+	ctx = canvas.getContext("2d");
+}
+
+export function canvas_set_size(width, height) {
+	canvas.width = width;
+	canvas.height = height;
+}
 
 export function calculate_FPS(ts) {
 	secondsPassed = (ts - oldTimeStamp) / 1000;
