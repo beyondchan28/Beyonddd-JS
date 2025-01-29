@@ -11,6 +11,7 @@ TODO:
 - [X] set the origin at the center of the entity.
 - [X] flip sprite horizontally.
 - [] organize as modules.
+- [] adding support for unrepeatable when pressing input.
 - [] start building the game.
 - [] proper type checking for every parameters for better debugging.
 - [] implement camera.

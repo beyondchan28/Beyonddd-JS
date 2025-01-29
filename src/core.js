@@ -25,6 +25,8 @@ window.onload = init; //start the game
 */
 
 function game_setup() {
+	input_create("UP", "Space");
+
 	let newScene = scene_create("Menu");
 	scene_change("Menu");
 
@@ -42,8 +44,7 @@ function game_setup() {
 
 	component_add(player, "s");
 	component_add(enemy, "s");
-	let enemyS = component_get(enemy.spriteIdx, "s");
-	enemyS.flipH = true;
+	
 	sprite_set(player.spriteIdx, "anim_walk");
 	sprite_set(enemy.spriteIdx, "anim_walk");
 	
@@ -68,14 +69,21 @@ function init() {
 }
 
 function game_update() {
-	// player_input();
+	player_input();
 }
 
 function player_input() {
-	for (let i of inputMap.values()) {
+	for (let i of es.inputArr) {
 		if (i.type === "START") {
 			if (i.name == "UP") {
 				console.log("pressed");
+				const enemy = entity_get("Enemy");
+				const enemyS = component_get(enemy.spriteIdx, "s");
+				if (enemyS.flipH) {
+					enemyS.flipH = false;
+				} else {
+					enemyS.flipH = true;
+				}
 			}
 		}
 
@@ -88,13 +96,12 @@ function player_input() {
 }
 
 function update(timeStamp) {
-	// if (!es.isPaused) {
-	// 	input_process();
-	// 	game_update();
-	// }
+	if (!es.isPaused) {
+		input_process();
+		game_update();
+	}
 	
 	draw();
-	// animation_update(cAnimations[0]);
 	
 	if (es.showFPS) {
 		calculate_FPS(timeStamp);

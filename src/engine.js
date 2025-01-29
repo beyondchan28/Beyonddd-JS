@@ -13,23 +13,24 @@ function asset_get_image(name) {
 	return es.assetImageMap.get(name);
 }
 
-function input_create(name, key) {
+function input_create(name, code) {
 	let input = {
-		key: key,
+		name: name,
+		code: code,
 		type: "NONE",
 	}
-	currScene.inputMap.set(name, input);
+	es.inputArr.push(input);
 }
 
 function input_process() {
-	for (let inp of currScene.assetImageMap.values()) {	
+	for (let inp of es.inputArr) {	
 		document.addEventListener("keydown", (event) => {
-			if (event.key === inp.key) {
+			if (inp.type !== "START" && event.code === inp.code) {
 				inp.type = "START";
 			}
 		});
 		document.addEventListener("keyup", (event) => {
-			if (event.key === inp.key) {
+			if (inp.type !== "END" && event.code === inp.code) {
 				inp.type = "END";
 			}
 		});
@@ -81,6 +82,10 @@ function entity_create(name) {
 	currScene.entityCreatedCount += 1;
 	currScene.entityMap.set(name, newEntity);
 	return newEntity;
+}
+
+function entity_get(name) {
+	return currScene.entityMap.get(name);
 }
 
 function entity_remove(name) {

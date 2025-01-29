@@ -137,7 +137,6 @@ class Sprite extends Component {
 		this.ssize = new Vector2(this.image.width, this.image.height);
 		this.halfSize.set(this.image.width*0.5, this.image.height*0.5);
  	}
-
  	set_origin() {
  		this.pos.add(this.size.scale(0.5));
  	}
@@ -223,9 +222,9 @@ class EngineSettings {
 		this.isDrawCollisionShape = false;
 		this.showFPS = true;
 
+		this.inputArr = new Array();
 		this.sceneMap = new Map();
 		this.assetImageMap = new Map();
-		this.inputMap = new Map();
 
 		this.currentScene = null;
 	}
