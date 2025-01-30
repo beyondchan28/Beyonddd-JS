@@ -170,6 +170,23 @@ export class Animation extends Component {
 	}
 }
 
+export class Text extends Component {
+	constructor(font, text, pos, tint) {
+		this.font = (font === undefined) ? "25px Arial" : font;
+		this.text = (text === undefined) ? "TEXT WRITTEN HERE" : text;
+		this.pos = (pos === undefined) ? new Vector2() : pos;
+		this.tint = (tint === undefined) ? "black" : tint;
+	}
+}
+
+export class ColorRectangle extends Component {
+	constructor(pos, size, fillTint) {
+		this.pos = (pos === undefined) ? new Vector2() : pos;
+		this.size = (pos === undefined) ? new Vector2(1, 1) : size;
+		this.fillTint === (fillTint === undefined) ? "white" : fillTint;
+	}
+}
+
 /* 
 	Note :
 	the problem with Class approach (putting all the 
@@ -181,43 +198,64 @@ export class Animation extends Component {
 	data structure such as array. But its nicer to organized .
 */
 
+export const ENTITY_TYPE = {
+	GAMEPLAY_OBJECT: 0,
+	GUI: 1,
+}
+
 export class Entity {
-	constructor(id, name, active) {
-		this.id = (typeof id !== "number") ? 0 : id;
-		this.name = (typeof name !== "string") ? "" : name;
-		this.active = (typeof active !== "boolean") ? true : active;
+	constructor(entityType) {
+		this.id = -1;
+		this.active = true;
 		
 		// keep track the used comp by its index. -1 means using none.
-		this.transformIdx = -1;
-		this.boundingBoxIdx = -1;
-		this.spriteIdx = -1;
-		this.animationIdx = -1;
+		if (entityType === ENTITY_TYPE.GAMEPLAY_OBJECT) {
+			this.transformIdx = -1;
+			this.boundingBoxIdx = -1;
+			this.spriteIdx = -1;
+			this.animationIdx = -1;
+		} else if (entityType === ENTITY_TYPE.GUI) {
+			this.transformIdx = -1;
+			this.textIdx = -1;
+			this.colorRectIdx = -1;
+		}
 	}
 }
 
+
+export const SCENE_TYPE = {
+	GUI_ONLY: 0,
+	GAMEPLAY_ONLY: 1,
+	DEFAULT: 2,
+}
+
 export class Scene {
-	// component_default_setup() {
-	// 	for (let i = 0; i < this.ENTITIES_AMOUNT; i += 1) {
-	// 		this.cTransforms[i] = new Transform();
-	// 		this.cBoundingBoxes[i] = new BoundingBox();
-	// 		this.cSprites[i] = new Sprite();
-	// 		this.cAnimations[i] = new Animation();
-	// 	}
-	// }
+	constructor(sceneType) {
+		switch (sceneType) {
+			case SCENE_TYPE.GUI_ONLY:
+				this.guiEntityMap = new Map();
+				this.cTexts = new Array();
+				this.cColorRectangles = new Array();
+				break;
+			case SCENE_TYPE.GAMEPLAY_ONLY:
+				this.entityMap = new Map();
+				this.cTransforms = new Array();
+				this.cBoundingBoxes = new Array();
+				this.cSprites = new Array();
+				this.cAnimations = new Array();
+				break;
+			case SCENE_TYPE.DEFAULT:
+				this.guiEntityMap = new Map();
+				this.cTexts = new Array();
+				this.cColorRectangles = new Array();
 
-	constructor() {
-		// this.ENTITIES_AMOUNT = (entAmount === undefined) ? 10 : entAmount;
-		this.entityCreatedCount = 0;
-
-		this.entityMap = new Map();
-		
-		this.cTransforms = new Array();
-		this.cBoundingBoxes = new Array();
-		this.cSprites = new Array();
-		this.cAnimations = new Array();
-		
-		// this.component_default_setup();
-		// add camera object ?
+				this.entityMap = new Map();
+				this.cTransforms = new Array();
+				this.cBoundingBoxes = new Array();
+				this.cSprites = new Array();
+				this.cAnimations = new Array();
+				break;
+		}
 	}
 }
 
@@ -233,12 +271,6 @@ export class EngineSettings {
 		this.assetImageMap = new Map();
 
 		this.currentScene = null;
-	}
-	change_scene(scene) {
-		this.currentScene = scene;
-	}
-	get_current_scene() {
-		return this.scene;
 	}
 
 }

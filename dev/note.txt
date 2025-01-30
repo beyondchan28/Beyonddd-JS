@@ -13,10 +13,11 @@ TODO:
 - [X] organize as modules and using advance keyword such static.
 - [X] adding support for unrepeatable when pressing input.
 - [X] setup the canvas.
+- [] implement camera.
 - [] making SceneMenu.
 - [] start building the game.
 - [] proper type checking for every parameters for better debugging.
-- [] implement camera.
+- [] ordering all the APIs alphabetically, so it easier to navigate to.
 
 NOTE:
 - Scene system

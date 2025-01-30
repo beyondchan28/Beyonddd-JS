@@ -6,50 +6,8 @@
 import * as type from "./type.js";
 import * as util from "./utility.js";
 
-export const settings = new type.EngineSettings();
-let currScene = settings.get_current_scene();
-
-
-export function asset_load_image(name, src) {
-	let img = new Image();
-	img.src = src;
-	settings.assetImageMap.set(name, img);
-	return img;
-}
-
-export function asset_get_image(name) {
-	return settings.assetImageMap.get(name);
-}
-
-export function input_create(name, code) {
-	const input = {
-		name: name,
-		active: true,
-		code: code,
-		type: "NONE",
-	}
-	settings.inputArr.push(input);
-}
-
-export function input_process() {
-	document.addEventListener("keydown", (event) => {
-		for (let inp of settings.inputArr) {	
-			if (event.code === inp.code) {
-				inp.type = "START";
-				break;
-			}
-		}
-	});
-	document.addEventListener("keyup", (event) => {
-		for (let inp of settings.inputArr) {	
-			if (event.code === inp.code) {
-				inp.type = "END";
-				break;
-			}
-		}
-	});
-	
-}
+const settings = new type.EngineSettings();
+let currScene = settings.currentScene;
 
 export function animation_update(anim) {
 	anim.currentFrame++;
@@ -67,6 +25,21 @@ export function animation_setup(animIdx, name, frameCount, speed) {
 	currScene.cAnimations[animIdx].setup(name,frameCount, speed);
 }
 
+
+
+export function asset_load_image(name, src) {
+	let img = new Image();
+	img.src = src;
+	settings.assetImageMap.set(name, img);
+	return img;
+}
+
+export function asset_get_image(name) {
+	return settings.assetImageMap.get(name);
+}
+
+
+
 export function collision_rect_debug(id) {
 	util.draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, "black");
 }
@@ -77,51 +50,7 @@ export function collision_rect_check(id1, id2) {
 	return (overlap.x > 0.0 && overlap.y > 0.0) ? true : false;
 }
 
-export function scene_create(name) {
-	const newScene = new type.Scene();
-	settings.sceneMap.set(name, newScene);
-	return newScene;
-}
 
-export function scene_change(name) {
-	settings.currentScene = settings.sceneMap.get(name);
-	currScene = settings.currentScene;
-	console.log(currScene);
-}
-
-export function entity_create(name) {
-	let newEntity = new type.Entity(name);
-	newEntity.id = currScene.entityCreatedCount;
-	newEntity.name = name;
-	currScene.entityCreatedCount += 1;
-	currScene.entityMap.set(name, newEntity);
-	return newEntity;
-}
-
-export function entity_get(name) {
-	return currScene.entityMap.get(name);
-}
-
-export function entity_remove(name) {
-	currScene.entityMap.delete(name);
-	entCount -= 1;
-}
-
-/* 
-	NOTE: 
-	using sorted entitis despite of the component array for the y_pos sort
-	because there's sprites and animations that need to be sorted along side
-	by its y position, so its more efficient if sort the entity rather than
-	component's array.
-*/
-export function entities_y_sorted() {
-	const sortedEntities = new Map([...currScene.entityMap]
-		.sort((e1, e2) => 
-			(currScene.cTransforms[e1[1].transformIdx].pos.y + currScene.cSprites[e1[1].spriteIdx].halfSize) - 
-			(currScene.cTransforms[e2[1].transformIdx].pos.y + currScene.cSprites[e2[1].spriteIdx].halfSize))
-		);
-	return sortedEntities;
-}
 
 export function component_add(ent, compType) {
 	switch (compType) {
@@ -155,13 +84,6 @@ export function component_add(ent, compType) {
 	}
 }
 
-export function sprite_set(sprId, imgName) {
-	currScene.cSprites[sprId].image = asset_get_image(imgName);
-	currScene.cSprites[sprId].set_size();
-	// currScene.cSprites[sprId].set_origin();
-	console.log(currScene.cSprites[sprId]);
-}
-
 export function component_get(compId, type) {
 	switch (type) {
 		case "a":
@@ -181,3 +103,144 @@ export function component_get(compId, type) {
 			break;
 	}
 }
+
+
+export function component_sprite_set(sprId, imgName) {
+	currScene.cSprites[sprId].image = asset_get_image(imgName);
+	currScene.cSprites[sprId].set_size();
+	// currScene.cSprites[sprId].set_origin();
+}
+
+
+
+export function entity_create(name) {
+	let newEntity = new type.Entity(type.ENTITY_TYPE.GAMEPLAY_OBJECT);
+	newEntity.id = currScene.entityMap.size;
+	currScene.entityMap.set(name, newEntity);
+	console.log(newEntity);
+	return newEntity;
+}
+
+export function entity_get(name) {
+	return currScene.entityMap.get(name);
+}
+
+export function entity_remove(name) {
+	currScene.entityMap.delete(name);
+}
+
+export function entity_get_map() {
+	return currScene.entityMap;
+}
+/* 
+	NOTE: 
+	using sorted entitis despite of the component array for the y_pos sort
+	because there's sprites and animations that need to be sorted along side
+	by its y position, so its more efficient if sort the entity rather than
+	component's array.
+*/
+export function entities_y_sorted() {
+	if (currScene.entityMap.size === 0) {
+		return
+	}
+	const sortedEntities = new Map([...currScene.entityMap]
+		.sort((e1, e2) => 
+			(currScene.cTransforms[e1[1].transformIdx].pos.y + currScene.cSprites[e1[1].spriteIdx].halfSize) - 
+			(currScene.cTransforms[e2[1].transformIdx].pos.y + currScene.cSprites[e2[1].spriteIdx].halfSize))
+		);
+	return sortedEntities;
+}
+
+
+
+export function entity_gui_create(name) {
+	const guiEntity = new type.Entity(type.ENTITY_TYPE.GUI);
+	guiEntity.id = currScene.guiEntityMap.size;
+	currScene.guiEntity.set(name, guiEntity);
+	return guiEntity;
+}
+
+export function entity_gui_get(name) {
+	return currScene.guiEntityMap.get(name);
+}
+
+export function entity_gui_remove(name) {
+	currScene.guiEntity.delete(name);
+}
+
+export function entity_gui_get_map() {
+	return currScene.guiEntityMap;
+}
+
+
+export function input_create(name, code) {
+	const input = {
+		name: name,
+		active: true,
+		code: code,
+		type: "NONE",
+	}
+	settings.inputArr.push(input);
+}
+
+export function input_process() {
+	document.addEventListener("keydown", (event) => {
+		for (let inp of settings.inputArr) {	
+			if (event.code === inp.code) {
+				inp.type = "START";
+				break;
+			}
+		}
+	});
+	document.addEventListener("keyup", (event) => {
+		for (let inp of settings.inputArr) {	
+			if (event.code === inp.code) {
+				inp.type = "END";
+				break;
+			}
+		}
+	});
+	
+}
+
+export function input_get_array() {
+	return settings.inputArr;
+}
+
+
+
+export function is_paused() {
+	return settings.isPaused;
+}
+
+export function is_draw_image() {
+	return settings.isDrawImage;
+}
+
+export function is_draw_collision_shape() {
+	return settings.isDrawCollisionShape;
+}
+
+export function is_show_fps() {
+	return settings.showFPS;
+}
+
+
+
+export function scene_create(name) {
+	const newScene = new type.Scene(type.SCENE_TYPE.DEFAULT);
+	settings.sceneMap.set(name, newScene);
+	return newScene;
+}
+
+export function scene_change(name) {
+	settings.currentScene = settings.sceneMap.get(name);
+	currScene = settings.currentScene;
+	console.log(currScene);
+}
+
+export function scene_get_current() {
+	return settings.currentScene;
+}
+
+
