@@ -232,6 +232,7 @@ export const SCENE_TYPE = {
 export class Scene {
 	constructor(sceneType) {
 		this.type = sceneType;
+		this.setup = () => {console.error("This should be override/replaced as scene's _setup_ function")};
 		this.input = () => {console.error("This should be override/replaced as scene's _input_ function")};
 		this.draw = () => {console.error("This should be override/replaced as scene's _draw_ function")};
 		switch (sceneType) {
