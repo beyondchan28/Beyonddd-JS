@@ -1,150 +1,304 @@
-/* 
-	architeture for making a level/scene 
-		GameSettings
-		
-		READY :
-			> scene setup 
-			> component setup
-			> asset setup
-			> animation setup
-			> collision setup
-			> input setup
-			> entity setup
-		PROCESS :
-			> input process
-			> as
-			> game_logic
+/*
+	This script includes all the APIs for the engine.
 */
 
-import * as engine from "./engine.js";
+
+import * as type from "./type.js";
 import * as util from "./utility.js";
 
-util.context_setup("canvas");
-util.canvas_set_size(800, 600);
-window.onload = _init; //start the game
+const settings = new type.EngineSettings();
+let currScene = settings.currentScene;
 
-
-function game_level_setup() {
-
-	engine.input_create("UP", "Space");
-
-	const levelScene = engine.scene_create("Level");
-
-	engine.scene_change("Level");
-
-	let player = engine.entity_create("Player");
-	let enemy = engine.entity_create("Enemy");
-
-	// engine.asset_load_image("anim_walk", "assets/Spritesheet/walk.png");
-
-	// engine.component_add(player, "t");
-	// engine.component_add(enemy, "t");
-	// let enemyT = engine.component_get(enemy.transformIdx, "t");
-	// enemyT.pos.y += 10;
-	// enemyT.pos.x += 50;
-
-	// engine.component_add(player, "s");
-	// engine.component_add(enemy, "s");
-	
-	// engine.sprite_set(player.spriteIdx, "anim_walk");
-	// engine.sprite_set(enemy.spriteIdx, "anim_walk");
-	
-	// engine.component_add(player, "a");
-	// engine.animation_set_sprite(player.animationIdx, player.spriteIdx);
-	// engine.animation_setup(player.animationIdx, "PlayerWalk", 6, 5);
-
-	// engine.component_add(enemy, "a");
-	// engine.animation_set_sprite(enemy.animationIdx, enemy.spriteIdx);
-	// engine.animation_setup(enemy.animationIdx, "EnemyWalk", 6, 20);
-
-	// console.log(currScene.cAnimations[player.spriteIdx].sprite.image.src);
-	// console.log(newScene.entityMap);
-	// console.log(es.sceneMap);
-	
-
+export function animation_update(anim) {
+	anim.currentFrame++;
+	let animFrame = Math.floor((anim.currentFrame / anim.speed) % anim.frameCount);
+	let spriteXSSize = anim.sprite.ssize.x;
+	anim.sprite.spos.x = animFrame * spriteXSSize;	
+	util.draw_image(anim.sprite);
 }
 
-function game_menu_setup() {
-	engine.input_create("UP", "Space");
-	
+export function animation_set_sprite(animId, spriteId) {
+	currScene.cAnimations[animId].sprite = currScene.cSprites[spriteId];
+}
 
-	const menuScene = engine.scene_gui_create("Menu");
-	
-	menuScene.input = () => {
-		for (let i of engine.input_get_array()) {
-			if (i.type === "START") {
-				if (i.name == "UP") {
-					console.log("pressed");
-				}
-			}
+export function animation_setup(animIdx, name, frameCount, speed) {
+	currScene.cAnimations[animIdx].setup(name,frameCount, speed);
+}
 
-			else if (i.type === "END") {
-				if (i.name == "UP") {
-					console.log("release");
-				}
+
+
+export function asset_load_image(name, src) {
+	let img = new Image();
+	img.src = src;
+	settings.assetImageMap.set(name, img);
+	return img;
+}
+
+export function asset_get_image(name) {
+	return settings.assetImageMap.get(name);
+}
+
+
+
+export function collision_rect_debug(id) {
+	util.draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, "black");
+}
+
+export function collision_rect_check(id1, id2) {
+	let dpos = currScene.cTransfroms[id1].pos.delta(currScene.cTransfroms[id2].pos);
+	let overlap = currScene.cBoundingBoxes[id2].halfSize.add(currScene.cBoundingBoxes[id2].halfSize).subtract(dpos);
+	return (overlap.x > 0.0 && overlap.y > 0.0) ? true : false;
+}
+
+
+
+export function component_add(ent, compType) {
+	switch (compType) {
+		case "t":
+			let t = new type.Transform();
+			currScene.cTransforms.push(t);
+			ent.transformIdx = currScene.cTransforms.length - 1;
+			t.set_user(ent.id);
+			break;
+		case "s":
+			let s = new type.Sprite();
+			s.pos = currScene.cTransforms[ent.id].pos;
+			currScene.cSprites.push(s);
+			ent.spriteIdx = currScene.cSprites.length - 1;
+			s.set_user(ent.id);
+			break;
+		case "a":
+			let a = new type.Animation();
+			currScene.cAnimations.push(a);
+			ent.animationIdx = currScene.cAnimations.length - 1;
+			a.set_user(ent.id);
+			break;
+		case "bb":
+			let bb = new type.BoundingBox();
+			currScene.cBoundingBoxes.push(bb);
+			ent.boundingBoxIdx = currScene.cBoundingBoxes.length - 1;
+			bb.set_user(ent.id);
+			break;
+		default:
+			console.log("wrong component. typed the first letter on every word inserted.");
+	}
+}
+
+export function component_get(compId, type) {
+	switch (type) {
+		case "a":
+			return currScene.cAnimations[compId];
+			break;
+		case "t":
+			return currScene.cTransforms[compId];
+			break;
+		case "s":
+			return currScene.cSprites[compId];
+			break;
+		case "bb":
+			return currScene.cBoundingBoxes[compId];
+			break;
+		default:
+			console.log("wrong component type passed.");
+			break;
+	}
+}
+
+
+export function component_sprite_set(sprId, imgName) {
+	currScene.cSprites[sprId].image = asset_get_image(imgName);
+	currScene.cSprites[sprId].set_size();
+	// currScene.cSprites[sprId].set_origin();
+}
+
+
+
+export function entity_create(name) {
+	let newEntity = new type.Entity(type.ENTITY_TYPE.GAMEPLAY_OBJECT);
+	newEntity.id = currScene.entityMap.size;
+	currScene.entityMap.set(name, newEntity);
+	console.log(newEntity);
+	return newEntity;
+}
+
+export function entity_get(name) {
+	return currScene.entityMap.get(name);
+}
+
+export function entity_remove(name) {
+	currScene.entityMap.delete(name);
+}
+
+export function entity_get_map() {
+	return currScene.entityMap;
+}
+/* 
+	NOTE: 
+	using sorted entitis despite of the component array for the y_pos sort
+	because there's sprites and animations that need to be sorted along side
+	by its y position, so its more efficient if sort the entity rather than
+	component's array.
+*/
+export function entities_y_sorted() {
+	if (currScene.entityMap.size === 0) {
+		return
+	}
+	const sortedEntities = new Map([...currScene.entityMap]
+		.sort((e1, e2) => 
+			(currScene.cTransforms[e1[1].transformIdx].pos.y + currScene.cSprites[e1[1].spriteIdx].halfSize) - 
+			(currScene.cTransforms[e2[1].transformIdx].pos.y + currScene.cSprites[e2[1].spriteIdx].halfSize))
+		);
+	return sortedEntities;
+}
+
+
+
+export function entity_gui_create(name) {
+	const guiEntity = new type.Entity(type.ENTITY_TYPE.GUI);
+	guiEntity.id = currScene.guiEntityMap.size;
+	currScene.guiEntity.set(name, guiEntity);
+	return guiEntity;
+}
+
+export function entity_gui_get(name) {
+	return currScene.guiEntityMap.get(name);
+}
+
+export function entity_gui_remove(name) {
+	currScene.guiEntity.delete(name);
+}
+
+export function entity_gui_get_map() {
+	return currScene.guiEntityMap;
+}
+
+
+export function input_create(name, code) {
+	const input = {
+		name: name,
+		active: true,
+		code: code,
+		type: "NONE",
+	}
+	settings.inputArr.push(input);
+}
+
+export function input_process() {
+	document.addEventListener("keydown", (event) => {
+		for (let inp of settings.inputArr) {	
+			if (event.code === inp.code) {
+				inp.type = "START";
+				break;
 			}
-			
-			i.type = "NONE";
 		}
-	};
-
-	menuScene.draw();
-	engine.scene_change("Menu");
-	engine.scene_get_type();
+	});
+	document.addEventListener("keyup", (event) => {
+		for (let inp of settings.inputArr) {	
+			if (event.code === inp.code) {
+				inp.type = "END";
+				break;
+			}
+		}
+	});
+	
 }
 
-function _init() {
-	game_menu_setup();
-	// game_level_setup();
-	window.requestAnimationFrame(_update);
+export function input_check() {
+	for (let i of input_get_array()) {
+		scene_get_current().input(i);		
+		i.type = "NONE";
+	}
 }
 
-function _input() {
-	engine.scene_get_current().input();
+export function input_get_array() {
+	return settings.inputArr;
 }
 
-function _update(timeStamp) {
-	if (!engine.is_paused()) {
-		engine.input_process();
-		_input();
 
-		// game_update();
+
+export function is_paused() {
+	return settings.isPaused;
+}
+
+export function is_draw_image() {
+	return settings.isDrawImage;
+}
+
+export function is_draw_collision_shape() {
+	return settings.isDrawCollisionShape;
+}
+
+export function is_show_fps() {
+	return settings.showFPS;
+}
+
+
+
+export function scene_create(name) {
+	const newScene = new type.Scene(type.SCENE_TYPE.DEFAULT);
+	settings.sceneMap.set(name, newScene);
+	return newScene;
+}
+
+export function scene_gui_create(name) {
+	const newScene = new type.Scene(type.SCENE_TYPE.GUI_ONLY);
+	settings.sceneMap.set(name, newScene);
+	return newScene;
+}
+
+export function scene_gameplay_create(name) {
+	const newScene = new type.Scene(type.SCENE_TYPE.GAMEPLAY_ONLY);
+	settings.sceneMap.set(name, newScene);
+	return newScene;
+}
+
+export function scene_is_gui_only() {
+	return scene_get_type() === type.SCENE_TYPE.GUI_ONLY;
+}
+
+export function scene_change(name) {
+	settings.currentScene = settings.sceneMap.get(name);
+	currScene = settings.currentScene;
+	console.log(currScene);
+}
+
+export function scene_get_current() {
+	return settings.currentScene;
+}
+
+export function scene_get_type() {
+	return settings.currentScene.type;
+}
+
+export function canvas_setup(canvas, width, height) {
+	util.context_setup(canvas);
+	util.canvas_set_size(width, height);
+}
+
+
+export function init() {
+	
+	scene_get_current().setup();
+	window.requestAnimationFrame(update);
+}
+
+
+function update(timeStamp) {
+	if (!is_paused()) {
+		input_process();
+		input_check();
+
+		scene_get_current().update();
 	}
 	
-	_draw();
+	if (is_draw_image()) {
+		util.clear_background("lightblue");
+		scene_get_current().draw();
+	}
 	
-	if (engine.is_show_fps()) {
+	if (is_show_fps()) {
 		util.calculate_FPS(timeStamp);
 	}
 
-	window.requestAnimationFrame(_update);
+	window.requestAnimationFrame(update);
 }
-
-function _draw() {	
-	util.clear_background("lightblue");
-
-	// ctx.save();
-	
-	if (engine.is_draw_image()) {
-		if (!engine.scene_is_gui_only()) {
-			const sortedEntities = engine.entities_y_sorted();
-			const currSceneAnim = engine.scene_get_current().cAnimations;
-			const currSceneSpr = engine.scene_get_current().cSprites;
-			
-			for (let ent of sortedEntities.values()) {
-				engine.animation_update(currSceneAnim[ent.animationIdx]);
-			}
-		}
-	}
-	// grid_draw();
-
-	// if (es.isDrawCollisionShape) {
-	// 	for (let ent of entityMap.values()) {
-	// 		collision_rect_debug(ent.id);
-	// 	}
-	// }
-	
-
-	// ctx.restore();
-}
-
