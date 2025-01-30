@@ -35,4 +35,3 @@ and just include *game.js* as **module** in the *HTML file*.
 - [ ] Particle system
 - [ ] Physics system
 - [ ] Tiled/OGMO editor integration
----
