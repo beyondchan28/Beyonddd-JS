@@ -231,6 +231,9 @@ export const SCENE_TYPE = {
 
 export class Scene {
 	constructor(sceneType) {
+		this.type = sceneType;
+		this.input = () => {console.error("This should be override/replaced as scene's _input_ function")};
+		this.draw = () => {console.error("This should be override/replaced as scene's _draw_ function")};
 		switch (sceneType) {
 			case SCENE_TYPE.GUI_ONLY:
 				this.guiEntityMap = new Map();

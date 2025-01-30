@@ -233,6 +233,22 @@ export function scene_create(name) {
 	return newScene;
 }
 
+export function scene_gui_create(name) {
+	const newScene = new type.Scene(type.SCENE_TYPE.GUI_ONLY);
+	settings.sceneMap.set(name, newScene);
+	return newScene;
+}
+
+export function scene_gameplay_create(name) {
+	const newScene = new type.Scene(type.SCENE_TYPE.GAMEPLAY_ONLY);
+	settings.sceneMap.set(name, newScene);
+	return newScene;
+}
+
+export function scene_is_gui_only() {
+	return scene_get_type() === type.SCENE_TYPE.GUI_ONLY;
+}
+
 export function scene_change(name) {
 	settings.currentScene = settings.sceneMap.get(name);
 	currScene = settings.currentScene;
@@ -241,6 +257,10 @@ export function scene_change(name) {
 
 export function scene_get_current() {
 	return settings.currentScene;
+}
+
+export function scene_get_type() {
+	return settings.currentScene.type;
 }
 
 

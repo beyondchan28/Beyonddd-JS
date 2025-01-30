@@ -65,8 +65,32 @@ function game_level_setup() {
 }
 
 function game_menu_setup() {
-	const menuScene = engine.scene_create("Menu");
+	engine.input_create("UP", "Space");
+	
+
+	const menuScene = engine.scene_gui_create("Menu");
+	
+	menuScene.input = () => {
+		for (let i of engine.input_get_array()) {
+			if (i.type === "START") {
+				if (i.name == "UP") {
+					console.log("pressed");
+				}
+			}
+
+			else if (i.type === "END") {
+				if (i.name == "UP") {
+					console.log("release");
+				}
+			}
+			
+			i.type = "NONE";
+		}
+	};
+
+	menuScene.draw();
 	engine.scene_change("Menu");
+	engine.scene_get_type();
 }
 
 function _init() {
@@ -75,31 +99,8 @@ function _init() {
 	window.requestAnimationFrame(_update);
 }
 
-
 function _input() {
-	for (let i of engine.input_get_array()) {
-		if (i.type === "START") {
-			if (i.name == "UP") {
-				console.log("pressed");
-				const enemy = engine.entity_get("Enemy");
-				const enemyS = engine.component_get(enemy.spriteIdx, "s");
-				if (enemyS.flipH) {
-					enemyS.flipH = false;
-				} else {
-					enemyS.flipH = true;
-
-				}
-			}
-		}
-
-		else if (i.type === "END") {
-			if (i.name == "UP") {
-				console.log("release");
-			}
-		}
-
-		i.type = "NONE";
-	}
+	engine.scene_get_current().input();
 }
 
 function _update(timeStamp) {
@@ -125,8 +126,8 @@ function _draw() {
 	// ctx.save();
 	
 	if (engine.is_draw_image()) {
-		const sortedEntities = engine.entities_y_sorted();
-		if (sortedEntities !== undefined) {
+		if (!engine.scene_is_gui_only()) {
+			const sortedEntities = engine.entities_y_sorted();
 			const currSceneAnim = engine.scene_get_current().cAnimations;
 			const currSceneSpr = engine.scene_get_current().cSprites;
 			
