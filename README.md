@@ -12,7 +12,7 @@ import * as bynd from "./src/beyonddd.js";
 put this line to your *game.js*.
 
 ``` html
-	<script type="module" src="game.js"></script>
+<script type="module" src="game.js"></script>
 ```
 and just include *game.js* as **module** in the *HTML file*.
 
