@@ -57,13 +57,12 @@ menuScene.draw = () => {
 window.onload = bynd.init;
 
 ```
-Here's the boilerplate to make your *game.js*. Or just *import beyondd.js* into your script file.
-
+Here's the boilerplate to make your *game.js*.
 
 ``` html
 <script type="module" src="game.js"></script>
 ```
-and then include *game.js* or your implementation script as **module** in the *HTML file*.
+and then include *game.js* as **module** in the *HTML file*.
 
 ### Project Goals
 ---
