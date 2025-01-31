@@ -21,9 +21,7 @@ menuScene.input = (input) => {
 		if (input.name == "UP") {
 			console.log("release");
 		}
-	}
-	
-	input.type = "NONE";
+	}	
 };
 
 
