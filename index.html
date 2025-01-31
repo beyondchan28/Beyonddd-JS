@@ -11,11 +11,20 @@
 		<h1>Hello motherfucker!</h1>
 	</div> -->
 	
-	<div class="center">
-		<canvas id="canvas" tabindex=0></canvas>
+	<div class="container">
+		<div id="left-panel" class="column">
+			Buttons to create entities and stuff
+		</div>
+		<div id="center-panel" class="column">
+			<canvas id="canvas" tabindex=0></canvas>
+		</div>
+		<div id="right-panel" class="column">
+			Details about the scene and its data
+		</div>
 	</div>
 
 	<!-- import javascript here -->
 	<script type="module" src="game.js"></script>
+	<script type="text/javascript" src="./src/editor.js"></script>
 </body>
 </html>

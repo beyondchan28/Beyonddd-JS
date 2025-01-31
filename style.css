@@ -1,19 +1,17 @@
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Full viewport height */
-  margin: 0; /* Remove default margin */
-}
-
 #canvas {
   border: 1px solid black;
   display: block;
-  margin: 0;
+  margin: auto;
 }
 
-div.center {
-  width: 800px; /* Optional width */
-  height: 600px; /* Optional height */
-  background: lightblue;
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  height: 100vh;
+  width: 100vw;
+}
+
+.column {
+  padding: 20px;
+  border: 1px solid #ccc;
 }

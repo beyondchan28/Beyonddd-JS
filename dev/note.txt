@@ -13,6 +13,7 @@ TODO:
 - [X] organize as modules and using advance keyword such static.
 - [X] adding support for unrepeatable when pressing input.
 - [X] setup the canvas.
+- [] tryout to make simple editor.
 - [] implement camera.
 - [] making SceneMenu.
 - [] start building the game.

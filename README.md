@@ -14,18 +14,18 @@ import * as bynd from "./src/beyonddd.js";
 bynd.canvas_setup("canvas", 800, 600); 
 
 // creating scene (with GUI-only type of components)
-const menuScene = bynd.scene_gui("Level"); 
+const scene = bynd.scene_create("Level"); 
 
 // change to the scene and set it as the current scene.
 bynd.scene_change("Level");
 
 // running before the game start. used for setup entities, components, inputs etc. 
-menuScene.setup = () => {
+scene.setup = () => {
 	//YOUR IMPLEMENTATION HERE
 }
 
 // logic for inputs or what will happen if an input happenning
-menuScene.input = (input) => {
+scene.input = (input) => {
 	if (input.type === "START") {
 		if (input.name == "INPUT_NAME") {			
 			console.log("pressed");
@@ -43,13 +43,13 @@ menuScene.input = (input) => {
 
 
 // used for game logic such as movement, physics, enemies, etc. 
-menuScene.update = () => {
+scene.update = () => {
 	//YOUR IMPLEMENTATION HERE
 };
 
 
 // used for rendering images, animations, and sprites
-menuScene.draw = () => {
+scene.draw = () => {
 	//YOUR IMPLEMENTATION HERE
 };
 
