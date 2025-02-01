@@ -15,6 +15,7 @@ TODO:
 - [X] setup the canvas.
 - [] tryout to make simple editor.
 - [] save file in JSON format.
+- [] generate script with boiler plate for the game logic based on the data.
 - [] implement camera.
 - [] making SceneMenu.
 - [] start building the game.
@@ -38,3 +39,10 @@ NOTE:
 	+ Drag and Drop entities
 	+ Gizmo
 	+ VBox and HBox
+- The usage of the editor:
+	+ create scenes, add entities, changes entities with position.
+	+ saved all of that data into a JSON file.
+	+ generate boilerplate script for the game logic.
+	+ need to save editor state for play and stop button 
+	+ 'play' button : disabled all the editor stuff, enable input and game logic.
+	+ 'stop' button : enable all the editor stuff, disabled input and game logic, reset back to last state.
