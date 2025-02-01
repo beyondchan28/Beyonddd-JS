@@ -13,7 +13,7 @@ import * as bynd from "./src/beyonddd.js";
 // assigning canvas, context, and its size 
 bynd.canvas_setup("canvas", 800, 600); 
 
-// creating scene (with GUI-only type of components)
+// creating scene
 const scene = bynd.scene_create("Level"); 
 
 // change to the scene and set it as the current scene.

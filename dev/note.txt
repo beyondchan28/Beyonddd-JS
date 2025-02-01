@@ -14,6 +14,7 @@ TODO:
 - [X] adding support for unrepeatable when pressing input.
 - [X] setup the canvas.
 - [] tryout to make simple editor.
+- [] save file in JSON format.
 - [] implement camera.
 - [] making SceneMenu.
 - [] start building the game.
@@ -30,3 +31,10 @@ NOTE:
 - Learn about javascripts import mechanism, so only add one tag script in the HTML
 - for the Y-Sort, just need to sort the entity obj, its cheaper and didnt the order wasnt really matter, bcs it is a map anyway.
 - the input implementation was overlapping if the game intended (consist of multiple scenes) to be made in a single file.
+- Editor building blocks
+	+ Button
+	+ Label
+	+ InputText
+	+ Drag and Drop entities
+	+ Gizmo
+	+ VBox and HBox
