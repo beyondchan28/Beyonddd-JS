@@ -13,7 +13,7 @@ TODO:
 - [X] organize as modules and using advance keyword such static.
 - [X] adding support for unrepeatable when pressing input.
 - [X] setup the canvas.
-- [] tryout to make simple editor.
+- [X] tryout to make simple editor.
 - [] save file in JSON format.
 - [] generate script with boiler plate for the game logic based on the data.
 - [] implement camera.
@@ -39,6 +39,10 @@ NOTE:
 	+ Drag and Drop entities
 	+ Gizmo
 	+ VBox and HBox
+- when clicked
+	+ entity details
+	+ scene details
+	+ 
 - The usage of the editor:
 	+ create scenes, add entities, changes entities with position.
 	+ saved all of that data into a JSON file.
