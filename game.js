@@ -1,27 +1,17 @@
 import * as bynd from "./src/beyonddd.js";
 
 bynd.canvas_setup("canvas", 800, 600); // assigning canvas, context, and its size 
-const menuScene = bynd.scene_gui_create("Menu"); // creating scene (with GUI-only type of components)
+const menuScene = bynd.scene_create("Menu"); // creating scene (with GUI-only type of components)
 bynd.scene_change("Menu"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
 menuScene.setup = () => {
-	bynd.input_create("UP", "Space");
+	bynd.input_create_press("UP", "Space");
 }
 
 // logic for inputs or what will happen if an input happenning
-menuScene.input = (input) => {
-	if (input.type === "START") {
-		if (input.name == "UP") {
-			console.log("pressed");
-		}
-	}
-
-	else if (input.type === "END") {
-		if (input.name == "UP") {
-			console.log("release");
-		}
-	}	
+menuScene.input = () => {
+	console.log(bynd.is_key_pressed("UP"));
 };
 
 

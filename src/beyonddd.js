@@ -3,8 +3,8 @@
 */
 
 
-import * as type from "./type.js";
 import * as util from "./utility.js";
+import * as type from "./type.js";
 
 const settings = new type.EngineSettings();
 let currScene = settings.currentScene;
@@ -173,47 +173,59 @@ export function entity_gui_get_map() {
 }
 
 
-export function input_create(name, code) {
-	const input = {
-		name: name,
-		active: true,
-		code: code,
-		type: "NONE",
-	}
-	settings.inputArr.push(input);
+
+//need to map all the keyCode into an objet, so no more usage of string
+export function input_create_press(name, keyCode) {
+	const inputKey = new type.InputKey(name, keyCode, type.INPUT_TYPE.PRESS);
+	settings.inputMap.set(name, inputKey);
+}
+export function input_create_release(name, keyCode) {
+	input_create(name, keyCode, type.INPUT_TYPE.RELEASE);
+}
+export function input_create_down(name, keyCode) {
+	input_create(name, keyCode, type.INPUT_TYPE.DOWN);
+}
+
+export function is_key_pressed(name) {
+	const pressedInput = settings.inputMap.get(name);
+	return pressedInput.active;
 }
 
 export function input_process() {
-	document.addEventListener("keydown", (event) => {
-		for (let inp of settings.inputArr) {	
-			if (event.code === inp.code) {
-				inp.type = "START";
+	for (let inp of settings.inputMap.values()) {
+		switch (inp.type) {
+			case type.INPUT_TYPE.PRESS:
+				document.addEventListener("keydown", (event) => {
+					if (event.code == inp.code) {
+						inp.active = true;
+					}
+				});
+				document.addEventListener("keyup", (event) => {
+					if (event.code == inp.code) {
+						inp.active = false;
+					}
+				});
 				break;
-			}
-		}
-	});
-	document.addEventListener("keyup", (event) => {
-		for (let inp of settings.inputArr) {	
-			if (event.code === inp.code) {
-				inp.type = "END";
+			case type.INPUT_TYPE.RELEASE:
+				document.addEventListener("keyup", (event) => {
+					if (event.code == inp.code) {
+						inp.active = true;
+					}
+				});
+				inp.active = false;
 				break;
-			}
+			case type.INPUT_TYPE.DOWN:
+				document.addEventListener("keydown", (event) => {
+					if (event.code == inp.code) {
+						inp.active = true;
+					}
+				});
+				break;				
+			default:
+				console.error("Unrecognized input type.");
 		}
-	});
-	
-}
-
-export function input_check() {
-	for (let i of input_get_array()) {
-		scene_get_current().input(i);		
-		i.type = "NONE";
 	}
 }
-
-export function input_get_array() {
-	return settings.inputArr;
-}
-
 
 
 export function is_paused() {
@@ -286,8 +298,7 @@ export function init() {
 function update(timeStamp) {
 	if (!is_paused()) {
 		input_process();
-		input_check();
-
+		scene_get_current().input();
 		scene_get_current().update();
 	}
 	

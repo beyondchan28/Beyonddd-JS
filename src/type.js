@@ -222,6 +222,21 @@ export class Entity {
 	}
 }
 
+export const INPUT_TYPE = {
+	PRESS: 0,
+	RELEASE: 1,
+	DOWN: 2,
+}
+
+export class InputKey {
+	constructor(name, keyCode, type) {
+		this.name = name;
+		this.code = keyCode;
+		this.type = type; //pressed, release, down 
+		this.active = false;
+	}
+}
+
 
 export const SCENE_TYPE = {
 	GUI_ONLY: 0,
@@ -233,7 +248,7 @@ export class Scene {
 	constructor(sceneType) {
 		this.type = sceneType;
 		this.setup = () => {console.error("This should be override/replaced as scene's _setup_ function")};
-		this.input = () => {console.error("This should be override/replaced as scene's _input_ function with _input_ as parameter")};
+		this.input = () => {console.error("This should be override/replaced as scene's _input_ function")};
 		this.draw = () => {console.error("This should be override/replaced as scene's _draw_ function")};
 		this.update = () => {console.error("This should be override/replaced as scene's _update_ function")}; // game logic goes here
 		switch (sceneType) {
@@ -271,7 +286,7 @@ export class EngineSettings {
 		this.isDrawCollisionShape = false;
 		this.showFPS = true;
 
-		this.inputArr = new Array();
+		this.inputMap = new Map();
 		this.sceneMap = new Map();
 		this.assetImageMap = new Map();
 
