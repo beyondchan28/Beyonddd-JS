@@ -5,6 +5,7 @@ BUG:
 - [X] wrap all engine functions to a single file.
 - [X] create scene system as an object.
 - [X] engine object to store all the engine property such as currScene, pause, draw, debug, etc.
+- [] the implementation of press and release arent working properly
 - [] the sprite/animation didnt show when pressing `CTRL + F5`. maybe due to opening the scene first before adding the sprite/animation data. or maybe it should be load asynchrodnously.
 
 TODO:
