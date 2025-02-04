@@ -228,12 +228,18 @@ export const INPUT_TYPE = {
 	DOWN: 2,
 }
 
+export const INPUT_STATE = {
+	PRESSED: 0,
+	RELEASED: 1,
+	NONE: 2,
+}
+
 export class InputKey {
 	constructor(name, keyCode, type) {
 		this.name = name;
 		this.code = keyCode;
 		this.type = type; //pressed, release, down 
-		this.active = false;
+		this.state = INPUT_STATE.NONE;
 	}
 }
 

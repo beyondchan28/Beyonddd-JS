@@ -6,12 +6,16 @@ bynd.scene_change("Menu"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
 menuScene.setup = () => {
-	bynd.input_create_press("UP", "Space");
+	bynd.input_press_create("X", "Space");
+	bynd.input_down_create("XX", "Space");
+	bynd.input_release_create("XXX", "Space");
 }
 
 // logic for inputs or what will happen if an input happenning
 menuScene.input = () => {
-	console.log(bynd.is_key_pressed("UP"));
+	// console.log("pressed : ",bynd.is_key_pressed("X"));
+	// console.log("down : ", bynd.is_key_down("XX"));
+	console.log("released : ", bynd.is_key_released("XXX"));
 };
 
 

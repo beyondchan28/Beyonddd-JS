@@ -175,58 +175,63 @@ export function entity_gui_get_map() {
 
 
 //need to map all the keyCode into an objet, so no more usage of string
-export function input_create_press(name, keyCode) {
+export function input_press_create(name, keyCode) {
 	const inputKey = new type.InputKey(name, keyCode, type.INPUT_TYPE.PRESS);
 	settings.inputMap.set(name, inputKey);
 }
-export function input_create_release(name, keyCode) {
-	input_create(name, keyCode, type.INPUT_TYPE.RELEASE);
+export function input_release_create(name, keyCode) {
+	const inputKey = new type.InputKey(name, keyCode, type.INPUT_TYPE.RELEASE);
+	settings.inputMap.set(name, inputKey);
 }
-export function input_create_down(name, keyCode) {
-	input_create(name, keyCode, type.INPUT_TYPE.DOWN);
+export function input_down_create(name, keyCode) {
+	const inputKey = new type.InputKey(name, keyCode, type.INPUT_TYPE.DOWN);
+	settings.inputMap.set(name, inputKey);
 }
 
 export function is_key_pressed(name) {
-	const pressedInput = settings.inputMap.get(name);
-	return pressedInput.active;
-}
-
-export function input_process() {
-	for (let inp of settings.inputMap.values()) {
-		switch (inp.type) {
-			case type.INPUT_TYPE.PRESS:
-				document.addEventListener("keydown", (event) => {
-					if (event.code == inp.code) {
-						inp.active = true;
-					}
-				});
-				document.addEventListener("keyup", (event) => {
-					if (event.code == inp.code) {
-						inp.active = false;
-					}
-				});
-				break;
-			case type.INPUT_TYPE.RELEASE:
-				document.addEventListener("keyup", (event) => {
-					if (event.code == inp.code) {
-						inp.active = true;
-					}
-				});
-				inp.active = false;
-				break;
-			case type.INPUT_TYPE.DOWN:
-				document.addEventListener("keydown", (event) => {
-					if (event.code == inp.code) {
-						inp.active = true;
-					}
-				});
-				break;				
-			default:
-				console.error("Unrecognized input type.");
-		}
+	const input = settings.inputMap.get(name);
+	if (input.type === type.INPUT_TYPE.PRESS && 
+		input.state === type.INPUT_STATE.PRESSED) 
+	{
+		input.state = type.INPUT_STATE.NONE
+		return true;
 	}
+	return false;
 }
 
+export function is_key_down(name) {
+	const input = settings.inputMap.get(name);
+	return (input.type === type.INPUT_TYPE.DOWN && 
+			input.state === type.INPUT_STATE.PRESSED) ? true : false;
+}
+
+export function is_key_released(name) {
+	const input = settings.inputMap.get(name);
+	if (input.type === type.INPUT_TYPE.RELEASE && 
+		input.state === type.INPUT_STATE.RELEASED)
+	{
+		input.state = type.INPUT_STATE.NONE;
+		return true; 
+	}
+	return false;
+}
+
+// might had weird behaviour if there is same name
+document.addEventListener("keydown", (event) => {
+	for (let inp of settings.inputMap.values()) {
+		if (inp.code === event.code) {
+			inp.state = type.INPUT_STATE.PRESSED;
+		} 
+	}
+});
+
+document.addEventListener("keyup", (event) => {
+	for (let inp of settings.inputMap.values()) {
+		if (inp.code === event.code) {
+			inp.state = type.INPUT_STATE.RELEASED;
+		}		
+	}
+});
 
 export function is_paused() {
 	return settings.isPaused;
@@ -297,7 +302,7 @@ export function init() {
 
 function update(timeStamp) {
 	if (!is_paused()) {
-		input_process();
+		// input_process();
 		scene_get_current().input();
 		scene_get_current().update();
 	}
