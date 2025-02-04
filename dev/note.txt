@@ -55,3 +55,12 @@ NOTE:
 	+ need to save editor state for play and stop button 
 	+ 'play' button : disabled all the editor stuff, enable input and game logic.
 	+ 'stop' button : enable all the editor stuff, disabled input and game logic, reset back to last state.
+- Editor Limitation :
+	+ if building this way, it would be pretty hard to manage the read and write files.
+	- its good for save files but not for game implementaion itself.
+	- so, the editor will just used for set scenes, entities, components, and assets.
+	- need to refresh the entire thing and add the script tag to the html for implementation manually.
+	- the refresh the page and add script tag maybe are doable with async stuff
+
+
+
