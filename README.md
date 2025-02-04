@@ -8,6 +8,7 @@ Zero dependencies and written in vanilla javascript using HTML Canvas.
 All files needed to start to building your game are in the *src* folder.
 
 ``` javascript
+// All the Engine API are in this file.
 import * as bynd from "./src/beyonddd.js";
 
 // assigning canvas, context, and its size 
@@ -21,23 +22,24 @@ bynd.scene_change("Level");
 
 // running before the game start. used for setup entities, components, inputs etc. 
 scene.setup = () => {
-	//YOUR IMPLEMENTATION HERE
+	bynd.input_press_create("buttonName", "keyCode"); //Mapping an Press-able Input
+	bynd.asset_load_image("assetName", "assetPath"); //Adding Asset Image
+	
+	const Entity = bynd.entity_create("Entity");
+	bynd.component_add(Entity, "t"); //adding __Transform__ Component to Entity 
+	bynd.component_add(Entity, "s"); //adding __Sprite__ Component to Entity
+	
+	bynd.sprite_set(Entity.spriteIdx, "assetName"); //assign __Asset__ to Sprite 
+	
+	bynd.component_add(Entity, "a"); //adding __Animation__ Component to Entity
+	bynd.animation_set_sprite(Entity.animationIdx, Entity.spriteIdx); //set Sprite to Animation
+	bynd.animation_setup(Entity.animationIdx, "EntityAnimation", 6, 5); //setup Animation properties
 }
 
 // logic for inputs or what will happen if an input happenning
-scene.input = (input) => {
-	if (input.type === "START") {
-		if (input.name == "INPUT_NAME") {			
-			console.log("pressed");
-			//YOUR IMPLEMENTATION HERE
-		}
-	}
-
-	else if (input.type === "END") {
-		if (input.name == "INPUT_NAME") {
-			console.log("release");
-			//YOUR IMPLEMENTATION HERE
-		}
+scene.input = () => {
+	if (bynd.is_key_pressed("button")) {
+		// LOGIC AFTER THE INPUT CHECKING
 	}
 };
 
@@ -57,7 +59,7 @@ scene.draw = () => {
 window.onload = bynd.init;
 
 ```
-Here's the boilerplate to make your *game.js*.
+Here's the example/boilerplate to make your *game.js*.
 
 ``` html
 <script type="module" src="game.js"></script>
@@ -80,6 +82,7 @@ and then include *game.js* as **module** in the *HTML file*.
 - [X] Animation system
 - [X] Scene system
 - [X] Asset system
+- [ ] Game editor
 - [ ] Particle system
 - [ ] Physics system
 - [ ] Tiled/OGMO editor integration
