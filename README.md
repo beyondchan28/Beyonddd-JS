@@ -25,15 +25,15 @@ scene.setup = () => {
 	bynd.input_press_create("buttonName", "keyCode"); //Mapping an Press-able Input
 	bynd.asset_load_image("assetName", "assetPath"); //Adding Asset Image
 	
-	const Entity = bynd.entity_create("Entity");
-	bynd.component_add(Entity, "t"); //adding __Transform__ Component to Entity 
-	bynd.component_add(Entity, "s"); //adding __Sprite__ Component to Entity
+	const entity = bynd.entity_create("Entity");
+	bynd.component_add(entity, "t"); //adding __Transform__ Component to Entity 
+	bynd.component_add(entity, "s"); //adding __Sprite__ Component to Entity
 	
-	bynd.sprite_set(Entity.spriteIdx, "assetName"); //assign __Asset__ to Sprite 
+	bynd.sprite_set(entity.spriteIdx, "assetName"); //assign __Asset__ to Sprite 
 	
-	bynd.component_add(Entity, "a"); //adding __Animation__ Component to Entity
-	bynd.animation_set_sprite(Entity.animationIdx, Entity.spriteIdx); //set Sprite to Animation
-	bynd.animation_setup(Entity.animationIdx, "EntityAnimation", 6, 5); //setup Animation properties
+	bynd.component_add(entity, "a"); //adding __Animation__ Component to Entity
+	bynd.animation_set_sprite(entity.animationIdx, entity.spriteIdx); //set Sprite to Animation
+	bynd.animation_setup(entity.animationIdx, "EntityAnimation", 6, 5); //setup Animation properties
 }
 
 // logic for inputs or what will happen if an input happenning
