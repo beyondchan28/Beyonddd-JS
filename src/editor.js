@@ -176,6 +176,14 @@ const engineStatesV = vertical_box_create(leftPanel, "engine-states");
 const labelName = label_create(engineStatesV,  "engine-states-title","Engine States ⚙️");
 const labelBox = box_label_group(engineStatesV, "Paused", engine.is_paused());
 
+const label1 = document.createElement("label");
+label1.textContent = "FUCK 1";
+const label2 = document.createElement("label")
+label2.textContent = "FUCK 2";
+const collapseGroup = collapse_group(leftPanel, "Collapse Button", [
+	label1, label2,
+]);
+
 
 // Game tools
 const gameToolsV = vertical_box_create(leftPanel, "game-tools");
@@ -193,12 +201,6 @@ const dropdown = dropdown_create(leftPanel, [
 	{value: "opt-2", text: "another detail 2"},
 	{value: "opt-3", text: "another detail 3"}
 ]);
-const label1 = document.createElement("label");
-label1.textContent = "FUCK 1";
-const label2 = document.createElement("label")
-label2.textContent = "FUCK 2";
-const collapseGroup = collapse_group(leftPanel, "Collapse Button", [
-	label1, label2,
-]);
+
 
 
