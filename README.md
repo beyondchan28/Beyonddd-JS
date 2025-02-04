@@ -38,7 +38,7 @@ scene.setup = () => {
 
 // logic for inputs or what will happen if an input happenning
 scene.input = () => {
-	if (bynd.is_key_pressed("button")) {
+	if (bynd.is_key_pressed("buttonName")) {
 		// LOGIC AFTER THE INPUT CHECKING
 	}
 };
