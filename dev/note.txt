@@ -15,9 +15,10 @@ TODO:
 - [X] adding support for unrepeatable when pressing input.
 - [X] setup the canvas.
 - [X] tryout to make simple editor.
-- [] generate all the panels and its css from the editor.js
+- [X] generate script with boiler plate for the game logic based on the data.
 - [] save file in JSON format.
-- [] generate script with boiler plate for the game logic based on the data.
+- [] refresh the page programmatically.
+- [] generate all the panels and its css from the editor.js
 - [] implement camera.
 - [] making SceneMenu.
 - [] start building the game.

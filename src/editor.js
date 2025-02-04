@@ -1,5 +1,78 @@
 import * as engine from './beyonddd.js';
 
+const boilerPlateCode =
+`// All the Engine API are in this file.
+import * as bynd from "./src/beyonddd.js";
+
+// assigning canvas, context, and its size 
+bynd.canvas_setup("canvas", 800, 600); 
+
+// creating scene
+const scene = bynd.scene_create("Level"); 
+
+// change to the scene and set it as the current scene.
+bynd.scene_change("Level");
+
+// running before the game start. used for setup entities, components, inputs etc. 
+scene.setup = () => {
+	bynd.input_press_create("buttonName", "keyCode"); //Mapping an Press-able Input
+	bynd.asset_load_image("assetName", "assetPath"); //Adding Asset Image
+	
+	const entity = bynd.entity_create("Entity");
+	bynd.component_add(entity, "t"); //adding __Transform__ Component to Entity 
+	bynd.component_add(entity, "s"); //adding __Sprite__ Component to Entity
+	
+	bynd.sprite_set(entity.spriteIdx, "assetName"); //assign __Asset__ to Sprite 
+	
+	bynd.component_add(entity, "a"); //adding __Animation__ Component to Entity
+	bynd.animation_set_sprite(entity.animationIdx, entity.spriteIdx); //set Sprite to Animation
+	bynd.animation_setup(entity.animationIdx, "EntityAnimation", 6, 5); //setup Animation properties
+}
+
+// logic for inputs or what will happen if an input happenning
+scene.input = () => {
+	if (bynd.is_key_pressed("buttonName")) {
+		// LOGIC AFTER THE INPUT CHECKING
+	}
+};
+
+
+// used for game logic such as movement, physics, enemies, etc. 
+scene.update = () => {
+	//YOUR IMPLEMENTATION HERE
+};
+
+
+// used for rendering images, animations, and sprites
+scene.draw = () => {
+	//YOUR IMPLEMENTATION HERE
+};
+
+// entry point or game running
+window.onload = bynd.init;
+`;
+
+function generate_boilerplate_file() {
+	const link = document.createElement("a");
+	const file = new Blob([boilerPlateCode], {type: "text/javascript"});
+	link.href = URL.createObjectURL(file);
+	link.download = "boiler_plate_game.js";
+	document.body.appendChild(link);
+	link.click();
+	URL.revokeObjectURL(link.href);
+	document.body.removeChild(link);
+	setTimeout(() => {
+		const isConfirmed = confirm("Script generated successfully.");
+		if (isConfirmed) {
+			const scriptTag = document.createElement("script");
+			scriptTag.src = "./boiler_plate_game.js";
+			scriptTag.type = "module";
+			document.body.appendChild(scriptTag);
+		}
+	}, 2000);
+}
+
+
 document.body.style.backgroundColor = '#454545';
 
 const allElements = document.querySelectorAll("*");
@@ -11,6 +84,8 @@ allElements.forEach( (element) => {
 const leftPanel = document.getElementById("left-panel");
 const centerPanel = document.getElementById("left-panel");
 const rightPanel = document.getElementById("right-panel");
+
+const newScriptButton = button_create(leftPanel, "save-button", "New Script", generate_boilerplate_file);
 
 function div_create(parent, className, id) {
 	const div = document.createElement('div');
@@ -57,7 +132,7 @@ function button_create(parent, className, text, clickHandler, id) {
 	button.classList.add(className);
 	button.textContent = text;
 	if (clickHandler !== undefined) {
-		button.addEventListener('click', clickHandler)
+		button.addEventListener('click', clickHandler);
 	}
 	if (id !== undefined) {
 		button.id = id;
@@ -158,7 +233,6 @@ function collapse_group(parent, buttonName, contents) {
 	});
 
 	content.style.display = 'none';
-	console.log(content.style);
 	contents.forEach(cont => {
 		content.appendChild(cont);
 	});
