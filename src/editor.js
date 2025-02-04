@@ -1,5 +1,12 @@
 import * as engine from './beyonddd.js';
 
+document.body.style.backgroundColor = '#454545';
+
+const allElements = document.querySelectorAll("*");
+
+allElements.forEach( (element) => {
+	element.style.color = "white";
+});
 // these 3 are the main editor layout
 const leftPanel = document.getElementById("left-panel");
 const centerPanel = document.getElementById("left-panel");
@@ -74,7 +81,7 @@ function horizontal_box_create(parent, className, id) {
 	hBox.style.flexDirection = 'row';
 	hBox.style.gap = "10px";
 	hBox.style.padding = "10px";
-	hBox.style.border = "1px solid black";
+	hBox.style.border = "1px solid white";
 	parent.appendChild(hBox);
 	return hBox;
 }
@@ -102,7 +109,7 @@ function vertical_box_create(parent, className, id) {
 	vBox.style.flexDirection = 'column';
 	vBox.style.gap = "10px";
 	vBox.style.padding = "10px";
-	vBox.style.border = "1px solid black";
+	vBox.style.border = "1px solid white";
 	vBox.style.marginBottom = '20px';
 	parent.appendChild(vBox);
 	return vBox;
@@ -193,3 +200,5 @@ label2.textContent = "FUCK 2";
 const collapseGroup = collapse_group(leftPanel, "Collapse Button", [
 	label1, label2,
 ]);
+
+
