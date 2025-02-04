@@ -216,7 +216,7 @@ export function is_key_released(name) {
 	return false;
 }
 
-// might had weird behaviour if there is same name
+//NOTE: might had weird behaviour if there is same name
 document.addEventListener("keydown", (event) => {
 	for (let inp of settings.inputMap.values()) {
 		if (inp.code === event.code) {
@@ -302,7 +302,6 @@ export function init() {
 
 function update(timeStamp) {
 	if (!is_paused()) {
-		// input_process();
 		scene_get_current().input();
 		scene_get_current().update();
 	}

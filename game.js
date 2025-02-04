@@ -15,7 +15,7 @@ menuScene.setup = () => {
 menuScene.input = () => {
 	// console.log("pressed : ",bynd.is_key_pressed("X"));
 	// console.log("down : ", bynd.is_key_down("XX"));
-	console.log("released : ", bynd.is_key_released("XXX"));
+	// console.log("released : ", bynd.is_key_released("XXX"));
 };
 
 

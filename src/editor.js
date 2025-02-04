@@ -1,4 +1,4 @@
-import {is_paused} from './beyonddd.js';
+import * as engine from './beyonddd.js';
 
 // these 3 are the main editor layout
 const leftPanel = document.getElementById("left-panel");
@@ -124,6 +124,41 @@ function box_label_group(parent, labelText, detailText) {
 	return box;
 }
 
+function dropdown_create(parent, options) {
+	const dropdown = document.createElement("select");
+	options.forEach( opt => {
+		const option = document.createElement("option");
+		option.value = opt.value;
+		option.textContent = opt.text;
+		dropdown.appendChild(option);
+	});
+	parent.appendChild(dropdown);
+}
+
+function collapse_group(parent, buttonName, contents) {
+	const container = div_create(parent, "collapse-container");
+	const content = horizontal_box_create(container, "collapse-content");
+	const button = document.createElement("button");
+	button.textContent = buttonName;
+	button.classList.add("collapse-button");
+	button.style.padding = "10px 20px";
+	button.addEventListener("click", () => {
+		if (content.style.display === "none") {
+			content.style.display = "block";
+		} else {
+			content.style.display = 'none';
+		}
+	});
+
+	content.style.display = 'none';
+	console.log(content.style);
+	contents.forEach(cont => {
+		content.appendChild(cont);
+	});
+	container.appendChild(button);
+	container.appendChild(content);
+}
+
 const sliderParent = div_create(leftPanel, "slider-container")
 const slider = input_slider_create(sliderParent, "slider");
 const span = span_create(sliderParent, "span", "FUCK YOU"); 
@@ -132,7 +167,7 @@ const span = span_create(sliderParent, "span", "FUCK YOU");
 // Engine states
 const engineStatesV = vertical_box_create(leftPanel, "engine-states");
 const labelName = label_create(engineStatesV,  "engine-states-title","Engine States ⚙️");
-const labelBox = box_label_group(engineStatesV, "Paused", is_paused());
+const labelBox = box_label_group(engineStatesV, "Paused", engine.is_paused());
 
 
 // Game tools
@@ -145,3 +180,16 @@ const entityHGroup = horizontal_button_label_group(gameToolsV, "entity-add-group
 	console.log("Adding Entity...")
 });
 
+
+const dropdown = dropdown_create(leftPanel, [
+	{value: "opt-1", text: "another detail 1"},
+	{value: "opt-2", text: "another detail 2"},
+	{value: "opt-3", text: "another detail 3"}
+]);
+const label1 = document.createElement("label");
+label1.textContent = "FUCK 1";
+const label2 = document.createElement("label")
+label2.textContent = "FUCK 2";
+const collapseGroup = collapse_group(leftPanel, "Collapse Button", [
+	label1, label2,
+]);
