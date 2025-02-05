@@ -1,37 +1,37 @@
-import * as engine from './beyonddd.js';
+import * as be from './beyonddd.js';
 
 const boilerPlateCode =
 `// All the Engine API are in this file.
-import * as bynd from "./src/beyonddd.js";
+import * as be from "./src/beyonddd.js";
 
 // assigning canvas, context, and its size 
-bynd.canvas_setup("canvas", 800, 600); 
+be.canvas_setup("canvas", 800, 600); 
 
 // creating scene
-const scene = bynd.scene_create("Level"); 
+const scene = be.scene_create("Level"); 
 
 // change to the scene and set it as the current scene.
-bynd.scene_change("Level");
+be.scene_change("Level");
 
 // running before the game start. used for setup entities, components, inputs etc. 
 scene.setup = () => {
-	bynd.input_press_create("buttonName", "keyCode"); //Mapping an Press-able Input
-	bynd.asset_load_image("assetName", "assetPath"); //Adding Asset Image
+	be.input_press_create("buttonName", "keyCode"); //Mapping an Press-able Input
+	be.asset_load_image("assetName", "assetPath"); //Adding Asset Image
 	
-	const entity = bynd.entity_create("Entity");
-	bynd.component_add(entity, "t"); //adding __Transform__ Component to Entity 
-	bynd.component_add(entity, "s"); //adding __Sprite__ Component to Entity
+	const entity = be.entity_create("Entity");
+	be.component_add(entity, "t"); //adding __Transform__ Component to Entity 
+	be.component_add(entity, "s"); //adding __Sprite__ Component to Entity
 	
-	bynd.sprite_set(entity.spriteIdx, "assetName"); //assign __Asset__ to Sprite 
+	be.sprite_set(entity.spriteIdx, "assetName"); //assign __Asset__ to Sprite 
 	
-	bynd.component_add(entity, "a"); //adding __Animation__ Component to Entity
-	bynd.animation_set_sprite(entity.animationIdx, entity.spriteIdx); //set Sprite to Animation
-	bynd.animation_setup(entity.animationIdx, "EntityAnimation", 6, 5); //setup Animation properties
+	be.component_add(entity, "a"); //adding __Animation__ Component to Entity
+	be.animation_set_sprite(entity.animationIdx, entity.spriteIdx); //set Sprite to Animation
+	be.animation_setup(entity.animationIdx, "EntityAnimation", 6, 5); //setup Animation properties
 }
 
 // logic for inputs or what will happen if an input happenning
 scene.input = () => {
-	if (bynd.is_key_pressed("buttonName")) {
+	if (be.is_key_pressed("buttonName")) {
 		// LOGIC AFTER THE INPUT CHECKING
 	}
 };
@@ -49,7 +49,7 @@ scene.draw = () => {
 };
 
 // entry point or game running
-window.onload = bynd.init;
+window.onload = be.init;
 `;
 
 function generate_boilerplate_file() {
@@ -80,12 +80,6 @@ const allElements = document.querySelectorAll("*");
 allElements.forEach( (element) => {
 	element.style.color = "white";
 });
-// these 3 are the main editor layout
-const leftPanel = document.getElementById("left-panel");
-const centerPanel = document.getElementById("left-panel");
-const rightPanel = document.getElementById("right-panel");
-
-const newScriptButton = button_create(leftPanel, "save-button", "New Script", generate_boilerplate_file);
 
 function div_create(parent, className, id) {
 	const div = document.createElement('div');
@@ -219,7 +213,7 @@ function dropdown_create(parent, options) {
 
 function collapse_group(parent, buttonName, contents) {
 	const container = div_create(parent, "collapse-container");
-	const content = horizontal_box_create(container, "collapse-content");
+	const content = vertical_box_create(container, "collapse-content");
 	const button = document.createElement("button");
 	button.textContent = buttonName;
 	button.classList.add("collapse-button");
@@ -240,24 +234,19 @@ function collapse_group(parent, buttonName, contents) {
 	container.appendChild(content);
 }
 
+// these 3 are the main editor layout
+const leftPanel = document.getElementById("left-panel");
+const centerPanel = document.getElementById("center-panel");
+const rightPanel = document.getElementById("right-panel");
+
 const sliderParent = div_create(leftPanel, "slider-container")
 const slider = input_slider_create(sliderParent, "slider");
 const span = span_create(sliderParent, "span", "FUCK YOU"); 
 
-
 // Engine states
 const engineStatesV = vertical_box_create(leftPanel, "engine-states");
 const labelName = label_create(engineStatesV,  "engine-states-title","Engine States ⚙️");
-const labelBox = box_label_group(engineStatesV, "Paused", engine.is_paused());
-
-const label1 = document.createElement("label");
-label1.textContent = "FUCK 1";
-const label2 = document.createElement("label")
-label2.textContent = "FUCK 2";
-const collapseGroup = collapse_group(leftPanel, "Collapse Button", [
-	label1, label2,
-]);
-
+const labelBox = box_label_group(engineStatesV, "Paused", be.is_paused());
 
 // Game tools
 const gameToolsV = vertical_box_create(leftPanel, "game-tools");
@@ -269,12 +258,16 @@ const entityHGroup = horizontal_button_label_group(gameToolsV, "entity-add-group
 	console.log("Adding Entity...")
 });
 
-
 const dropdown = dropdown_create(leftPanel, [
 	{value: "opt-1", text: "another detail 1"},
 	{value: "opt-2", text: "another detail 2"},
 	{value: "opt-3", text: "another detail 3"}
 ]);
 
+const newScriptButton = button_create(leftPanel, "save-button", "New Script", generate_boilerplate_file);
+
+const collapseGroup = collapse_group(leftPanel, "Collapse Button", [
+	engineStatesV, gameToolsV
+]);
 
 

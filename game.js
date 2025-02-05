@@ -1,21 +1,21 @@
-import * as bynd from "./src/beyonddd.js";
+import * as be from "./src/beyonddd.js";
 
-bynd.canvas_setup("canvas", 800, 600); // assigning canvas, context, and its size 
-const menuScene = bynd.scene_create("Menu"); // creating scene (with GUI-only type of components)
-bynd.scene_change("Menu"); // change to the scene as the current scene.
+be.canvas_setup("canvas", 800, 600); // assigning canvas, context, and its size 
+const menuScene = be.scene_create("Menu"); // creating scene (with GUI-only type of components)
+be.scene_change("Menu"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
 menuScene.setup = () => {
-	bynd.input_press_create("X", "Space");
-	bynd.input_down_create("XX", "Space");
-	bynd.input_release_create("XXX", "Space");
+	be.input_press_create("X", "Space");
+	be.input_down_create("XX", "Space");
+	be.input_release_create("XXX", "Space");
 }
 
 // logic for inputs or what will happen if an input happenning
 menuScene.input = () => {
-	// console.log("pressed : ",bynd.is_key_pressed("X"));
-	// console.log("down : ", bynd.is_key_down("XX"));
-	// console.log("released : ", bynd.is_key_released("XXX"));
+	// console.log("pressed : ",be.is_key_pressed("X"));
+	// console.log("down : ", be.is_key_down("XX"));
+	// console.log("released : ", be.is_key_released("XXX"));
 };
 
 
@@ -30,42 +30,42 @@ menuScene.draw = () => {
 	// console.log("DRAWING THINGS");
 };
 
-window.onload = bynd.init; // entry point or game running
+window.onload = be.init; // entry point or game running
 
 
 
 function game_level_setup() {
 
-	bynd.input_create("UP", "Space");
+	be.input_create("UP", "Space");
 
-	const levelScene = bynd.scene_create("Level");
+	const levelScene = be.scene_create("Level");
 
-	bynd.scene_change("Level");
+	be.scene_change("Level");
 
-	let player = bynd.entity_create("Player");
-	let enemy = bynd.entity_create("Enemy");
+	let player = be.entity_create("Player");
+	let enemy = be.entity_create("Enemy");
 
-	// bynd.asset_load_image("anim_walk", "assets/Spritesheet/walk.png");
+	// be.asset_load_image("anim_walk", "assets/Spritesheet/walk.png");
 
-	// bynd.component_add(player, "t");
-	// bynd.component_add(enemy, "t");
-	// let enemyT = bynd.component_get(enemy.transformIdx, "t");
+	// be.component_add(player, "t");
+	// be.component_add(enemy, "t");
+	// let enemyT = be.component_get(enemy.transformIdx, "t");
 	// enemyT.pos.y += 10;
 	// enemyT.pos.x += 50;
 
-	// bynd.component_add(player, "s");
-	// bynd.component_add(enemy, "s");
+	// be.component_add(player, "s");
+	// be.component_add(enemy, "s");
 	
-	// bynd.sprite_set(player.spriteIdx, "anim_walk");
-	// bynd.sprite_set(enemy.spriteIdx, "anim_walk");
+	// be.sprite_set(player.spriteIdx, "anim_walk");
+	// be.sprite_set(enemy.spriteIdx, "anim_walk");
 	
-	// bynd.component_add(player, "a");
-	// bynd.animation_set_sprite(player.animationIdx, player.spriteIdx);
-	// bynd.animation_setup(player.animationIdx, "PlayerWalk", 6, 5);
+	// be.component_add(player, "a");
+	// be.animation_set_sprite(player.animationIdx, player.spriteIdx);
+	// be.animation_setup(player.animationIdx, "PlayerWalk", 6, 5);
 
-	// bynd.component_add(enemy, "a");
-	// bynd.animation_set_sprite(enemy.animationIdx, enemy.spriteIdx);
-	// bynd.animation_setup(enemy.animationIdx, "EnemyWalk", 6, 20);
+	// be.component_add(enemy, "a");
+	// be.animation_set_sprite(enemy.animationIdx, enemy.spriteIdx);
+	// be.animation_setup(enemy.animationIdx, "EnemyWalk", 6, 20);
 
 	// console.log(currScene.cAnimations[player.spriteIdx].sprite.image.src);
 	// console.log(newScene.entityMap);
@@ -82,14 +82,14 @@ function _draw() {
 
 	// ctx.save();
 	
-	if (bynd.is_draw_image()) {
-		if (!bynd.scene_is_gui_only()) {
-			const sortedEntities = bynd.entities_y_sorted();
-			const currSceneAnim = bynd.scene_get_current().cAnimations;
-			const currSceneSpr = bynd.scene_get_current().cSprites;
+	if (be.is_draw_image()) {
+		if (!be.scene_is_gui_only()) {
+			const sortedEntities = be.entities_y_sorted();
+			const currSceneAnim = be.scene_get_current().cAnimations;
+			const currSceneSpr = be.scene_get_current().cSprites;
 			
 			for (let ent of sortedEntities.values()) {
-				bynd.animation_update(currSceneAnim[ent.animationIdx]);
+				be.animation_update(currSceneAnim[ent.animationIdx]);
 			}
 		}
 	}

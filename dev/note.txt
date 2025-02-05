@@ -16,7 +16,10 @@ TODO:
 - [X] setup the canvas.
 - [X] tryout to make simple editor.
 - [X] generate script with boiler plate for the game logic based on the data.
+- [] collision solver and its abstraction.
+- [] steering stuff and physics for 2d platformer game
 - [] save file in JSON format.
+- [] runtime code editor ?
 - [] refresh the page programmatically.
 - [] generate all the panels and its css from the editor.js
 - [] implement camera.
@@ -47,7 +50,6 @@ NOTE:
 - when clicked
 	+ entity details
 	+ scene details
-	+ 
 - The usage of the editor:
 	+ create scenes, add entities, changes entities with position.
 	+ saved all of that data into a JSON file.

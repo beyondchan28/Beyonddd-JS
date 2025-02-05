@@ -30,7 +30,10 @@ export class Vector2 {
 		return new Vector2(this.x * scalar, this.y * scalar);
 	}
 	dot(vector) {
-		return (this.x * vector.x + this.y + vector.y);
+		return (this.x * vector.x + this.y * vector.y);
+	}
+	mutiply(vector) {
+		return new Vector2(this.x * vector.x, this.y * vector.y);
 	}
 	delta(vector) {
 		return new Vector2(Math.abs(this.x - vector.x), Math.abs(this.y - vector.y));
@@ -184,6 +187,16 @@ export class ColorRectangle extends Component {
 		this.pos = (pos === undefined) ? new Vector2() : pos;
 		this.size = (pos === undefined) ? new Vector2(1, 1) : size;
 		this.fillTint === (fillTint === undefined) ? "white" : fillTint;
+	}
+}
+
+export class Physics extends Component {
+	constructor() {
+		this.velocity = new Vector2();
+		this.acceleration = new Vector2();
+		this.maxSpeed = 0;
+		this.maxForce = 0;
+		this.mass = 0;
 	}
 }
 

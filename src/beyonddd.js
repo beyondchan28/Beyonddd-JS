@@ -2,7 +2,6 @@
 	This script includes all the APIs for the engine.
 */
 
-
 import * as util from "./utility.js";
 import * as type from "./type.js";
 
@@ -47,9 +46,8 @@ export function collision_rect_debug(id) {
 export function collision_rect_check(id1, id2) {
 	let dpos = currScene.cTransfroms[id1].pos.delta(currScene.cTransfroms[id2].pos);
 	let overlap = currScene.cBoundingBoxes[id2].halfSize.add(currScene.cBoundingBoxes[id2].halfSize).subtract(dpos);
-	return (overlap.x > 0.0 && overlap.y > 0.0) ? true : false;
+	return (overlap.x > 0.0 && overlap.y > 0.0) ? overlap : null;
 }
-
 
 
 export function component_add(ent, compType) {
