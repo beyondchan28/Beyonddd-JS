@@ -248,6 +248,10 @@ export function is_show_fps() {
 }
 
 
+export function settings_get() {
+	return settings;
+}
+
 
 export function scene_create(name) {
 	const newScene = new type.Scene(type.SCENE_TYPE.DEFAULT);

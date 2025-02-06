@@ -1,5 +1,14 @@
 import * as be from './beyonddd.js';
 
+/*
+SETUP:
+1. Scene
+2. Input
+3. Assets
+4. Entity
+5. Component
+*/
+
 const boilerPlateCode =
 `// All the Engine API are in this file.
 import * as be from "./src/beyonddd.js";
@@ -52,26 +61,47 @@ scene.draw = () => {
 window.onload = be.init;
 `;
 
-function generate_boilerplate_file() {
+function generate_file(content, fileName) {
 	const link = document.createElement("a");
-	const file = new Blob([boilerPlateCode], {type: "text/javascript"});
+	const file = new Blob([content], {type: "text/javascript"});
 	link.href = URL.createObjectURL(file);
-	link.download = "boiler_plate_game.js";
+	link.download = fileName;
 	document.body.appendChild(link);
 	link.click();
 	URL.revokeObjectURL(link.href);
 	document.body.removeChild(link);
-	setTimeout(() => {
-		const isConfirmed = confirm("Script generated successfully.");
-		if (isConfirmed) {
-			const scriptTag = document.createElement("script");
-			scriptTag.src = "./boiler_plate_game.js";
-			scriptTag.type = "module";
-			document.body.appendChild(scriptTag);
-		}
-	}, 2000);
 }
 
+
+function load_json() {
+	fetch("../test.json").then(response => {
+		if (!response.ok){
+			throw new Error(`HTTP ERROR ! STATUS ${response.status}`);
+		}
+		return response.json();
+	})
+	.then(data => console.log(data))
+	.catch(error => console.error("Failed to fetch data:", error));
+}
+
+function save_json() {
+	// saving scene's properties
+	// TODO: checks _{}_ and replace it to _null_ instead for better readable code
+	const saveFormat = {
+		"type" : be.scene_get_current().type,
+		"entities" : Object.fromEntries(be.scene_get_current().entityMap), 
+		"transforms" : Object.fromEntries(be.scene_get_current().cTransforms),
+		"boundingBoxes" : Object.fromEntries(be.scene_get_current().cBoundingBoxes),
+		"sprites" : Object.fromEntries(be.scene_get_current().cSprites),
+		"animations" : Object.fromEntries(be.scene_get_current().cAnimations),
+		"texts" : Object.fromEntries(be.scene_get_current().cTexts),
+		"colorRectangles" : Object.fromEntries(be.scene_get_current().cColorRectangles),
+		"inputs" : Object.fromEntries(be.settings_get().inputMap),
+		"assetImage" : Object.fromEntries(be.settings_get().assetImageMap),
+
+	}
+	generate_file(JSON.stringify(saveFormat, null, "\t"), "save_file.json");
+}
 
 document.body.style.backgroundColor = '#454545';
 
@@ -264,10 +294,15 @@ const dropdown = dropdown_create(leftPanel, [
 	{value: "opt-3", text: "another detail 3"}
 ]);
 
-const newScriptButton = button_create(leftPanel, "save-button", "New Script", generate_boilerplate_file);
+const newScriptButton = button_create(leftPanel, "new-script-button", "New Script", () => {
+	generate_file(boilerPlateCode, "boiler_plate_code.js");
+});
+
+const saveButton = button_create(leftPanel, "save-button", "Save Scene", () => {
+	save_json();
+});
 
 const collapseGroup = collapse_group(leftPanel, "Collapse Button", [
 	engineStatesV, gameToolsV
 ]);
-
 

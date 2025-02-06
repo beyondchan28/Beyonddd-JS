@@ -9,6 +9,7 @@ menuScene.setup = () => {
 	be.input_press_create("X", "Space");
 	be.input_down_create("XX", "Space");
 	be.input_release_create("XXX", "Space");
+	be.entity_create("Player")
 }
 
 // logic for inputs or what will happen if an input happenning
