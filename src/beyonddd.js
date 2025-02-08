@@ -13,7 +13,6 @@ const camera = {
 	size : new type.Vector2(),
 }
 
-
 export const KEY = {
 	SPACE : " ",
 	TAB : "Tab",
