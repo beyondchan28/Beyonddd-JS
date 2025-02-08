@@ -1,4 +1,5 @@
 import * as be from "./src/beyonddd.js";
+import * as type from "./src/type.js";
 
 be.canvas_setup("canvas", 800, 600); // assigning canvas, context, and its size 
 const menuScene = be.scene_create("Menu"); // creating scene (with GUI-only type of components)
@@ -6,30 +7,44 @@ be.scene_change("Menu"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
 menuScene.setup = () => {
+	console.log(be.canvas_get());
 	be.input_press_create("X", be.KEY.ZERO);
 	be.input_down_create("XX", be.KEY.SPACE);
 	be.input_release_create("XXX", be.KEY.SPACE);
-	be.entity_create("Player")
+
+	be.asset_load_image("anim_walk", "assets/spritesheet/walk.png");
+	be.asset_load_image("icon", "assets/icon.png");
+
+	const player = be.entity_create("Player");
+	be.component_add(player, "t");
+	let playerT = be.component_get(player.transformIdx, "t");
+	playerT.pos.x = 300;
+	playerT.pos.y = 50;
+
+	be.component_add(player, "s");
+	let playerS = be.component_get(player.spriteIdx, "s");
+	playerS.flipH = true;
+	console.log(playerS);
+
+	be.component_sprite_set(player.spriteIdx, "anim_walk");
+
 }
 
 // logic for inputs or what will happen if an input happenning
 menuScene.input = () => {
-	console.log("pressed : ",be.is_key_pressed("X"));
+	// console.log("pressed : ",be.is_key_pressed("X"));
 	// console.log("down : ", be.is_key_down("XX"));
 	// console.log("released : ", be.is_key_released("XXX"));
 };
 
 
+const vel = new type.Vector2(1, 0);
 // used for game logic such as movement, physics, enemies, etc. 
 menuScene.update = () => {
 	// console.log("GAME LOGIC COMPUTED");
+	be.camera_movement(vel);
 };
 
-
-// used for rendering images, animations, and sprites
-menuScene.draw = () => {
-	// console.log("DRAWING THINGS");
-};
 
 window.onload = be.init; // entry point or game running
 

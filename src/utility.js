@@ -23,6 +23,19 @@ export function canvas_set_size(width, height) {
 	canvas.height = height;
 }
 
+export function canvas_get() {
+	return canvas;
+}
+
+export function context_get() {
+	return ctx;
+}
+
+export function canvas_set_translate(pos) {
+	ctx.save();
+	ctx.translate(pos.x, pos.y);
+}
+
 export function calculate_FPS(ts) {
 	secondsPassed = (ts - oldTimeStamp) / 1000;
 	oldTimeStamp = ts;
@@ -46,7 +59,7 @@ export function draw_line(start, end) {
 	ctx.moveTo(start.x, start.y);
 	ctx.lineTo(end.x, end.y);
 	ctx.lineWidth = 2;
-	ctx.stroke();
+	// ctx.stroke();
 }
 
 export function draw_circle(center, radius, outlineTint, fillTint) {

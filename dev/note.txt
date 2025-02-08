@@ -17,6 +17,8 @@ TODO:
 - [X] tryout to make simple editor.
 - [X] generate script with boiler plate for the game logic based on the data.
 - [X] save file in JSON format.
+- [X] abstarct away the drawing function
+- [] in-game UIs system
 - [] change scene's variable name on boilerplate based on its name   
 - [] collision solver and its abstraction.
 - [] steering stuff and physics for 2d platformer game
@@ -63,5 +65,7 @@ NOTE:
 	- need to refresh the entire thing and add the script tag to the html for implementation manually.
 	- the refresh the page and add script tag maybe are doable with async stuff
 - The purpose of this editor is to ditch the setup part entirely and completely ditch support for wrote game logic inside the editor
-
+- Camera :
+	- if its moving, the container of the UIs moving too
+	- 
 

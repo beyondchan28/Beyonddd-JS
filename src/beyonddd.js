@@ -8,6 +8,12 @@ import * as type from "./type.js";
 const settings = new type.EngineSettings();
 let currScene = settings.currentScene;
 
+const camera = {
+	pos : new type.Vector2(),
+	size : new type.Vector2(),
+}
+
+
 export const KEY = {
 	SPACE : " ",
 	TAB : "Tab",
@@ -98,6 +104,21 @@ export function asset_get_image(name) {
 }
 
 
+export function canvas_get() {
+	return util.canvas_get();
+}
+
+function camera_setup() {
+	const canvasWidth = canvas_get().width;
+	const canvasHeight = canvas_get().height;
+	camera.size = new type.Vector2(canvasWidth, canvasHeight);
+}
+
+export function camera_movement(vel) {
+	camera.pos.add(vel);
+	util.canvas_set_translate(camera.pos);
+	// console.log(camera.pos.x);
+}
 
 export function collision_rect_debug(id) {
 	util.draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, "black");
@@ -120,7 +141,7 @@ export function component_add(ent, compType) {
 			break;
 		case "s":
 			let s = new type.Sprite();
-			s.pos = currScene.cTransforms[ent.id].pos;
+			s.pos = currScene.cTransforms[ent.transformIdx].pos;
 			currScene.cSprites.push(s);
 			ent.spriteIdx = currScene.cSprites.length - 1;
 			s.set_user(ent.id);
@@ -197,7 +218,7 @@ export function entity_get_map() {
 	by its y position, so its more efficient if sort the entity rather than
 	component's array.
 */
-export function entities_y_sorted() {
+function entities_y_sorted() {
 	if (currScene.entityMap.size === 0) {
 		return
 	}
@@ -353,11 +374,18 @@ export function canvas_setup(canvas, width, height) {
 }
 
 export function init() {
-	
 	scene_get_current().setup();
+	camera_setup();
 	window.requestAnimationFrame(update);
 }
 
+function draw() {
+	const currSceneSpr = scene_get_current().cSprites;
+	for (let s of currSceneSpr) {
+		util.draw_image(s);
+	}
+
+}
 
 function update(timeStamp) {
 	if (!is_paused()) {
@@ -367,7 +395,8 @@ function update(timeStamp) {
 	
 	if (is_draw_image()) {
 		util.clear_background("lightblue");
-		scene_get_current().draw();
+		draw();
+		util.context_get().restore(); // related to camera/canvas movement/translate implementation this
 	}
 	
 	if (is_show_fps()) {

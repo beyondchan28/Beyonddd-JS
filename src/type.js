@@ -232,7 +232,7 @@ export class Entity {
 			this.textIdx = -1;
 			this.colorRectIdx = -1;
 		}
-	}
+}
 }
 
 export const INPUT_TYPE = {
@@ -268,7 +268,6 @@ export class Scene {
 		this.type = sceneType;
 		this.setup = () => {console.error("This should be override/replaced as scene's _setup_ function")};
 		this.input = () => {console.error("This should be override/replaced as scene's _input_ function")};
-		this.draw = () => {console.error("This should be override/replaced as scene's _draw_ function")};
 		this.update = () => {console.error("This should be override/replaced as scene's _update_ function")}; // game logic goes here
 		switch (sceneType) {
 			case SCENE_TYPE.GUI_ONLY:
@@ -297,6 +296,7 @@ export class Scene {
 		}
 	}
 }
+
 
 export class EngineSettings {
 	constructor() {
