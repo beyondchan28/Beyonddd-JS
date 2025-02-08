@@ -248,9 +248,9 @@ export const INPUT_STATE = {
 }
 
 export class InputKey {
-	constructor(name, keyCode, type) {
+	constructor(name, key, type) {
 		this.name = name;
-		this.code = keyCode;
+		this.key = key;
 		this.type = type; //pressed, release, down 
 		this.state = INPUT_STATE.NONE;
 	}

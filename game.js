@@ -6,15 +6,15 @@ be.scene_change("Menu"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
 menuScene.setup = () => {
-	be.input_press_create("X", "Space");
-	be.input_down_create("XX", "Space");
-	be.input_release_create("XXX", "Space");
+	be.input_press_create("X", be.KEY.ZERO);
+	be.input_down_create("XX", be.KEY.SPACE);
+	be.input_release_create("XXX", be.KEY.SPACE);
 	be.entity_create("Player")
 }
 
 // logic for inputs or what will happen if an input happenning
 menuScene.input = () => {
-	// console.log("pressed : ",be.is_key_pressed("X"));
+	console.log("pressed : ",be.is_key_pressed("X"));
 	// console.log("down : ", be.is_key_down("XX"));
 	// console.log("released : ", be.is_key_released("XXX"));
 };

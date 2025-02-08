@@ -8,6 +8,66 @@ import * as type from "./type.js";
 const settings = new type.EngineSettings();
 let currScene = settings.currentScene;
 
+export const KEY = {
+	SPACE : " ",
+	TAB : "Tab",
+	ENTER : "Enter",
+	SHIFT : "Shift",
+	CONTROL : "Control",
+	ALT : "Alt",
+	CAPSLOCK : "CapsLock",
+	ESCAPE : "Escape",
+	ARROW_LEFT : "ArrowLeft",
+	ARROW_RIGHT : "ArrowRight",
+	ARROW_UP : "ArrowUp",
+	ARROW_DOWN : "ArrowDown",
+	A : "a",
+	B : "b",
+	C : "c",
+	D : "d", 
+	E : "e",
+	F : "f",
+	G : "g",
+	H : "h",
+	I : "i",
+	J : "j",
+	K : "k",
+	L : "l",
+	M : "m",
+	N : "n",
+	O : "o",
+	P : "p",
+	Q : "q",
+	R : "r",
+	S : "s",
+	T : "t",
+	U : "u",
+	V : "v",
+	W : "w",
+	X : "x",
+	Y : "y",
+	Z : "z",
+	ONE : "1",
+	TWO : "2",
+	THREE : "3",
+	FOUR : "4",
+	FIVE : "5",
+	SIX : "6",
+	SEVEN : "7",
+	EIGHT : "8",
+	NINE : "9",
+	ZERO : "0",
+	COMA : ",",
+	DOT : ".",
+	SLASH : "/",
+	BACKSLASH : "\\",
+	COLON : ":",
+	SEMI_COLON : "\;",
+	QUOTE : "\"",
+	EXCLAMATION : "\!",
+
+}
+
 export function animation_update(anim) {
 	anim.currentFrame++;
 	let animFrame = Math.floor((anim.currentFrame / anim.speed) % anim.frameCount);
@@ -171,18 +231,16 @@ export function entity_gui_get_map() {
 }
 
 
-
-//need to map all the keyCode into an objet, so no more usage of string
-export function input_press_create(name, keyCode) {
-	const inputKey = new type.InputKey(name, keyCode, type.INPUT_TYPE.PRESS);
+export function input_press_create(name, key) {
+	const inputKey = new type.InputKey(name, key, type.INPUT_TYPE.PRESS);
 	settings.inputMap.set(name, inputKey);
 }
-export function input_release_create(name, keyCode) {
-	const inputKey = new type.InputKey(name, keyCode, type.INPUT_TYPE.RELEASE);
+export function input_release_create(name, key) {
+	const inputKey = new type.InputKey(name, key, type.INPUT_TYPE.RELEASE);
 	settings.inputMap.set(name, inputKey);
 }
-export function input_down_create(name, keyCode) {
-	const inputKey = new type.InputKey(name, keyCode, type.INPUT_TYPE.DOWN);
+export function input_down_create(name, key) {
+	const inputKey = new type.InputKey(name, key, type.INPUT_TYPE.DOWN);
 	settings.inputMap.set(name, inputKey);
 }
 
@@ -217,7 +275,7 @@ export function is_key_released(name) {
 //NOTE: might had weird behaviour if there is same name
 document.addEventListener("keydown", (event) => {
 	for (let inp of settings.inputMap.values()) {
-		if (inp.code === event.code) {
+		if (inp.key === event.key) {
 			inp.state = type.INPUT_STATE.PRESSED;
 		} 
 	}
@@ -225,7 +283,7 @@ document.addEventListener("keydown", (event) => {
 
 document.addEventListener("keyup", (event) => {
 	for (let inp of settings.inputMap.values()) {
-		if (inp.code === event.code) {
+		if (inp.key === event.key) {
 			inp.state = type.INPUT_STATE.RELEASED;
 		}		
 	}
@@ -293,7 +351,6 @@ export function canvas_setup(canvas, width, height) {
 	util.context_setup(canvas);
 	util.canvas_set_size(width, height);
 }
-
 
 export function init() {
 	

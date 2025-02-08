@@ -20,8 +20,6 @@ TODO:
 - [] change scene's variable name on boilerplate based on its name   
 - [] collision solver and its abstraction.
 - [] steering stuff and physics for 2d platformer game
-- [] runtime code editor ?
-- [] refresh the page programmatically.
 - [] generate all the panels and its css from the editor.js
 - [] implement camera.
 - [] making SceneMenu.
