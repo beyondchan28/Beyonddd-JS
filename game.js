@@ -1,5 +1,4 @@
 import * as be from "./src/beyonddd.js";
-import * as type from "./src/type.js";
 
 be.canvas_setup("canvas", 800, 600); // assigning canvas, context, and its size 
 const menuScene = be.scene_create("Menu"); // creating scene (with GUI-only type of components)
@@ -38,7 +37,7 @@ menuScene.input = () => {
 };
 
 
-const vel = new type.Vector2(1, 0);
+const vel = new be.Vector2(1, 0);
 // used for game logic such as movement, physics, enemies, etc. 
 menuScene.update = () => {
 	// console.log("GAME LOGIC COMPUTED");

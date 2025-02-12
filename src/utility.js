@@ -1,6 +1,9 @@
 /* 
 	This script have all the API from the canvas/window.
-	including draw/render stuff to screen and FPS.
+	including rendering depedency stuff to screen and FPS.
+
+	rendering on different file is for such case that
+	the engine need to change with new rendering library.
 */
 
 

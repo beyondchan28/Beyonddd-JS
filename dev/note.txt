@@ -18,8 +18,9 @@ TODO:
 - [X] generate script with boiler plate for the game logic based on the data.
 - [X] save file in JSON format.
 - [X] abstarct away the drawing function
-- [?] put types.js content into beyonddd.js so it looks like raylib header file
-- [] differentiate order between `export`(below) and non-export (upper) function.
+- [X] put types.js content into beyonddd.js so it looks like raylib header file
+- [X] ordering all the APIs alphabetically, so it easier to navigate to.
+- [X] differentiate order between `export`(below) and non-export (upper) function.
 - [] implement camera.
 - [] in-game UIs system
 - [] change scene's variable name on boilerplate based on its name   
@@ -29,7 +30,6 @@ TODO:
 - [] making SceneMenu.
 - [] start building the game.
 - [] proper type checking for every parameters for better debugging.
-- [] ordering all the APIs alphabetically, so it easier to navigate to.
 
 NOTE:
 - Scene system
