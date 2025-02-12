@@ -52,11 +52,6 @@ scene.update = () => {
 };
 
 
-// used for rendering images, animations, and sprites
-scene.draw = () => {
-	//YOUR IMPLEMENTATION HERE
-};
-
 // entry point or game running
 window.onload = be.init;
 `;
