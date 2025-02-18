@@ -91,6 +91,7 @@ export const COLOR = {
     BLACK:      "black",
     WHITE:      "white",
     BLUE:       "blue",
+    RED: 		"red", 
     YELLOW:     "yellow",
     GREEN:      "green",
     LIGHT_BLUE: "lightblue"
@@ -245,6 +246,7 @@ class Sprite extends Component {
 		this.ssize = (ssize === undefined) ? new Vector2(this.image.width, this.image.height) : ssize;
  		this.halfSize = new Vector2();
  		this.flipH = false;
+ 		this.usedByAnimation = false;
  	}
  	set_size() {
  		this.size = new Vector2(this.image.width, this.image.height);
@@ -280,6 +282,7 @@ class Animation extends Component {
 
 class Text extends Component {
 	constructor(font, text, pos, tint) {
+		super();
 		this.font = (font === undefined) ? "25px Arial" : font;
 		this.text = (text === undefined) ? "TEXT WRITTEN HERE" : text;
 		this.pos = (pos === undefined) ? new Vector2() : pos;
@@ -289,6 +292,7 @@ class Text extends Component {
 
 class ColorRectangle extends Component {
 	constructor(pos, size, fillTint) {
+		super();
 		this.pos = (pos === undefined) ? new Vector2() : pos;
 		this.size = (pos === undefined) ? new Vector2(1, 1) : size;
 		this.fillTint === (fillTint === undefined) ? COLOR.WHITE : fillTint;
@@ -297,6 +301,7 @@ class ColorRectangle extends Component {
 
 class Physics extends Component {
 	constructor() {
+		super();
 		this.velocity = new Vector2();
 		this.acceleration = new Vector2();
 		this.maxSpeed = 0;
@@ -326,17 +331,14 @@ class Physics extends Component {
 
 
 class ParticleEmitter extends Component {
-	constructor(pos, duration, amount) {
+	constructor(pos, duration, amount, col) {
+		super();
 		this.pos = (pos === undefined) ? new Vector2() : pos;
-		this.duration = (duration === undefined) ? 5 : duration ;
+		this.duration = (duration === undefined) ? 5 : duration;
 		this.amount = (amount === undefined) ? 10 : amount;
+		this.col = (col === undefined) ? COLOR.WHITE : col; 
 		this.particles = new Array(this.amount);
 		// Add enum for different emit shape
-
-		for (let i = 0; i < this.amount; i += 1) {
-			const p = new Particle();
-			this.particles.push(p);
-		}
 	}
 }
 
@@ -346,8 +348,9 @@ class Particle {
 		this.size = new Vector2();
 		this.velocity = new Vector2(1, 1);
 		this.lifeTime = 1;
-		this.col = COLOR.WHITE; 
-		this.sprite = new Sprite();
+		this.time = 0;
+		this.colRect = new ColorRectangle(this.pos, this.size, COLOR.RED);
+		// this.sprite = new Sprite();
 		// this.blend = null;		
 		// this.angle = 0;
 		// this.rot = 0;
@@ -374,14 +377,16 @@ class Entity {
 		
 		// keep track the used comp by its index. -1 means using none.
 		if (entityType === ENTITY_TYPE.GAMEPLAY_OBJECT) {
-            this.transformIdx   = -1;
-            this.boundingBoxIdx = -1;
-            this.spriteIdx      = -1;
-            this.animationIdx   = -1;
+            this.transformIdx       = -1;
+            this.boundingBoxIdx     = -1;
+            this.spriteIdx          = -1;
+            this.animationIdx       = -1;
+            this.particleEmitterIdx = -1;
 		} else if (entityType === ENTITY_TYPE.GUI) {
-            this.transformIdx = -1;
-            this.textIdx      = -1;
-            this.colorRectIdx = -1;
+            this.transformIdx       = -1;
+            this.textIdx            = -1;
+            this.colorRectIdx       = -1;
+            this.particleEmitterIdx = -1;
 		}
 	}
 }
@@ -456,16 +461,18 @@ const camera = {
 	size : new Vector2(),
 }
 
-export function animation_update(anim) {
+function animation_update(anim) {
 	anim.currentFrame++;
-	let animFrame = Math.floor((anim.currentFrame / anim.speed) % anim.frameCount);
-	let spriteXSSize = anim.sprite.ssize.x;
+	const animFrame = Math.floor((anim.currentFrame / anim.speed) % anim.frameCount);
+	const spriteXSSize = anim.sprite.ssize.x;
 	anim.sprite.spos.x = animFrame * spriteXSSize;	
 	util.draw_image(anim.sprite);
 }
 
 export function animation_set_sprite(animId, spriteId) {
-	currScene.cAnimations[animId].sprite = currScene.cSprites[spriteId];
+	const s = currScene.cSprites[spriteId];
+	s.usedByAnimation = true;
+	currScene.cAnimations[animId].sprite = s;
 }
 
 export function animation_setup(animIdx, name, frameCount, speed) {
@@ -510,32 +517,39 @@ export function collision_rect_check(tIdx1, tIdx2, bbIdx1, bbIdx2) {
 export function component_add(ent, compType) {
 	switch (compType) {
 		case COMPONENT_TYPE.TRANSFORM:
-			let t = new Transform();
+			const t = new Transform();
 			currScene.cTransforms.push(t);
 			ent.transformIdx = currScene.cTransforms.length - 1;
 			t.set_user(ent.id);
 			break;
 		case COMPONENT_TYPE.SPRITE:
-			let s = new Sprite();
+			const s = new Sprite();
 			s.pos = currScene.cTransforms[ent.transformIdx].pos;
 			currScene.cSprites.push(s);
 			ent.spriteIdx = currScene.cSprites.length - 1;
 			s.set_user(ent.id);
 			break;
 		case COMPONENT_TYPE.ANIMATION:
-			let a = new Animation();
+			const a = new Animation();
 			currScene.cAnimations.push(a);
 			ent.animationIdx = currScene.cAnimations.length - 1;
 			a.set_user(ent.id);
 			break;
 		case COMPONENT_TYPE.BOUNDING_BOX:
-			let bb = new BoundingBox();
+			const bb = new BoundingBox();
 			currScene.cBoundingBoxes.push(bb);
 			ent.boundingBoxIdx = currScene.cBoundingBoxes.length - 1;
 			bb.set_user(ent.id);
 			break;
+		case COMPONENT_TYPE.PARTICLE_EMITTER:
+			const pe = new ParticleEmitter();
+			pe.pos = currScene.cTransforms[ent.transformIdx].pos;
+			currScene.cParticleEmitters.push(pe);
+			ent.particleEmitterIdx = currScene.cParticleEmitters.length - 1;
+			pe.set_user(ent.id);
+			break;
 		default:
-			console.error("wrong component. typed the first letter on every word inserted.");
+			console.error("wrong component type.");
 	}
 }
 
@@ -553,6 +567,9 @@ export function component_get(compId, type) {
 		case COMPONENT_TYPE.BOUNDING_BOX:
 			return currScene.cBoundingBoxes[compId];
 			break;
+		case COMPONENT_TYPE.PARTICLE_EMITTER:
+			return currScene.cParticleEmitters[compId];
+			break;
 		default:
 			console.error("wrong component type passed.");
 			break;
@@ -560,16 +577,8 @@ export function component_get(compId, type) {
 }
 
 
-export function component_sprite_set(sprId, imgName) {
-	currScene.cSprites[sprId].image = asset_get_image(imgName);
-	currScene.cSprites[sprId].set_size();
-	// currScene.cSprites[sprId].set_origin();
-}
-
-
-
 export function entity_create(name) {
-	let newEntity = new Entity(ENTITY_TYPE.GAMEPLAY_OBJECT);
+	const newEntity = new Entity(ENTITY_TYPE.GAMEPLAY_OBJECT);
 	newEntity.id = currScene.entityMap.size;
 	currScene.entityMap.set(name, newEntity);
 	console.log(newEntity);
@@ -623,7 +632,7 @@ export function input_down_create(name, key) {
 
 export function is_key_pressed(name) {
 	const input = settings.inputMap.get(name);
-	if (input.type === INPUT_PRESS && 
+	if (input.type === INPUT_TYPE.PRESS && 
 		input.state === INPUT_STATE.PRESSED) 
 	{
 		input.state = INPUT_STATE.NONE
@@ -634,13 +643,13 @@ export function is_key_pressed(name) {
 
 export function is_key_down(name) {
 	const input = settings.inputMap.get(name);
-	return (input.type === INPUT_DOWN && 
+	return (input.type === INPUT_TYPE.DOWN && 
 			input.state === INPUT_STATE.PRESSED) ? true : false;
 }
 
 export function is_key_released(name) {
 	const input = settings.inputMap.get(name);
-	if (input.type === INPUT_RELEASE && 
+	if (input.type === INPUT_TYPE.RELEASE && 
 		input.state === INPUT_STATE.RELEASED)
 	{
 		input.state = INPUT_STATE.NONE;
@@ -707,7 +716,27 @@ export function scene_get_type() {
 	return settings.currentScene.type;
 }
 
+export function sprite_set(sprId, imgName) {
+	currScene.cSprites[sprId].image = asset_get_image(imgName);
+	currScene.cSprites[sprId].set_size();
+	// currScene.cSprites[sprId].set_origin();
+}
 
+
+export function particle_emitter_set(peIdx, pePos, duration, amount, col, vel) {
+	const pe = currScene.cParticleEmitters[peIdx];
+	pe.pos = pePos;
+	pe.duration = duration;
+	pe.amount = amount;
+	pe.col = col;
+
+	for (let i = 0; i < amount; i += 1) {
+		const p = new Particles();
+		p.vel = vel;
+		p.colRect.fillTint = col;
+		pe.push(p);
+	}
+}
 
 
 export function canvas_setup(canvas, width, height) {
@@ -728,10 +757,21 @@ function camera_setup() {
 }
 
 function draw() {
-	const currSceneSpr = currScene.cSprites;
-	for (let s of currSceneSpr) {
-		entities_y_sorted();
-		util.draw_image(s);
+	entities_y_sorted();
+
+	if (currScene.cSprites.length !== 0) {		
+		for (let s of currScene.cSprites) {
+			if (s.usedByAnimation) {
+				continue;
+			}
+			util.draw_image(s);
+		}
+	} 
+
+	if (currScene.cAnimations.length !== 0) {		
+		for (let a of currScene.cAnimations) {
+			animation_update(a);
+		}
 	}
 
 }

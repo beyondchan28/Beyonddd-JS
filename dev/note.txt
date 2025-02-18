@@ -21,6 +21,7 @@ TODO:
 - [X] put types.js content into beyonddd.js so it looks like raylib header file
 - [X] ordering all the APIs alphabetically, so it easier to navigate to.
 - [X] differentiate order between `export`(below) and non-export (upper) function.
+- [] setting up key_map in editor
 - [] collision solver and its abstraction.
 - [] implement camera trap and side scrolling
 - [] in-game UIs system
