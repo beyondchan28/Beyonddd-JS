@@ -4,284 +4,108 @@
 
 import * as util from "./utility.js";
 
-class Component {
-	constructor() {
-		this.userId = -1; // -1 means no entity using this component
-	}
-	get_user() {
-		return this.userId;
-	}
-	set_user(entityId) {
-		this.userId = entityId;
-	}
-	erase_user() {
-		this.userId = -1;
-	}
-	is_used() {
-		return (this.userId !== -1 ) ? true : false;
-	}
-}
-
-class Transform extends Component {
-	constructor(pos, rot, scale) {
-		super();
-		this.pos = (pos === undefined) ? new Vector2() : pos;
-		this.rot = (rot === undefined) ? 0 : rot;
-		this.scale = (scale === undefined) ? 1 : scale;
-	}
-}
-
-class BoundingBox extends Component {
-	constructor(size, halfSize) {
-		super();
-		this.size = (size === undefined) ? new Vector2() : size;
-		this.halfSize = (halfSize === undefined) ? new Vector2() : halfSize;
-	}
-}
-
-class Sprite extends Component {
-	constructor(image, pos, size, spos, ssize) {
-		super();
-		this.image = (image === undefined) ? new Image() : image;
-		this.pos = (pos === undefined) ? new Vector2() : pos; //starting point when first loaded
-		this.size = (size === undefined) ? new Vector2(this.image.width, this.image.height) : size;
-		this.spos = (spos === undefined) ? new Vector2() : spos;
-		this.ssize = (ssize === undefined) ? new Vector2(this.image.width, this.image.height) : ssize;
- 		this.halfSize = new Vector2();
- 		this.flipH = false;
- 	}
- 	set_size() {
- 		this.size = new Vector2(this.image.width, this.image.height);
-		this.ssize = new Vector2(this.image.width, this.image.height);
-		this.halfSize.set(this.image.width*0.5, this.image.height*0.5);
- 	}
- 	set_origin() {
- 		this.pos.add(this.size.scale(0.5));
- 	}
-}
-
-class Animation extends Component {
-	constructor(name, sprite, frameCount, currentFrame, speed, size) {
-		super();
-		this.name = (name === undefined) ? "" : name;
-		this.sprite = (sprite === undefined) ? new Sprite() : sprite;
-		this.frameCount = (frameCount === undefined) ? 1 : frameCount;
-		this.currentFrame = (currentFrame === undefined) ? 0 : currentFrame;
-		this.speed = (speed === undefined) ? 1 : speed;
-		this.sprite.ssize = (size === undefined) ? new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height) : size;
-		this.sprite.size = (size === undefined) ? new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height) : size;
-	}
-
-	setup(name, frameCount, speed) {
-		this.name = name;
-		this.frameCount = frameCount;
-		this.speed = speed;
-		this.sprite.ssize = new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height);
-		this.sprite.size = new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height);
-		this.sprite.halfSize.set(this.sprite.size.x*0.5, this.sprite.size.y*0.5);
-	}
-}
-
-class Text extends Component {
-	constructor(font, text, pos, tint) {
-		this.font = (font === undefined) ? "25px Arial" : font;
-		this.text = (text === undefined) ? "TEXT WRITTEN HERE" : text;
-		this.pos = (pos === undefined) ? new Vector2() : pos;
-		this.tint = (tint === undefined) ? "black" : tint;
-	}
-}
-
-class ColorRectangle extends Component {
-	constructor(pos, size, fillTint) {
-		this.pos = (pos === undefined) ? new Vector2() : pos;
-		this.size = (pos === undefined) ? new Vector2(1, 1) : size;
-		this.fillTint === (fillTint === undefined) ? "white" : fillTint;
-	}
-}
-
-class Physics extends Component {
-	constructor() {
-		this.velocity = new Vector2();
-		this.acceleration = new Vector2();
-		this.maxSpeed = 0;
-		this.maxForce = 0;
-		this.mass = 0;
-	}
-}
-
-/* 
-	Note :
-	the problem with Class approach (putting all the 
-	components inside every entity) is
-	when iterating through entityMap to access
-	one specific component, it loads all the thing inside the
-	entity, so it required a lot more time to call
-	rather than grouped every component on its own
-	data structure such as array. But its nicer to organized .
-*/
-
-const ENTITY_TYPE = {
-	GAMEPLAY_OBJECT: 0,
-	GUI: 1,
-}
-
-class Entity {
-	constructor(entityType) {
-		this.id = -1;
-		this.active = true;
-		
-		// keep track the used comp by its index. -1 means using none.
-		if (entityType === ENTITY_TYPE.GAMEPLAY_OBJECT) {
-			this.transformIdx = -1;
-			this.boundingBoxIdx = -1;
-			this.spriteIdx = -1;
-			this.animationIdx = -1;
-		} else if (entityType === ENTITY_TYPE.GUI) {
-			this.transformIdx = -1;
-			this.textIdx = -1;
-			this.colorRectIdx = -1;
-		}
-}
-}
-
 const INPUT_TYPE = {
-	PRESS: 0,
-	RELEASE: 1,
-	DOWN: 2,
+    PRESS:   0,
+    RELEASE: 1,
+    DOWN:    2,
 }
 
 const INPUT_STATE = {
-	PRESSED: 0,
-	RELEASED: 1,
-	NONE: 2,
+    PRESSED:  0,
+    RELEASED: 1,
+    NONE:     2,
 }
 
-class InputKey {
-	constructor(name, key, type) {
-		this.name = name;
-		this.key = key;
-		this.type = type; //pressed, release, down 
-		this.state = INPUT_STATE.NONE;
-	}
+const ENTITY_TYPE = {
+    GAMEPLAY_OBJECT: 0,
+    GUI:             1,
 }
-
 
 const SCENE_TYPE = {
-	GUI_ONLY: 0,
-	GAMEPLAY_ONLY: 1,
-	DEFAULT: 2,
-}
-
-class Scene {
-	constructor(sceneType) {
-		this.type = sceneType;
-		this.setup = () => {console.error("This should be override/replaced as scene's _setup_ function")};
-		this.input = () => {console.error("This should be override/replaced as scene's _input_ function")};
-		this.update = () => {console.error("This should be override/replaced as scene's _update_ function")}; // game logic goes here
-		switch (sceneType) {
-			case SCENE_TYPE.GUI_ONLY:
-				this.guiEntityMap = new Map();
-				this.cTexts = new Array();
-				this.cColorRectangles = new Array();
-				break;
-			case SCENE_TYPE.GAMEPLAY_ONLY:
-				this.entityMap = new Map();
-				this.cTransforms = new Array();
-				this.cBoundingBoxes = new Array();
-				this.cSprites = new Array();
-				this.cAnimations = new Array();
-				break;
-			case SCENE_TYPE.DEFAULT:
-				this.guiEntityMap = new Map();
-				this.cTexts = new Array();
-				this.cColorRectangles = new Array();
-
-				this.entityMap = new Map();
-				this.cTransforms = new Array();
-				this.cBoundingBoxes = new Array();
-				this.cSprites = new Array();
-				this.cAnimations = new Array();
-				break;
-		}
-	}
-}
-
-
-class EngineSettings {
-	constructor() {
-		this.isPaused = false;
-		this.isDrawImage = true;
-		this.isDrawCollisionShape = false;
-		this.showFPS = true;
-
-		this.inputMap = new Map();
-		this.sceneMap = new Map();
-		this.assetImageMap = new Map();
-
-		this.currentScene = null;
-	}
-
+    GUI_ONLY:      0,
+    GAMEPLAY_ONLY: 1,
+    DEFAULT:       2,
 }
 
 
 export const KEY = {
-	SPACE : " ",
-	TAB : "Tab",
-	ENTER : "Enter",
-	SHIFT : "Shift",
-	CONTROL : "Control",
-	ALT : "Alt",
-	CAPSLOCK : "CapsLock",
-	ESCAPE : "Escape",
-	ARROW_LEFT : "ArrowLeft",
-	ARROW_RIGHT : "ArrowRight",
-	ARROW_UP : "ArrowUp",
-	ARROW_DOWN : "ArrowDown",
-	A : "a",
-	B : "b",
-	C : "c",
-	D : "d", 
-	E : "e",
-	F : "f",
-	G : "g",
-	H : "h",
-	I : "i",
-	J : "j",
-	K : "k",
-	L : "l",
-	M : "m",
-	N : "n",
-	O : "o",
-	P : "p",
-	Q : "q",
-	R : "r",
-	S : "s",
-	T : "t",
-	U : "u",
-	V : "v",
-	W : "w",
-	X : "x",
-	Y : "y",
-	Z : "z",
-	ONE : "1",
-	TWO : "2",
-	THREE : "3",
-	FOUR : "4",
-	FIVE : "5",
-	SIX : "6",
-	SEVEN : "7",
-	EIGHT : "8",
-	NINE : "9",
-	ZERO : "0",
-	COMA : ",",
-	DOT : ".",
-	SLASH : "/",
-	BACKSLASH : "\\",
-	COLON : ":",
-	SEMI_COLON : "\;",
-	QUOTE : "\"",
-	EXCLAMATION : "\!",
+    SPACE:       " ",
+    TAB:         "Tab",
+    ENTER:       "Enter",
+    SHIFT:       "Shift",
+    CONTROL:     "Control",
+    ALT:         "Alt",
+    CAPSLOCK:    "CapsLock",
+    ESCAPE:      "Escape",
+    ARROW_LEFT:  "ArrowLeft",
+    ARROW_RIGHT: "ArrowRight",
+    ARROW_UP:    "ArrowUp",
+    ARROW_DOWN:  "ArrowDown",
+    A:           "a",
+    B:           "b",
+    C:           "c",
+    D:           "d",
+    E:           "e",
+    F:           "f",
+    G:           "g",
+    H:           "h",
+    I:           "i",
+    J:           "j",
+    K:           "k",
+    L:           "l",
+    M:           "m",
+    N:           "n",
+    O:           "o",
+    P:           "p",
+    Q:           "q",
+    R:           "r",
+    S:           "s",
+    T:           "t",
+    U:           "u",
+    V:           "v",
+    W:           "w",
+    X:           "x",
+    Y:           "y",
+    Z:           "z",
+    ONE:         "1",
+    TWO:         "2",
+    THREE:       "3",
+    FOUR:        "4",
+    FIVE:        "5",
+    SIX:         "6",
+    SEVEN:       "7",
+    EIGHT:       "8",
+    NINE:        "9",
+    ZERO:        "0",
+    COMA:        ",",
+    DOT:         ".",
+    SLASH:       "/",
+    BACKSLASH:   "\\",
+    COLON:       ":",
+    SEMI_COLON:  "\;",
+    QUOTE:       "\"",
+    EXCLAMATION: "\!",
+}
 
+export const COLOR = {
+    BLACK:      "black",
+    WHITE:      "white",
+    BLUE:       "blue",
+    YELLOW:     "yellow",
+    GREEN:      "green",
+    LIGHT_BLUE: "lightblue"
+}
+
+
+export const COMPONENT_TYPE = {
+    TRANSFORM:        0,
+    BOUNDING_BOX:     1,
+    PHYSICS:          2,
+    SPRITE:           3,
+    ANIMATION:        4,
+    TEXT:             5,
+    COLOR_RECTANGLE:  6,
+    PARTICLE_EMITTER: 7,
 }
 
 export class Vector2 {
@@ -376,6 +200,254 @@ export class Vector2 {
 }
 
 
+class Component {
+	constructor() {
+		this.userId = -1; // -1 means no entity using this component
+	}
+	get_user() {
+		return this.userId;
+	}
+	set_user(entityId) {
+		this.userId = entityId;
+	}
+	erase_user() {
+		this.userId = -1;
+	}
+	is_used() {
+		return (this.userId !== -1 ) ? true : false;
+	}
+}
+
+class Transform extends Component {
+	constructor(pos, rot, scale) {
+		super();
+		this.pos = (pos === undefined) ? new Vector2() : pos;
+		this.rot = (rot === undefined) ? 0 : rot;
+		this.scale = (scale === undefined) ? 1 : scale;
+	}
+}
+
+class BoundingBox extends Component {
+	constructor(size, halfSize) {
+		super();
+		this.size = (size === undefined) ? new Vector2() : size;
+		this.halfSize = (halfSize === undefined) ? new Vector2() : halfSize;
+	}
+}
+
+class Sprite extends Component {
+	constructor(image, pos, size, spos, ssize) {
+		super();
+		this.image = (image === undefined) ? new Image() : image;
+		this.pos = (pos === undefined) ? new Vector2() : pos; //starting point when first loaded
+		this.size = (size === undefined) ? new Vector2(this.image.width, this.image.height) : size;
+		this.spos = (spos === undefined) ? new Vector2() : spos;
+		this.ssize = (ssize === undefined) ? new Vector2(this.image.width, this.image.height) : ssize;
+ 		this.halfSize = new Vector2();
+ 		this.flipH = false;
+ 	}
+ 	set_size() {
+ 		this.size = new Vector2(this.image.width, this.image.height);
+		this.ssize = new Vector2(this.image.width, this.image.height);
+		this.halfSize.set(this.image.width*0.5, this.image.height*0.5);
+ 	}
+ 	set_origin() {
+ 		this.pos.add(this.size.scale(0.5));
+ 	}
+}
+
+class Animation extends Component {
+	constructor(name, sprite, frameCount, currentFrame, speed, size) {
+		super();
+		this.name = (name === undefined) ? "" : name;
+		this.sprite = (sprite === undefined) ? new Sprite() : sprite;
+		this.frameCount = (frameCount === undefined) ? 1 : frameCount;
+		this.currentFrame = (currentFrame === undefined) ? 0 : currentFrame;
+		this.speed = (speed === undefined) ? 1 : speed;
+		this.sprite.ssize = (size === undefined) ? new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height) : size;
+		this.sprite.size = (size === undefined) ? new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height) : size;
+	}
+
+	setup(name, frameCount, speed) {
+		this.name = name;
+		this.frameCount = frameCount;
+		this.speed = speed;
+		this.sprite.ssize = new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height);
+		this.sprite.size = new Vector2(this.sprite.image.width/this.frameCount, this.sprite.image.height);
+		this.sprite.halfSize.set(this.sprite.size.x*0.5, this.sprite.size.y*0.5);
+	}
+}
+
+class Text extends Component {
+	constructor(font, text, pos, tint) {
+		this.font = (font === undefined) ? "25px Arial" : font;
+		this.text = (text === undefined) ? "TEXT WRITTEN HERE" : text;
+		this.pos = (pos === undefined) ? new Vector2() : pos;
+		this.tint = (tint === undefined) ? COLOR.BLACK : tint;
+	}
+}
+
+class ColorRectangle extends Component {
+	constructor(pos, size, fillTint) {
+		this.pos = (pos === undefined) ? new Vector2() : pos;
+		this.size = (pos === undefined) ? new Vector2(1, 1) : size;
+		this.fillTint === (fillTint === undefined) ? COLOR.WHITE : fillTint;
+	}
+}
+
+class Physics extends Component {
+	constructor() {
+		this.velocity = new Vector2();
+		this.acceleration = new Vector2();
+		this.maxSpeed = 0;
+		this.maxForce = 0;
+		this.mass = 0;
+	}
+}
+
+
+/*
+	Emitter :
+		- position
+		- rate/amount
+		- duration
+		- setup particle's properties  
+	particle :
+		- pos
+		- size
+		- angle
+		- vel
+		- rot
+		- lifetime
+		- col
+		- sprite
+		- blend mode
+*/
+
+
+class ParticleEmitter extends Component {
+	constructor(pos, duration, amount) {
+		this.pos = (pos === undefined) ? new Vector2() : pos;
+		this.duration = (duration === undefined) ? 5 : duration ;
+		this.amount = (amount === undefined) ? 10 : amount;
+		this.particles = new Array(this.amount);
+		// Add enum for different emit shape
+
+		for (let i = 0; i < this.amount; i += 1) {
+			const p = new Particle();
+			this.particles.push(p);
+		}
+	}
+}
+
+class Particle {
+	constructor() {
+		this.pos = new Vector2();
+		this.size = new Vector2();
+		this.velocity = new Vector2(1, 1);
+		this.lifeTime = 1;
+		this.col = COLOR.WHITE; 
+		this.sprite = new Sprite();
+		// this.blend = null;		
+		// this.angle = 0;
+		// this.rot = 0;
+	}
+}
+
+
+/* 
+	Note :
+	the problem with Class approach (putting all the 
+	components inside every entity) is
+	when iterating through entityMap to access
+	one specific component, it loads all the thing inside the
+	entity, so it required a lot more time to call
+	rather than grouped every component on its own
+	data structure such as array. But its nicer to organized .
+*/
+
+
+class Entity {
+	constructor(entityType) {
+        this.id     = -1;
+        this.active = true;
+		
+		// keep track the used comp by its index. -1 means using none.
+		if (entityType === ENTITY_TYPE.GAMEPLAY_OBJECT) {
+            this.transformIdx   = -1;
+            this.boundingBoxIdx = -1;
+            this.spriteIdx      = -1;
+            this.animationIdx   = -1;
+		} else if (entityType === ENTITY_TYPE.GUI) {
+            this.transformIdx = -1;
+            this.textIdx      = -1;
+            this.colorRectIdx = -1;
+		}
+	}
+}
+
+class InputKey {
+	constructor(name, key, type) {
+		this.name = name;
+		this.key = key;
+		this.type = type; //pressed, release, down 
+		this.state = INPUT_STATE.NONE;
+	}
+}
+
+
+class Scene {
+	constructor(sceneType) {
+        this.type   = sceneType;
+        this.setup  = () => {console.error("This should be override/replaced as scene's _setup_ function")};
+        this.input  = () => {console.error("This should be override/replaced as scene's _input_ function")};
+        this.update = () => {console.error("This should be override/replaced as scene's _update_ function")}; // game logic goes here
+		switch (sceneType) {
+			case SCENE_TYPE.GUI_ONLY:
+				this.guiEntityMap = new Map();
+				this.cTexts = new Array();
+				this.cColorRectangles = new Array();
+				break;
+			case SCENE_TYPE.GAMEPLAY_ONLY:
+				this.entityMap = new Map();
+				this.cTransforms = new Array();
+				this.cBoundingBoxes = new Array();
+				this.cSprites = new Array();
+				this.cAnimations = new Array();
+				break;
+			case SCENE_TYPE.DEFAULT:
+				this.guiEntityMap = new Map();
+				this.cTexts = new Array();
+				this.cColorRectangles = new Array();
+
+				this.entityMap = new Map();
+				this.cTransforms = new Array();
+				this.cBoundingBoxes = new Array();
+				this.cSprites = new Array();
+				this.cAnimations = new Array();
+		        this.cParticleEmitters = new Array();
+				break;
+		}
+	}
+}
+
+
+class EngineSettings {
+	constructor() {
+		this.isPaused = false;
+		this.isDrawImage = true;
+		this.isDrawCollisionShape = false;
+		this.showFPS = true;
+
+		this.inputMap = new Map();
+		this.sceneMap = new Map();
+		this.assetImageMap = new Map();
+
+		this.currentScene = null;
+	}
+}
+
+
 const settings = new EngineSettings();
 let currScene = settings.currentScene;
 
@@ -425,64 +497,64 @@ export function camera_movement(vel) {
 }
 
 export function collision_rect_debug(id) {
-	util.draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, "black");
+	util.draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, COLOR.BLACK);
 }
 
-export function collision_rect_check(id1, id2) {
-	let dpos = currScene.cTransfroms[id1].pos.delta(currScene.cTransfroms[id2].pos);
-	let overlap = currScene.cBoundingBoxes[id2].halfSize.add(currScene.cBoundingBoxes[id2].halfSize).subtract(dpos);
+export function collision_rect_check(tIdx1, tIdx2, bbIdx1, bbIdx2) {
+	let dpos = currScene.cTransfroms[tIdx1].pos.delta(currScene.cTransfroms[tIdx2].pos);
+	let overlap = currScene.cBoundingBoxes[bbIdx1].halfSize.add(currScene.cBoundingBoxes[bbIdx2].halfSize).subtract(dpos);
 	return (overlap.x > 0.0 && overlap.y > 0.0) ? overlap : null;
 }
 
 
 export function component_add(ent, compType) {
 	switch (compType) {
-		case "t":
+		case COMPONENT_TYPE.TRANSFORM:
 			let t = new Transform();
 			currScene.cTransforms.push(t);
 			ent.transformIdx = currScene.cTransforms.length - 1;
 			t.set_user(ent.id);
 			break;
-		case "s":
+		case COMPONENT_TYPE.SPRITE:
 			let s = new Sprite();
 			s.pos = currScene.cTransforms[ent.transformIdx].pos;
 			currScene.cSprites.push(s);
 			ent.spriteIdx = currScene.cSprites.length - 1;
 			s.set_user(ent.id);
 			break;
-		case "a":
+		case COMPONENT_TYPE.ANIMATION:
 			let a = new Animation();
 			currScene.cAnimations.push(a);
 			ent.animationIdx = currScene.cAnimations.length - 1;
 			a.set_user(ent.id);
 			break;
-		case "bb":
+		case COMPONENT_TYPE.BOUNDING_BOX:
 			let bb = new BoundingBox();
 			currScene.cBoundingBoxes.push(bb);
 			ent.boundingBoxIdx = currScene.cBoundingBoxes.length - 1;
 			bb.set_user(ent.id);
 			break;
 		default:
-			console.log("wrong component. typed the first letter on every word inserted.");
+			console.error("wrong component. typed the first letter on every word inserted.");
 	}
 }
 
 export function component_get(compId, type) {
 	switch (type) {
-		case "a":
+		case COMPONENT_TYPE.ANIMATION:
 			return currScene.cAnimations[compId];
 			break;
-		case "t":
+		case COMPONENT_TYPE.TRANSFORM:
 			return currScene.cTransforms[compId];
 			break;
-		case "s":
+		case COMPONENT_TYPE.SPRITE:
 			return currScene.cSprites[compId];
 			break;
-		case "bb":
+		case COMPONENT_TYPE.BOUNDING_BOX:
 			return currScene.cBoundingBoxes[compId];
 			break;
 		default:
-			console.log("wrong component type passed.");
+			console.error("wrong component type passed.");
 			break;
 	}
 }
@@ -635,13 +707,16 @@ export function scene_get_type() {
 	return settings.currentScene.type;
 }
 
+
+
+
 export function canvas_setup(canvas, width, height) {
 	util.context_setup(canvas);
 	util.canvas_set_size(width, height);
 }
 
 export function init() {
-	scene_get_current().setup();
+	currScene.setup();
 	camera_setup();
 	window.requestAnimationFrame(update);
 }
@@ -653,21 +728,49 @@ function camera_setup() {
 }
 
 function draw() {
-	const currSceneSpr = scene_get_current().cSprites;
+	const currSceneSpr = currScene.cSprites;
 	for (let s of currSceneSpr) {
+		entities_y_sorted();
 		util.draw_image(s);
+	}
+
+}
+
+function collision() {
+	const currSceneBB = currScene.cBoundingBoxes;
+	if (currSceneBB.size <= 1) {
+		return
+	}
+
+	const entities = currScene.entityMap.values(); 
+	for (let idx = 0; idx < currSceneBB.size; idx += 1) {
+		if (idx + 1 < currSceneBB.size) {
+			var overlap = collision_rect_check(
+				entities[idx].transformIdx, entities[idx + 1].transformIdx, 
+				entities[idx].boundingBoxIdx, entities[idx + 1].boundingBoxIdx);
+
+			if (overlap) {
+				
+			}
+
+		} else if (idx == currSceneBB.size - 1) {
+			var ovelap = collision_rect_check(
+				entities[idx].transformIdx, entities[0].transformIdx,
+				entities[idx].boundingBoxIdx, entities[0].boundingBoxIdx);
+		}
 	}
 
 }
 
 function update(timeStamp) {
 	if (!is_paused()) {
-		scene_get_current().input();
-		scene_get_current().update();
+		currScene.input();
+		currScene.update();
+		// collision();
 	}
 	
 	if (is_draw_image()) {
-		util.clear_background("lightblue");
+		util.clear_background(COLOR.LIGHT_BLUE);
 		draw();
 		util.context_get().restore(); // related to camera/canvas movement/translate implementation this
 	}
@@ -679,7 +782,7 @@ function update(timeStamp) {
 	window.requestAnimationFrame(update);
 }
 
-//NOTE: might had weird behaviour if there is same name
+//WARNING: might had weird behaviour if there is same name
 document.addEventListener("keydown", (event) => {
 	for (let inp of settings.inputMap.values()) {
 		if (inp.key === event.key) {

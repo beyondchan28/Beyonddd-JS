@@ -7,6 +7,8 @@
 */
 
 
+//TODO : Mapped color to obj to avoid string
+
 let canvas
 let ctx 
 

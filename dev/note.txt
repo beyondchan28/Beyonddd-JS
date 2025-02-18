@@ -21,10 +21,10 @@ TODO:
 - [X] put types.js content into beyonddd.js so it looks like raylib header file
 - [X] ordering all the APIs alphabetically, so it easier to navigate to.
 - [X] differentiate order between `export`(below) and non-export (upper) function.
-- [] implement camera.
+- [] collision solver and its abstraction.
+- [] implement camera trap and side scrolling
 - [] in-game UIs system
 - [] change scene's variable name on boilerplate based on its name   
-- [] collision solver and its abstraction.
 - [] steering stuff and physics for 2d platformer game
 - [] generate all the panels and its css from the editor.js
 - [] making SceneMenu.

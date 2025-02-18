@@ -83,16 +83,16 @@ function save_json() {
 	// saving scene's properties
 	// TODO: checks _{}_ and replace it to _null_ instead for better readable code
 	const saveFormat = {
-		"type" : be.scene_get_current().type,
-		"entities" : Object.fromEntries(be.scene_get_current().entityMap), 
-		"transforms" : Object.fromEntries(be.scene_get_current().cTransforms),
-		"boundingBoxes" : Object.fromEntries(be.scene_get_current().cBoundingBoxes),
-		"sprites" : Object.fromEntries(be.scene_get_current().cSprites),
-		"animations" : Object.fromEntries(be.scene_get_current().cAnimations),
-		"texts" : Object.fromEntries(be.scene_get_current().cTexts),
-		"colorRectangles" : Object.fromEntries(be.scene_get_current().cColorRectangles),
-		"inputs" : Object.fromEntries(be.settings_get().inputMap),
-		"assetImage" : Object.fromEntries(be.settings_get().assetImageMap),
+        "type":            be.scene_get_current().type,
+        "entities":        Object.fromEntries(be.scene_get_current().entityMap),
+        "transforms":      Object.fromEntries(be.scene_get_current().cTransforms),
+        "boundingBoxes":   Object.fromEntries(be.scene_get_current().cBoundingBoxes),
+        "sprites":         Object.fromEntries(be.scene_get_current().cSprites),
+        "animations":      Object.fromEntries(be.scene_get_current().cAnimations),
+        "texts":           Object.fromEntries(be.scene_get_current().cTexts),
+        "colorRectangles": Object.fromEntries(be.scene_get_current().cColorRectangles),
+        "inputs":          Object.fromEntries(be.settings_get().inputMap),
+        "assetImage":      Object.fromEntries(be.settings_get().assetImageMap),
 
 	}
 	generate_file(JSON.stringify(saveFormat, null, "\t"), "save_file.json");

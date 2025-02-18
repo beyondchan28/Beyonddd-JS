@@ -22,16 +22,16 @@ be.scene_change("Level");
 
 // running before the game start. used for setup entities, components, inputs etc. 
 scene.setup = () => {
-	be.input_press_create("buttonName", "keyCode"); //Mapping an Press-able Input
-	be.asset_load_image("assetName", "assetPath"); //Adding Asset Image
+	be.input_press_create("buttonName", be.KEY.SPACE); //Mapping an Press-able Input
+	be.asset_load_image("assetName", "/dir/to/asset"); //Adding Asset Image
 	
 	const entity = be.entity_create("Entity");
-	be.component_add(entity, "t"); //adding __Transform__ Component to Entity 
-	be.component_add(entity, "s"); //adding __Sprite__ Component to Entity
+	be.component_add(entity, be.COMPONENT_TYPE.TRANSFORM); //adding __Transform__ Component to Entity 
+	be.component_add(entity, be.COMPONENT_TYPE.SPRITE); //adding __Sprite__ Component to Entity
 	
 	be.sprite_set(entity.spriteIdx, "assetName"); //assign __Asset__ to Sprite 
 	
-	be.component_add(entity, "a"); //adding __Animation__ Component to Entity
+	be.component_add(entity, be.COMPONENT_TYPE.ANIMATION); //adding __Animation__ Component to Entity
 	be.animation_set_sprite(entity.animationIdx, entity.spriteIdx); //set Sprite to Animation
 	be.animation_setup(entity.animationIdx, "EntityAnimation", 6, 5); //setup Animation properties
 }

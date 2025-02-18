@@ -6,7 +6,6 @@ be.scene_change("Menu"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
 menuScene.setup = () => {
-	console.log(be.canvas_get());
 	be.input_press_create("X", be.KEY.ZERO);
 	be.input_down_create("XX", be.KEY.SPACE);
 	be.input_release_create("XXX", be.KEY.SPACE);
@@ -15,18 +14,17 @@ menuScene.setup = () => {
 	be.asset_load_image("icon", "assets/icon.png");
 
 	const player = be.entity_create("Player");
-	be.component_add(player, "t");
-	let playerT = be.component_get(player.transformIdx, "t");
+	be.component_add(player, be.COMPONENT_TYPE.TRANSFORM);
+	let playerT = be.component_get(player.transformIdx, be.COMPONENT_TYPE.TRANSFORM);
 	playerT.pos.x = 300;
 	playerT.pos.y = 50;
 
-	be.component_add(player, "s");
-	let playerS = be.component_get(player.spriteIdx, "s");
+	be.component_add(player, be.COMPONENT_TYPE.SPRITE);
+	let playerS = be.component_get(player.spriteIdx, be.COMPONENT_TYPE.SPRITE);
 	playerS.flipH = true;
 	console.log(playerS);
 
 	be.component_sprite_set(player.spriteIdx, "anim_walk");
-
 }
 
 // logic for inputs or what will happen if an input happenning
@@ -41,7 +39,6 @@ const vel = new be.Vector2(1, 0);
 // used for game logic such as movement, physics, enemies, etc. 
 menuScene.update = () => {
 	// console.log("GAME LOGIC COMPUTED");
-	be.camera_movement(vel);
 };
 
 
