@@ -14,7 +14,7 @@ let ctx
 
 
 //For calculating FPS
-let secondsPassed = 0;
+export let secondsPassed = 0;
 let oldTimeStamp = 0;
 let fps = 0;
 

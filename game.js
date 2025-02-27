@@ -28,7 +28,7 @@ menuScene.setup = () => {
 
 	const pePos = playerT.pos.clone();
 	be.component_add(player, be.COMPONENT_TYPE.PARTICLE_EMITTER);
-	be.particle_emitter_set(player.particleEmitterIdx, pePos, 5, 10, be.COLOR.RED, new be.Vector2(-3, -3), new be.Vector2(3, 3),new be.Vector2(10, 10));
+	be.particle_emitter_set(player.particleEmitterIdx, pePos, 3, 1, be.COLOR.RED, new be.Vector2(-3, -3), new be.Vector2(3, 3),new be.Vector2(150, 150));
 
 }
 

@@ -334,11 +334,12 @@ class ParticleEmitter extends Component {
 	constructor(pos, duration, amount, col) {
 		super();
 		this.pos = (pos === undefined) ? new Vector2() : pos;
-		this.duration = (duration === undefined) ? 5 : duration;
 		this.amount = (amount === undefined) ? 10 : amount;
 		this.col = (col === undefined) ? COLOR.WHITE : col; 
 		this.particles = new Array();
 		this.isEmitting = true;
+		this.minVel = new Vector2(0, 0);
+		this.maxVel = new Vector2(1, 1);
 		// Add enum for different emit shape
 	}
 }
@@ -347,12 +348,11 @@ class Particle {
 	constructor() {
 		this.pos = new Vector2();
 		this.size = new Vector2();
-		this.minVel = new Vector2(0, 0);
-		this.maxVel = new Vector2(1, 1);
+		this.vel = new Vector2();
 		this.lifeTime = 1;
 		this.time = 0;
 		this.colRect = new ColorRectangle(this.pos, this.size, COLOR.RED);
-		this.isDraw = true;
+		this.isAlive = true;
 		// this.sprite = new Sprite();
 		// this.blend = null;		
 		// this.angle = 0;
@@ -725,47 +725,35 @@ export function sprite_set(sprId, imgName) {
 	// currScene.cSprites[sprId].set_origin();
 }
 
-export function particle_emitter_set(peIdx, pePos, duration, amount, col, minVel, maxVel, particleSize) {
+export function particle_emitter_set(
+	peIdx, pePos, lifeTime, amount, col, minVel, maxVel, particleSize) {
 	const pe = currScene.cParticleEmitters[peIdx];
 	pe.pos = pePos;
-	pe.duration = duration;
 	pe.amount = amount;
 	pe.col = col;
+	pe.minVel = minVel;
+	pe.maxVel = maxVel;
+
+	//TODO: random direction
 
 	for (let i = 0; i < amount; i += 1) {
 		const p = new Particle();
+		const randX = Math.random() * (pe.maxVel.x - pe.minVel.x) + pe.minVel.x;
+		const randY = Math.random() * (pe.maxVel.y - pe.minVel.y) + pe.minVel.y;
+		const randVel = new Vector2(randX, randY);
 		p.pos = pe.pos;
-		p.minVel = minVel;
-		p.maxVel = maxVel;
+		p.vel = randVel;
 		p.colRect.pos = pe.pos;
 		p.colRect.size = particleSize;
-		p.colRect.fillTint = col;
+		p.colRect.fillTint = pe.col;
 		p.size = particleSize;
 
+		p.lifeTime = lifeTime;
 
 		pe.particles.push(p);
 	}
 
 	console.log(pe);
-}
-
-function particle_update(particle) {
-	const randX = Math.random() * (particle.maxVel.x - particle.minVel.x) + particle.minVel.x;
-	const randY = Math.random() * (particle.maxVel.y - particle.minVel.y) + particle.minVel.y;
-	const randVel = new Vector2(randX, randY);
-
-	particle.pos.add(randVel);
-}
-
-function particle_emitter_emitting(particleEmitter) {
-	if (particleEmitter.isEmitting) {
-		for (let p of particleEmitter.particles) {
-			if (p.isDraw) {
-				particle_update(p);
-				util.draw_rect(p.colRect.pos, p.colRect.size, p.colRect.fillTint);
-			}
-		}			
-	}	
 }
 
 
@@ -785,6 +773,18 @@ function camera_setup() {
 	const canvasHeight = canvas_get().height;
 	camera.size = new Vector2(canvasWidth, canvasHeight);
 }
+
+
+function particle_emitter_emitting(particleEmitter) {
+	if (particleEmitter.isEmitting) {
+		for (let p of particleEmitter.particles) {
+			if (p.isAlive) {
+				util.draw_rect(p.colRect.pos, p.colRect.size, p.colRect.fillTint);
+			}
+		}			
+	}	
+}
+
 
 function draw() {
 	entities_y_sorted();
@@ -838,11 +838,31 @@ function collision() {
 
 }
 
+
+function particle_update() {
+	for (let pe of currScene.cParticleEmitters) {
+		if (pe.isEmitting) {
+			for (let p of pe.particles) {
+				if (p.isAlive) {
+					p.pos.add(p.vel);			
+					p.time += util.secondsPassed;
+					if (p.time >= p.lifeTime) {
+						p.isAlive = false;
+						p.time = 0;
+						break;
+					}
+				}
+			}
+		}		
+	}
+}
+
 function update(timeStamp) {
 	if (!is_paused()) {
 		currScene.input();
 		currScene.update();
 		// collision();
+		particle_update(timeStamp);
 	}
 	
 	if (is_draw_image()) {

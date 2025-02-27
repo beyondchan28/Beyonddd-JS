@@ -77,7 +77,7 @@ and then include *game.js* as **module** in the *HTML file*.
 - [X] Animation system
 - [X] Scene system
 - [X] Asset system
-- [ ] Game editor
 - [ ] Particle system
+- [ ] Game editor
 - [ ] Physics system
 - [ ] Tiled/OGMO editor integration
