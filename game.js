@@ -26,7 +26,9 @@ menuScene.setup = () => {
 	be.animation_set_sprite(player.animationIdx, player.spriteIdx);
 	be.animation_setup(player.animationIdx, "Walk", 6, 5);
 
+	const pePos = playerT.pos.clone();
 	be.component_add(player, be.COMPONENT_TYPE.PARTICLE_EMITTER);
+	be.particle_emitter_set(player.particleEmitterIdx, pePos, 5, 10, be.COLOR.RED, new be.Vector2(-3, -3), new be.Vector2(3, 3),new be.Vector2(10, 10));
 
 }
 
