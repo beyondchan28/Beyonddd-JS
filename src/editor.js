@@ -266,7 +266,7 @@ const rightPanel = document.getElementById("right-panel");
 
 const sliderParent = div_create(leftPanel, "slider-container")
 const slider = input_slider_create(sliderParent, "slider");
-const span = span_create(sliderParent, "span", "FUCK YOU"); 
+const span = span_create(sliderParent, "span", "HELLO"); 
 
 // Engine states
 const engineStatesV = vertical_box_create(leftPanel, "engine-states");

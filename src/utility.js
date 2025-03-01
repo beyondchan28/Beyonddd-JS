@@ -55,7 +55,7 @@ export function calculate_FPS(ts) {
 
 export function clear_background(col) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = col;
+	ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${col.a})`;
 	ctx.fillRect(0, 0, canvas.width, canvas.height); //background
 }
 
@@ -67,28 +67,28 @@ export function draw_line(start, end) {
 	// ctx.stroke();
 }
 
-export function draw_circle(center, radius, outlineTint, fillTint) {
+export function draw_circle(center, radius, outLineCol, fillCol) {
 	ctx.beginPath();
 	ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
-	ctx.strokeStyle = outlineTint;
+	ctx.strokeStyle = `rgba(${outLineCol.r}, ${outLineCol.g}, ${outLineCol.b}, ${outLineCol.a})`;
 	ctx.stroke();
-	ctx.fillStyle = fillTint;
+	ctx.fillStyle = `rgba(${fillCol.r}, ${fillCol.g}, ${fillCol.b}, ${fillCol.a})`;
 	ctx.fill();
 }
 
-export function draw_text(font, text, pos, tint) {
+export function draw_text(font, text, pos, col) {
 	ctx.font = font;
-	ctx.fillStyle = tint;
+	ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${col.a})`;
 	ctx.fillText(text, pos.x, pos.y);
 }
 
-export function draw_rect(pos, size, fillTint) {
-	ctx.fillStyle = fillTint;
+export function draw_rect(pos, size, col) {
+	ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${col.a})`;
 	ctx.fillRect(pos.x, pos.y, size.x, size.y);
 }
 
-export function draw_stroke_rect(pos, size, strokeTint) {
-	ctx.strokeStyle = strokeTint;
+export function draw_stroke_rect(pos, size, col) {
+	ctx.strokeStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${col.a})`;
 	ctx.strokeRect(pos.x, pos.y, size.x, size.y);
 }
 

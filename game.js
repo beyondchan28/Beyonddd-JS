@@ -38,7 +38,6 @@ menuScene.setup = () => {
 		new be.Vector2(3, 3),
 		new be.Vector2(10, 10)
 	);
-
 }
 
 // logic for inputs or what will happen if an input happenning

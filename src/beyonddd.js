@@ -87,15 +87,30 @@ export const KEY = {
     EXCLAMATION: "\!",
 }
 
+export class Color{
+
+	constructor(r, g, b, a) {
+		this.r = (r === undefined) ? 255 : r;
+		this.g = (r === undefined) ? 255 : g;
+		this.b = (r === undefined) ? 255 : b;
+		this.a = (r === undefined) ? 1 : a; // alpha channel is 0 to 1 scale	
+	}
+
+	clone() {
+		return new Color(this.r, this.g, this.b, this.a);
+	}
+}
+
 // all supported color name : https://www.w3schools.com/colors/colors_names.asp
+// TODO: using RGBA value, rather than this
 export const COLOR = {
-    BLACK:      "black",
-    WHITE:      "white",
-    BLUE:       "blue",
-    RED: 		"red", 
-    YELLOW:     "yellow",
-    GREEN:      "green",
-    LIGHT_BLUE: "lightblue"
+    BLACK:      new Color(0, 0, 0, 1),
+    WHITE:      new Color(255, 255, 255, 1),
+    BLUE:       new Color(0, 0, 255, 1),
+    RED:        new Color(255, 0, 0, 1),
+    YELLOW:     new Color(255, 255, 0, 1),
+    GREEN:      new Color(0, 255, 0, 1),
+    LIGHT_BLUE: new Color(173, 216, 230, 1)
 }
 
 
@@ -114,7 +129,7 @@ export const PARTICLE_TYPE = {
 
 }
 
-export const PARTICLE_SHAPE = {
+export const EMIT_SHAPE = {
     CIRCLE: 0,
     SQUARE: 1,
     CONE:   2,
@@ -800,7 +815,7 @@ export function particle_emitter_set(
 		p.vel = randVel;
 		p.colRect.pos = p.pos.clone();
 		p.colRect.size = particleSize;
-		p.colRect.fillTint = pe.col;
+		p.colRect.fillTint = pe.col.clone();
 		p.size = particleSize;
 		p.lifeTime = Math.random() * lifeTime + 1;
 
@@ -818,19 +833,22 @@ function particle_update(particle) {
 
 	// p.pos.add(v);
 	// console.log(util.secondPassed)
-	if (particle.startTime > 0.01) {
+	if (particle.startTime > 0.1) {
 		particle.startTime -= util.secondsPassed;
 		return;
 	} 
 
 	particle.colRect.pos.add(particle.vel)
 	particle.colRect.pos.scale(util.secondPassed);
+	particle.colRect.fillTint.a -= 0.01;
 
 	particle.time += util.secondsPassed;
 	if (particle.time >= particle.lifeTime) {
 		// particle.isAlive = false;
 		particle.colRect.pos = particle.pos.clone();
 		particle.time = 0;
+		particle.colRect.fillTint.a = 1;
+
 	}
 	//TODO: fade out 
 }
@@ -858,7 +876,6 @@ function draw() {
 			particle_draw(pe);
 		}
 	}
-
 }
 
 function collision() {
