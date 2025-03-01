@@ -87,6 +87,7 @@ export const KEY = {
     EXCLAMATION: "\!",
 }
 
+// all supported color name : https://www.w3schools.com/colors/colors_names.asp
 export const COLOR = {
     BLACK:      "black",
     WHITE:      "white",
@@ -135,6 +136,9 @@ export class Vector2 {
 	}
 	clone() {
 		return new Vector2(this.x, this.y)
+	}
+	isEqual(vector) {
+		return this.x === vector.x && this.y === vector.y;
 	}
 	add(vector) {
 		this.x += vector.x;
@@ -366,6 +370,7 @@ class Particle {
 		this.vel = new Vector2();
 		this.lifeTime = 1;
 		this.time = 0;
+		this.startTime = Math.random();
 		this.colRect = new ColorRectangle(this.pos, this.size, COLOR.RED);
 		this.isAlive = true;
 
@@ -799,6 +804,7 @@ export function particle_emitter_set(
 		p.size = particleSize;
 		p.lifeTime = Math.random() * lifeTime + 1;
 
+		// console.log(p.startTime)
 		pe.particles.push(p);
 	}
 
@@ -811,6 +817,12 @@ function particle_update(particle) {
 	// const v = new Vector2(particle.radius*Math.cos(rad), particle.radius*Math.sin(rad));
 
 	// p.pos.add(v);
+	// console.log(util.secondPassed)
+	if (particle.startTime > 0.01) {
+		particle.startTime -= util.secondsPassed;
+		return;
+	} 
+
 	particle.colRect.pos.add(particle.vel)
 	particle.colRect.pos.scale(util.secondPassed);
 
