@@ -22,15 +22,15 @@ TODO:
 - [X] ordering all the APIs alphabetically, so it easier to navigate to.
 - [X] differentiate order between `export`(below) and non-export (upper) function.
 - [] making different flag for particle emit shape and random its direction
-- [] setting up key_map in editor
 - [] collision solver and its abstraction.
+- [] start building the game.
+- [] setting up key_map in editor
 - [] implement camera trap and side scrolling
 - [] in-game UIs system
 - [] change scene's variable name on boilerplate based on its name   
 - [] steering stuff and physics for 2d platformer game
 - [] generate all the panels and its css from the editor.js
 - [] making SceneMenu.
-- [] start building the game.
 - [] proper type checking for every parameters for better debugging.
 
 NOTE:

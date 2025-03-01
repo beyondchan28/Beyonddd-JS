@@ -22,9 +22,9 @@ const ENTITY_TYPE = {
 }
 
 const SCENE_TYPE = {
-    GUI_ONLY:      0,
-    GAMEPLAY_ONLY: 1,
-    DEFAULT:       2,
+    DEFAULT:       0,
+    GUI_ONLY:      1,
+    GAMEPLAY_ONLY: 2,
 }
 
 
@@ -107,6 +107,21 @@ export const COMPONENT_TYPE = {
     TEXT:             5,
     COLOR_RECTANGLE:  6,
     PARTICLE_EMITTER: 7,
+}
+
+export const PARTICLE_TYPE = {
+
+}
+
+export const PARTICLE_SHAPE = {
+    CIRCLE: 0,
+    SQUARE: 1,
+    CONE:   2,
+    LINE:   3,
+}
+
+export function degrees_to_radians(deg) {
+	return deg * (Math.PI/180);
 }
 
 export class Vector2 {
@@ -353,6 +368,10 @@ class Particle {
 		this.time = 0;
 		this.colRect = new ColorRectangle(this.pos, this.size, COLOR.RED);
 		this.isAlive = true;
+
+		this.angle = 180; // in degrees
+		this.radius = 100;
+
 		// this.sprite = new Sprite();
 		// this.blend = null;		
 		// this.angle = 0;
@@ -725,37 +744,6 @@ export function sprite_set(sprId, imgName) {
 	// currScene.cSprites[sprId].set_origin();
 }
 
-export function particle_emitter_set(
-	peIdx, pePos, lifeTime, amount, col, minVel, maxVel, particleSize) {
-	const pe = currScene.cParticleEmitters[peIdx];
-	pe.pos = pePos;
-	pe.amount = amount;
-	pe.col = col;
-	pe.minVel = minVel;
-	pe.maxVel = maxVel;
-
-	//TODO: random direction
-
-	for (let i = 0; i < amount; i += 1) {
-		const p = new Particle();
-		const randX = Math.random() * (pe.maxVel.x - pe.minVel.x) + pe.minVel.x;
-		const randY = Math.random() * (pe.maxVel.y - pe.minVel.y) + pe.minVel.y;
-		const randVel = new Vector2(randX, randY);
-		p.pos = pe.pos;
-		p.vel = randVel;
-		p.colRect.pos = pe.pos;
-		p.colRect.size = particleSize;
-		p.colRect.fillTint = pe.col;
-		p.size = particleSize;
-
-		p.lifeTime = lifeTime;
-
-		pe.particles.push(p);
-	}
-
-	console.log(pe);
-}
-
 
 export function canvas_setup(canvas, width, height) {
 	util.context_setup(canvas);
@@ -775,16 +763,65 @@ function camera_setup() {
 }
 
 
-function particle_emitter_emitting(particleEmitter) {
+function particle_draw(particleEmitter) {
 	if (particleEmitter.isEmitting) {
 		for (let p of particleEmitter.particles) {
 			if (p.isAlive) {
+				particle_update(p);
 				util.draw_rect(p.colRect.pos, p.colRect.size, p.colRect.fillTint);
 			}
 		}			
 	}	
 }
 
+
+export function particle_emitter_set(
+	peIdx, pePos, lifeTime, amount, col, minVel, maxVel, particleSize) {
+	const pe = currScene.cParticleEmitters[peIdx];
+	pe.pos = pePos;
+	pe.amount = amount;
+	pe.col = col;
+	pe.minVel = minVel;
+	pe.maxVel = maxVel;
+
+	//TODO: random direction
+
+	for (let i = 0; i < amount; i += 1) {
+		const p = new Particle();
+		const randX = Math.random() * (pe.maxVel.x - pe.minVel.x) + pe.minVel.x;
+		const randY = Math.random() * (pe.maxVel.y - pe.minVel.y) + pe.minVel.y;
+		const randVel = new Vector2(randX, randY);
+		p.pos = pe.pos;
+		p.vel = randVel;
+		p.colRect.pos = p.pos.clone();
+		p.colRect.size = particleSize;
+		p.colRect.fillTint = pe.col;
+		p.size = particleSize;
+		p.lifeTime = Math.random() * lifeTime + 1;
+
+		pe.particles.push(p);
+	}
+
+	console.log(pe);
+}
+
+
+function particle_update(particle) {
+	// const rad = degrees_to_radians(particle.angle);
+	// const v = new Vector2(particle.radius*Math.cos(rad), particle.radius*Math.sin(rad));
+
+	// p.pos.add(v);
+	particle.colRect.pos.add(particle.vel)
+	particle.colRect.pos.scale(util.secondPassed);
+
+	particle.time += util.secondsPassed;
+	if (particle.time >= particle.lifeTime) {
+		// particle.isAlive = false;
+		particle.colRect.pos = particle.pos.clone();
+		particle.time = 0;
+	}
+	//TODO: fade out 
+}
 
 function draw() {
 	entities_y_sorted();
@@ -805,8 +842,8 @@ function draw() {
 	}
 
 	if (currScene.cParticleEmitters.length !== 0) {
-		for (let p of currScene.cParticleEmitters) {
-			particle_emitter_emitting(p);
+		for (let pe of currScene.cParticleEmitters) {
+			particle_draw(pe);
 		}
 	}
 
@@ -839,30 +876,11 @@ function collision() {
 }
 
 
-function particle_update() {
-	for (let pe of currScene.cParticleEmitters) {
-		if (pe.isEmitting) {
-			for (let p of pe.particles) {
-				if (p.isAlive) {
-					p.pos.add(p.vel);			
-					p.time += util.secondsPassed;
-					if (p.time >= p.lifeTime) {
-						p.isAlive = false;
-						p.time = 0;
-						break;
-					}
-				}
-			}
-		}		
-	}
-}
-
 function update(timeStamp) {
 	if (!is_paused()) {
 		currScene.input();
 		currScene.update();
 		// collision();
-		particle_update(timeStamp);
 	}
 	
 	if (is_draw_image()) {

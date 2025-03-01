@@ -16,8 +16,8 @@ menuScene.setup = () => {
 
 	be.component_add(player, be.COMPONENT_TYPE.TRANSFORM);
 	const playerT = be.component_get(player.transformIdx, be.COMPONENT_TYPE.TRANSFORM);
-	playerT.pos.x = 300;
-	playerT.pos.y = 50;
+	playerT.pos.x = 400;
+	playerT.pos.y = 300;
 
 	be.component_add(player, be.COMPONENT_TYPE.SPRITE);
 	be.sprite_set(player.spriteIdx, "anim_walk");
@@ -28,7 +28,16 @@ menuScene.setup = () => {
 
 	const pePos = playerT.pos.clone();
 	be.component_add(player, be.COMPONENT_TYPE.PARTICLE_EMITTER);
-	be.particle_emitter_set(player.particleEmitterIdx, pePos, 3, 1, be.COLOR.RED, new be.Vector2(-3, -3), new be.Vector2(3, 3),new be.Vector2(150, 150));
+	be.particle_emitter_set(
+		player.particleEmitterIdx, 
+		pePos, 
+		1.5, 
+		1000, 
+		be.COLOR.RED, 
+		new be.Vector2(-3, -3), 
+		new be.Vector2(3, 3),
+		new be.Vector2(10, 10)
+	);
 
 }
 
