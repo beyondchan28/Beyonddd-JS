@@ -93,7 +93,7 @@ export class Color{
 		this.r = (r === undefined) ? 255 : r;
 		this.g = (r === undefined) ? 255 : g;
 		this.b = (r === undefined) ? 255 : b;
-		this.a = (r === undefined) ? 1 : a; // alpha channel is 0 to 1 scale	
+		this.a = (r === undefined) ? 1 : a; // alpha channel is from 0 to 1 scale	
 	}
 
 	clone() {
@@ -126,7 +126,7 @@ export const COMPONENT_TYPE = {
 }
 
 export const PARTICLE_TYPE = {
-
+	DEFAULT: 0,
 }
 
 export const EMIT_SHAPE = {
@@ -134,6 +134,11 @@ export const EMIT_SHAPE = {
     SQUARE: 1,
     CONE:   2,
     LINE:   3,
+}
+
+export const COLLISION_TYPE = {
+    STATIC:    0,
+    KINEMATIC: 1,
 }
 
 export function degrees_to_radians(deg) {
@@ -267,6 +272,7 @@ class BoundingBox extends Component {
 		super();
 		this.size = (size === undefined) ? new Vector2() : size;
 		this.halfSize = (halfSize === undefined) ? new Vector2() : halfSize;
+		this.collisionType = COLLISION_TYPE.STATIC;
 	}
 }
 
@@ -483,7 +489,7 @@ class EngineSettings {
 	constructor() {
 		this.isPaused = false;
 		this.isDrawImage = true;
-		this.isDrawCollisionShape = false;
+		this.isDrawCollisionShape = true;
 		this.showFPS = true;
 
 		this.inputMap = new Map();
@@ -497,6 +503,7 @@ class EngineSettings {
 
 const settings = new EngineSettings();
 let currScene = settings.currentScene;
+console.log(settings);
 
 const camera = {
 	pos : new Vector2(),
@@ -545,14 +552,20 @@ export function camera_movement(vel) {
 	// console.log(camera.pos.x);
 }
 
-export function collision_rect_debug(id) {
-	util.draw_stroke_rect(currScene.cTransforms[id].pos, currScene.cBoundingBoxes[id].size, COLOR.BLACK);
+export function collision_rect_debug(bb) {
+	util.draw_stroke_rect(currScene.cTransforms[bb.userId].pos, bb.size, COLOR.BLACK);
 }
 
 export function collision_rect_check(tIdx1, tIdx2, bbIdx1, bbIdx2) {
 	let dpos = currScene.cTransfroms[tIdx1].pos.delta(currScene.cTransfroms[tIdx2].pos);
 	let overlap = currScene.cBoundingBoxes[bbIdx1].halfSize.add(currScene.cBoundingBoxes[bbIdx2].halfSize).subtract(dpos);
 	return (overlap.x > 0.0 && overlap.y > 0.0) ? overlap : null;
+}
+
+export function bounding_box_set(bbId, size, collType) {
+	currScene.cBoundingBoxes[bbId].size = size;
+	currScene.cBoundingBoxes[bbId].halfSize = size.scale(0.5);
+	currScene.cBoundingBoxes[bbId].collisionType = collType;
 }
 
 
@@ -876,6 +889,12 @@ function draw() {
 			particle_draw(pe);
 		}
 	}
+
+	if (settings.isDrawCollisionShape) {
+		for (let bb of currScene.cBoundingBoxes) {
+			collision_rect_debug(bb);
+		}
+	}
 }
 
 function collision() {
@@ -885,6 +904,30 @@ function collision() {
 	}
 
 	const entities = currScene.entityMap.values(); 
+
+	for (let bbK of currSceneBB) {
+		if (bbK.collisionType === COLLISION_TYPE.KINEMATIC) {
+			
+			const entBBK = entities[bbK.userId];
+			for (let bbS of currSceneBB) {
+				if (bbS.collisionType === COLLISION_TYPE.STATIC) {
+					const entBBS = entities[bbS.userId];
+					var overlap = collision_rect_check(
+							entBBK.transformIdx,
+							entBBS.transformIdx,
+							entBBK.boundingBoxIdx,
+							entBBS.boundingBoxIdx,
+						);
+
+					console.log(overlap);
+					if (overlap) {
+						console.log("COLLIDING");
+					}
+				}
+			} 
+		}
+	} 
+
 	for (let idx = 0; idx < currSceneBB.size; idx += 1) {
 		if (idx + 1 < currSceneBB.size) {
 			var overlap = collision_rect_check(
@@ -909,7 +952,7 @@ function update(timeStamp) {
 	if (!is_paused()) {
 		currScene.input();
 		currScene.update();
-		// collision();
+		collision();
 	}
 	
 	if (is_draw_image()) {

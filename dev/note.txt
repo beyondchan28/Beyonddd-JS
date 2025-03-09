@@ -21,8 +21,9 @@ TODO:
 - [X] put types.js content into beyonddd.js so it looks like raylib header file
 - [X] ordering all the APIs alphabetically, so it easier to navigate to.
 - [X] differentiate order between `export`(below) and non-export (upper) function.
-- [] making different flag for particle emit shape and random its direction
 - [] collision solver and its abstraction.
+	+ There is a problem with entityMap. The values, cant be accessed directly.
+- [] making different flag for particle emit shape and random its direction
 - [] start building the game.
 - [] setting up key_map in editor
 - [] implement camera trap and side scrolling
