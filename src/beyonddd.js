@@ -437,6 +437,14 @@ class Entity {
             this.particleEmitterIdx = -1;
 		}
 	}
+
+	get_id() {
+		return this.id;
+	}
+
+	check_id(id) {
+		return this.id === id;
+	}
 }
 
 class InputKey {
@@ -557,8 +565,12 @@ export function collision_rect_debug(bb) {
 }
 
 export function collision_rect_check(tIdx1, tIdx2, bbIdx1, bbIdx2) {
-	let dpos = currScene.cTransfroms[tIdx1].pos.delta(currScene.cTransfroms[tIdx2].pos);
-	let overlap = currScene.cBoundingBoxes[bbIdx1].halfSize.add(currScene.cBoundingBoxes[bbIdx2].halfSize).subtract(dpos);
+	const ct = currScene.cTransforms;
+	const cbb = currScene.cBoundingBoxes;
+	let dpos = ct[tIdx1].pos.delta(ct[tIdx2].pos);
+	let overlap = ((cbb[bbIdx1].halfSize).addAndCopy(cbb[bbIdx2].halfSize)).subtract(dpos);
+	// console.log(overlap);
+	// console.log(cbb[bbIdx2].halfSize);
 	return (overlap.x > 0.0 && overlap.y > 0.0) ? overlap : null;
 }
 
@@ -642,6 +654,14 @@ export function entity_create(name) {
 
 export function entity_get(name) {
 	return currScene.entityMap.get(name);
+}
+
+export function entity_get_by_id(id) {
+	for (let e of currScene.entityMap.values()) {
+		if (e.check_id(id)) {
+			return e;
+		}
+	}
 }
 
 export function entity_remove(name) {
@@ -907,11 +927,10 @@ function collision() {
 
 	for (let bbK of currSceneBB) {
 		if (bbK.collisionType === COLLISION_TYPE.KINEMATIC) {
-			
-			const entBBK = entities[bbK.userId];
+			const entBBK = entity_get_by_id(bbK.userId);
 			for (let bbS of currSceneBB) {
 				if (bbS.collisionType === COLLISION_TYPE.STATIC) {
-					const entBBS = entities[bbS.userId];
+					const entBBS = entity_get_by_id(bbS.userId);
 					var overlap = collision_rect_check(
 							entBBK.transformIdx,
 							entBBS.transformIdx,
@@ -919,7 +938,7 @@ function collision() {
 							entBBS.boundingBoxIdx,
 						);
 
-					console.log(overlap);
+					// console.log(overlap);
 					if (overlap) {
 						console.log("COLLIDING");
 					}
@@ -927,24 +946,6 @@ function collision() {
 			} 
 		}
 	} 
-
-	for (let idx = 0; idx < currSceneBB.size; idx += 1) {
-		if (idx + 1 < currSceneBB.size) {
-			var overlap = collision_rect_check(
-				entities[idx].transformIdx, entities[idx + 1].transformIdx, 
-				entities[idx].boundingBoxIdx, entities[idx + 1].boundingBoxIdx);
-
-			if (overlap) {
-				
-			}
-
-		} else if (idx == currSceneBB.size - 1) {
-			var ovelap = collision_rect_check(
-				entities[idx].transformIdx, entities[0].transformIdx,
-				entities[idx].boundingBoxIdx, entities[0].boundingBoxIdx);
-		}
-	}
-
 }
 
 

@@ -24,29 +24,35 @@ menuScene.setup = () => {
 
 	be.component_add(player, be.COMPONENT_TYPE.TRANSFORM);
 	const playerT = be.component_get(player.transformIdx, be.COMPONENT_TYPE.TRANSFORM);
-	playerT.pos.x = 400;
-	playerT.pos.y = 300;
+	playerT.pos.x = 100;
+	playerT.pos.y = 100;
 
 	be.component_add(player, be.COMPONENT_TYPE.SPRITE);
-	be.sprite_set(player.spriteIdx, "anim_walk");
+	be.sprite_set(player.spriteIdx, "icon");
 
 	be.component_add(player, be.COMPONENT_TYPE.ANIMATION);
-	be.animation_set_sprite(player.animationIdx, player.spriteIdx);
-	be.animation_setup(player.animationIdx, "Walk", 6, 5);
+	// be.animation_set_sprite(player.animationIdx, player.spriteIdx);
+	// be.animation_setup(player.animationIdx, "Walk", 6, 5);
 
 	be.component_add(player, be.COMPONENT_TYPE.BOUNDING_BOX);
-	be.bounding_box_set(player.boundingBoxIdx, new be.Vector2(28, 40), be.COLLISION_TYPE.KINEMATIC);
+	be.bounding_box_set(
+		player.boundingBoxIdx, new be.Vector2(64, 64), be.COLLISION_TYPE.KINEMATIC
+	);
 
 	be.component_add(staticObj, be.COMPONENT_TYPE.TRANSFORM);
-	const staticObjT = be.component_get(staticObj.transformIdx, be.COMPONENT_TYPE.TRANSFORM);
-	staticObjT.pos.x = 300;
-	staticObjT.pos.y = 300;
+	const staticObjT = be.component_get(
+		staticObj.transformIdx, be.COMPONENT_TYPE.TRANSFORM
+	);
+	staticObjT.pos.x = 0;
+	staticObjT.pos.y = 0;
 
 	be.component_add(staticObj, be.COMPONENT_TYPE.SPRITE);
 	be.sprite_set(staticObj.spriteIdx, "icon");
 
 	be.component_add(staticObj, be.COMPONENT_TYPE.BOUNDING_BOX);
-	be.bounding_box_set(staticObj.boundingBoxIdx, new be.Vector2(64, 64), be.COLLISION_TYPE.STATIC);
+	be.bounding_box_set(
+		staticObj.boundingBoxIdx, new be.Vector2(64, 64), be.COLLISION_TYPE.STATIC
+	);
 
 
 	// const pePos = playerT.pos.clone();z

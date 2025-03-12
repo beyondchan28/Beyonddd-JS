@@ -23,6 +23,7 @@ TODO:
 - [X] differentiate order between `export`(below) and non-export (upper) function.
 - [] collision solver and its abstraction.
 	+ There is a problem with entityMap. The values, cant be accessed directly.
+	+ Implement quadtree for more efficient and performant AABB collision checking.
 - [] making different flag for particle emit shape and random its direction
 - [] start building the game.
 - [] setting up key_map in editor
