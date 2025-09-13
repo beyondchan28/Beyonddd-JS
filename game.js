@@ -36,7 +36,9 @@ menuScene.setup = () => {
 
 	be.component_add(player, be.COMPONENT_TYPE.BOUNDING_BOX);
 	be.bounding_box_set(
-		player.boundingBoxIdx, new be.Vector2(64, 64), be.COLLISION_TYPE.KINEMATIC
+		player.boundingBoxIdx, 
+		new be.Vector2(64, 64), 
+		be.COLLISION_TYPE.KINEMATIC
 	);
 
 	be.component_add(staticObj, be.COMPONENT_TYPE.TRANSFORM);
@@ -51,7 +53,9 @@ menuScene.setup = () => {
 
 	be.component_add(staticObj, be.COMPONENT_TYPE.BOUNDING_BOX);
 	be.bounding_box_set(
-		staticObj.boundingBoxIdx, new be.Vector2(64, 64), be.COLLISION_TYPE.STATIC
+		staticObj.boundingBoxIdx, 
+		new be.Vector2(64, 64), 
+		be.COLLISION_TYPE.STATIC
 	);
 
 

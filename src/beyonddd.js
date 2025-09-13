@@ -102,7 +102,6 @@ export class Color{
 }
 
 // all supported color name : https://www.w3schools.com/colors/colors_names.asp
-// TODO: using RGBA value, rather than this
 export const COLOR = {
     BLACK:      new Color(0, 0, 0, 1),
     WHITE:      new Color(255, 255, 255, 1),
@@ -239,6 +238,18 @@ export class Vector2 {
 
 }
 
+
+const QUAD_MAX_ENTITY = 10;
+const QUAD_MAX_LEVEL  = 4;
+
+class QuadTree {
+	constructor(pos, size, level) {
+        this.pos             = (pos === undefined) ? new Vector2() : pos; //NOTE: top-left corner
+        this.size            = (size === undefined) ? new Vector2() : size;
+        this.level           = (level === undefined) ? 0 : level; //NOTE: region amounts
+        this.staticEntityIds = new Array();
+	}
+}
 
 class Component {
 	constructor() {
@@ -487,6 +498,7 @@ class Scene {
 				this.cSprites = new Array();
 				this.cAnimations = new Array();
 		        this.cParticleEmitters = new Array();
+		        this.quadTrees = new Array();
 				break;
 		}
 	}
@@ -517,6 +529,44 @@ const camera = {
 	pos : new Vector2(),
 	size : new Vector2(),
 }
+
+//grouping objects and checking AABB collision based on its positions
+//the problem now, is how to group all of the objects with the current implementation ?
+//change entities data structure to array so, we can sort the that based on its position.
+/*
+	1. make the data structure
+	2. create 4 region (quad)
+	3. check the position of all entity with BoundingBox typed STATIC component
+	4. determine its region and the store the information.
+	5. only check entity with BoundingBox typed KINEMATIC component based on its position on the region (quad).
+	then do AABB checks.
+	6. check the max object amount. if maxed out, then this reqion will be divided into four equally
+	7. check the 
+*/
+
+function quad_tree_setup() {
+	//setup initial region
+	const sizeX = canvas_get().width/QUAD_MAX_LEVEL;
+	const sizeY = canvas_get().height/QUAD_MAX_LEVEL;
+	const pattern = [[0,0], [0,1], [1,0], [1,1]];
+	let level = 1;
+	
+	for(let p of pattern) {
+		console.log(p[0], p[1]);
+		const pos = new Vector2(sizeX * p[0], sizeY * p[1]); 
+		const size = new Vector2(sizeX, sizeY);
+		const newQuad = new QuadTree(pos, size, level);
+		currScene.quadTrees.push(newQuad);
+		level += 1;	
+	}
+
+	//setup all the static objects
+	for (let of currScene.cBoundinBoxes) {
+		if 
+	}
+
+}
+
 
 function animation_update(anim) {
 	anim.currentFrame++;
@@ -805,6 +855,7 @@ export function canvas_setup(canvas, width, height) {
 
 export function init() {
 	currScene.setup();
+	quad_tree_setup();
 	camera_setup();
 	window.requestAnimationFrame(update);
 }
