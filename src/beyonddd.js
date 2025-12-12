@@ -560,10 +560,10 @@ function quad_tree_setup() {
 		level += 1;	
 	}
 
-	//setup all the static objects
-	for (let of currScene.cBoundinBoxes) {
-		if 
-	}
+	// //setup all the static objects
+	// for (let of currScene.cBoundinBoxes) {
+	// 	if 
+	// }
 
 }
 
@@ -611,7 +611,8 @@ export function camera_movement(vel) {
 }
 
 export function collision_rect_debug(bb) {
-	util.draw_stroke_rect(currScene.cTransforms[bb.userId].pos, bb.size, COLOR.BLACK);
+	const transform = component_get(bb.get_user(), COMPONENT_TYPE.TRANSFORM);
+	util.draw_stroke_rect(transform.pos, bb.size, COLOR.BLACK);
 }
 
 export function collision_rect_check(tIdx1, tIdx2, bbIdx1, bbIdx2) {
@@ -670,22 +671,23 @@ export function component_add(ent, compType) {
 	}
 }
 
-export function component_get(compId, type) {
+export function component_get(entityId, type) {
+	const entity = entity_get_by_id(entityId);
 	switch (type) {
 		case COMPONENT_TYPE.ANIMATION:
-			return currScene.cAnimations[compId];
+			return currScene.cAnimations[entity.animationIdx];
 			break;
 		case COMPONENT_TYPE.TRANSFORM:
-			return currScene.cTransforms[compId];
+			return currScene.cTransforms[entity.transformIdx];
 			break;
 		case COMPONENT_TYPE.SPRITE:
-			return currScene.cSprites[compId];
+			return currScene.cSprites[entity.spriteIdx];
 			break;
 		case COMPONENT_TYPE.BOUNDING_BOX:
-			return currScene.cBoundingBoxes[compId];
+			return currScene.cBoundingBoxes[entity.boundingBoxIdx];
 			break;
 		case COMPONENT_TYPE.PARTICLE_EMITTER:
-			return currScene.cParticleEmitters[compId];
+			return currScene.cParticleEmitters[entity.particleEmitterIdx];
 			break;
 		default:
 			console.error("wrong component type passed.");
@@ -855,7 +857,7 @@ export function canvas_setup(canvas, width, height) {
 
 export function init() {
 	currScene.setup();
-	quad_tree_setup();
+	// quad_tree_setup();
 	camera_setup();
 	window.requestAnimationFrame(update);
 }
@@ -938,7 +940,7 @@ function particle_update(particle) {
 }
 
 function draw() {
-	entities_y_sorted();
+	// entities_y_sorted();
 
 	if (currScene.cSprites.length !== 0) {		
 		for (let s of currScene.cSprites) {
@@ -979,22 +981,26 @@ function collision() {
 	for (let bbK of currSceneBB) {
 		if (bbK.collisionType === COLLISION_TYPE.KINEMATIC) {
 			const entBBK = entity_get_by_id(bbK.userId);
-			for (let bbS of currSceneBB) {
-				if (bbS.collisionType === COLLISION_TYPE.STATIC) {
-					const entBBS = entity_get_by_id(bbS.userId);
-					var overlap = collision_rect_check(
-							entBBK.transformIdx,
-							entBBS.transformIdx,
-							entBBK.boundingBoxIdx,
-							entBBS.boundingBoxIdx,
-						);
 
-					// console.log(overlap);
-					if (overlap) {
-						console.log("COLLIDING");
-					}
-				}
-			} 
+			// const isMouseInsideBox = (
+
+			// 	);
+			// for (let bbS of currSceneBB) {
+			// 	if (bbS.collisionType === COLLISION_TYPE.STATIC) {
+			// 		const entBBS = entity_get_by_id(bbS.userId);
+			// 		var overlap = collision_rect_check(
+			// 				entBBK.transformIdx,
+			// 				entBBS.transformIdx,
+			// 				entBBK.boundingBoxIdx,
+			// 				entBBS.boundingBoxIdx,
+			// 			);
+
+			// 		// console.log(overlap);
+			// 		if (overlap) {
+			// 			console.log("COLLIDING");
+			// 		}
+			// 	}
+			// } 
 		}
 	} 
 }
@@ -1004,7 +1010,7 @@ function update(timeStamp) {
 	if (!is_paused()) {
 		currScene.input();
 		currScene.update();
-		collision();
+		// collision();
 	}
 	
 	if (is_draw_image()) {
@@ -1036,6 +1042,45 @@ document.addEventListener("keyup", (event) => {
 		}		
 	}
 });
+
+function mouse_detect_in_bounding_boxes(event) {
+	const currSceneBB = currScene.cBoundingBoxes;
+	for (let bbS of currSceneBB) {
+		if (bbS.collisionType === COLLISION_TYPE.STATIC) {
+			const entBBS = entity_get_by_id(bbS.userId);
+			const cT = currScene.cTransforms[entBBS.transformIdx];
+			const cBB = currScene.cBoundingBoxes[entBBS.boundingBoxIdx];
+
+			const leftPos = cT.pos.x;
+			const rightPos = cT.pos.x + cBB.size.x;
+			const topPos = cT.pos.y;
+			const botPos = cT.pos.y + cBB.size.y;
+
+			const rect = canvas_get().getBoundingClientRect();
+			const mousePosX = event.clientX - rect.left;
+			const mousePosY = event.clientY - rect.top;
+
+			const isMouseInside = (
+				mousePosX >= leftPos &&
+				mousePosX <= rightPos &&
+				mousePosY >= topPos &&
+				mousePosY <= botPos
+			);
+			if (event.type == "click" && isMouseInside) {
+				console.log(entBBS.get_id());
+			}
+
+		}
+	}
+}
+
+// document.addEventListener("mousemove", (event) => {
+// 	mouse_detect_in_bounding_boxes(event);
+// })
+
+document.addEventListener("click", (event) => {
+	mouse_detect_in_bounding_boxes(event);
+})
 
 /* 
 	NOTE: 
