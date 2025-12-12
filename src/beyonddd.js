@@ -254,6 +254,7 @@ class QuadTree {
 class Component {
 	constructor() {
 		this.userId = -1; // -1 means no entity using this component
+		this.active = true;
 	}
 	get_user() {
 		return this.userId;
@@ -266,6 +267,12 @@ class Component {
 	}
 	is_used() {
 		return (this.userId !== -1 ) ? true : false;
+	}
+	set_active(b) {
+		this.active = b
+	}
+	is_active() {
+		return this.active;
 	}
 }
 
@@ -433,6 +440,7 @@ class Entity {
 	constructor(entityType) {
         this.id     = -1;
         this.active = true;
+        this.name = "NONE"
 		
 		// keep track the used comp by its index. -1 means using none.
 		if (entityType === ENTITY_TYPE.GAMEPLAY_OBJECT) {
@@ -455,6 +463,13 @@ class Entity {
 
 	check_id(id) {
 		return this.id === id;
+	}
+
+	set_name(name) {
+		this.name = name;
+	}
+	get_name() {
+		return this.name;
 	}
 }
 
@@ -565,6 +580,10 @@ function quad_tree_setup() {
 	// 	if 
 	// }
 
+}
+
+export function lerp(a, b, t) {
+	return a + (b - a) * t;
 }
 
 
@@ -697,8 +716,10 @@ export function component_get(entityId, type) {
 
 
 export function entity_create(name) {
+	console.assert(currScene.entityMap.has(name) === false);
 	const newEntity = new Entity(ENTITY_TYPE.GAMEPLAY_OBJECT);
 	newEntity.id = currScene.entityMap.size;
+	newEntity.set_name(name);
 	currScene.entityMap.set(name, newEntity);
 	console.log(newEntity);
 	return newEntity;
@@ -947,25 +968,33 @@ function draw() {
 			if (s.usedByAnimation) {
 				continue;
 			}
-			util.draw_image(s);
+			if (s.is_active()) {
+				util.draw_image(s);
+			}
 		}
 	} 
 
 	if (currScene.cAnimations.length !== 0) {		
 		for (let a of currScene.cAnimations) {
-			animation_update(a);
+			if (a.is_active()) {
+				animation_update(a);
+			}
 		}
 	}
 
 	if (currScene.cParticleEmitters.length !== 0) {
 		for (let pe of currScene.cParticleEmitters) {
-			particle_draw(pe);
+			if (pe.is_active()) {
+				particle_draw(pe);
+			}
 		}
 	}
 
 	if (settings.isDrawCollisionShape) {
 		for (let bb of currScene.cBoundingBoxes) {
-			collision_rect_debug(bb);
+			if (bb.is_active) {
+				collision_rect_debug(bb);
+			}
 		}
 	}
 }
@@ -1046,7 +1075,7 @@ document.addEventListener("keyup", (event) => {
 function mouse_detect_in_bounding_boxes(event) {
 	const currSceneBB = currScene.cBoundingBoxes;
 	for (let bbS of currSceneBB) {
-		if (bbS.collisionType === COLLISION_TYPE.STATIC) {
+		if (bbs.is_active() && bbS.collisionType === COLLISION_TYPE.STATIC) {
 			const entBBS = entity_get_by_id(bbS.userId);
 			const cT = currScene.cTransforms[entBBS.transformIdx];
 			const cBB = currScene.cBoundingBoxes[entBBS.boundingBoxIdx];
