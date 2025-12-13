@@ -488,7 +488,7 @@ class Scene {
         this.type   = sceneType;
         this.setup  = () => {console.error("This should be override/replaced as scene's _setup_ function")};
         this.input  = () => {console.error("This should be override/replaced as scene's _input_ function")};
-        this.update = () => {console.error("This should be override/replaced as scene's _update_ function")}; // game logic goes here
+        this.update = (dt) => {console.error("This should be override/replaced as scene's _update_ function")}; // game logic goes here
 		switch (sceneType) {
 			case SCENE_TYPE.GUI_ONLY:
 				this.guiEntityMap = new Map();
@@ -1034,11 +1034,16 @@ function collision() {
 	} 
 }
 
+let dt = 0;
+let oldTimeStamp = 0;
 
 function update(timeStamp) {
+	dt = (timeStamp - oldTimeStamp) / 1000;
+	oldTimeStamp = timeStamp;
+
 	if (!is_paused()) {
 		currScene.input();
-		currScene.update();
+		currScene.update(dt);
 		// collision();
 	}
 	
@@ -1049,8 +1054,9 @@ function update(timeStamp) {
 	}
 	
 	if (is_show_fps()) {
-		util.calculate_FPS(timeStamp);
+		util.calculate_FPS(dt);
 	}
+
 
 	window.requestAnimationFrame(update);
 }
@@ -1075,7 +1081,7 @@ document.addEventListener("keyup", (event) => {
 function mouse_detect_in_bounding_boxes(event) {
 	const currSceneBB = currScene.cBoundingBoxes;
 	for (let bbS of currSceneBB) {
-		if (bbs.is_active() && bbS.collisionType === COLLISION_TYPE.STATIC) {
+		if (bbS.is_active() && bbS.collisionType === COLLISION_TYPE.STATIC) {
 			const entBBS = entity_get_by_id(bbS.userId);
 			const cT = currScene.cTransforms[entBBS.transformIdx];
 			const cBB = currScene.cBoundingBoxes[entBBS.boundingBoxIdx];

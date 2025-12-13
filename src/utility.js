@@ -14,8 +14,8 @@ let ctx
 
 
 //For calculating FPS
-export let secondsPassed = 0;
-let oldTimeStamp = 0;
+// export let secondsPassed = 0;
+// let oldTimeStamp = 0;
 let fps = 0;
 
 export function context_setup(ctxId) {
@@ -41,11 +41,11 @@ export function canvas_set_translate(pos) {
 	ctx.translate(pos.x, pos.y);
 }
 
-export function calculate_FPS(ts) {
-	secondsPassed = (ts - oldTimeStamp) / 1000;
-	oldTimeStamp = ts;
+export function calculate_FPS(dt) {
+	// secondsPassed = (ts - oldTimeStamp) / 1000;
+	// oldTimeStamp = ts;
 
-	fps = Math.round(1 / secondsPassed);
+	fps = Math.round(1 / dt);
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, canvas.height, 200, 100);
 	ctx.font = "25px Arial";

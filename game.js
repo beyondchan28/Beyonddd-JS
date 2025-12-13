@@ -24,11 +24,12 @@ const BUTTON_Y_OFFSET = SCENE_HEIGHT - BUTTON_SIZE - 30
 const MOVE_TIME = 0.1
 const BASE_DISTANCE = 200.0
 
-let goal = BASE_DISTANCE
-let multiplier = 1;
+let goal = new be.Vector2(BASE_DISTANCE, 0);
+let multiplier = 0;
 let canMove = true
 
 let entityToPlay
+let scheduler;
 
 menuScene.setup = () => {
 	be.input_press_create("X", be.KEY.SPACE);
@@ -48,6 +49,24 @@ menuScene.setup = () => {
 	setup_playable_entity("Enemy", "enemy_anim_walk", "EnemyWalk", 200);
 
 	entityToPlay = be.entity_get("Player");
+
+	scheduler = new Scheduler();
+	const entityTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+	scheduler.start( () => ( move(entityTransform, goal, 2) ) );	
+
+	scheduler.finish = () => {
+		if (entityToPlay.get_name() === "Player") {
+			entityToPlay = be.entity_get("Enemy");
+		} else if (entityToPlay.get_name() === "Enemy") {
+			entityToPlay = be.entity_get("Player");
+		}
+		const entityTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+		goal.y = entityTransform.pos.y;
+		multiplier += 1;
+		goal.x = BASE_DISTANCE * multiplier;
+		console.log(goal);
+		scheduler.start( () => ( move(entityTransform, goal, 2) ) );
+	}
 
 
 	for (let i = 0; i < BUTTON_AMOUNT; i += 1) {
@@ -91,25 +110,77 @@ menuScene.input = () => {
 	// console.log("released : ", be.is_key_released("XXX"));
 };
 
+class Scheduler {
+  constructor() {
+    this.coroutines = new Set();
+    this.before_start = () => {
+  		console.log("Tween Start");
+    }
+    this.finish = () => {
+  		console.log("Tween Finish");
+  	}
+  }
+
+  start(generator) {
+  	this.before_start();
+  	const co = generator();
+    this.coroutines.add(co);
+    return co;
+  }
+
+  tick(dt) {
+    for (const co of [...this.coroutines]) {
+      const { done } = co.next(dt);
+      if (done) {
+        this.coroutines.delete(co);
+        this.finish();
+      }
+    }
+  }
+
+  
+}
+
 // used for game logic such as movement, physics, enemies, etc. 
-menuScene.update = () => {
+menuScene.update = (dt) => {
+	// console.log(dt);
+	scheduler.tick(dt);
+
 	if (canMove === true) {
 		const entityTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-		console.log(goal);
+		// console.log(goal);
 
-		move_entity(entityTransform, goal);
-		if ( is_reach_goal_position(entityTransform.pos.x, goal) === true ) {
-			console.log("[INFO] CHANGE ENTITY TO PLAY")
-			if (entityToPlay.get_name() === "Player") {
-				entityToPlay = be.entity_get("Enemy");
-			} else if (entityToPlay.get_name() === "Enemy") {
-				entityToPlay = be.entity_get("Player");
-			}
-			multiplier += 1;
-			goal = BASE_DISTANCE * multiplier;
-		}
+		
+
+
+		// multiplier += 1;
+		// goal = BASE_DISTANCE * multiplier;
+
+		// move_entity(entityTransform, goal);
+		// if ( is_reach_goal_position(entityTransform.pos.x, goal) === true ) {
+		// 	console.log("[INFO] CHANGE ENTITY TO PLAY")
+		// 	if (entityToPlay.get_name() === "Player") {
+		// 		entityToPlay = be.entity_get("Enemy");
+		// 	} else if (entityToPlay.get_name() === "Enemy") {
+		// 		entityToPlay = be.entity_get("Player");
+		// 	}
+		// 	multiplier += 1;
+		// 	goal = BASE_DISTANCE * multiplier;
+		// }
 	}
 };
+
+
+
+function* move(entityTransform, to, duration) {
+  let t = 0;
+  while (t < duration) {
+    t += yield; // yield dt
+    const p = Math.min(t / duration, 1);
+    entityTransform.pos.x = entityTransform.pos.x + (to.x - entityTransform.pos.x) * p;
+    entityTransform.pos.y = entityTransform.pos.y + (to.y - entityTransform.pos.y) * p;
+  }
+}
 
 
 function setup_playable_entity(entityName, spriteName, animName, yPos) {
