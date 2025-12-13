@@ -33,7 +33,6 @@ const SCENE_WIDTH = 800;
 const SCENE_HEIGHT = 600;
 
 // TODO:
-// - camera movement
 // - running field trap
 // - implement assets
 // - main menu (optional) and exit
@@ -50,37 +49,30 @@ const CARD_X_OFFSET = (SCENE_WIDTH / 2) - ((CARD_SIZE) * CARD_AMOUNT) / 2
 const CARD_Y_OFFSET = SCENE_HEIGHT - CARD_SIZE - 30
 
 const MOVE_TIME = 0.1
-const BASE_DISTANCE = 10.0
+const BASE_DISTANCE = 30.0
+
+const gameData = {
+	field : [
+		0, 1, 2, 0, -1,
+	 -3, 0, -1, 1, 0
+	],
+
+	playerFieldIdx: 0,
+	enemyFieldIdx: 0
+}
 
 let multiplier = 0;
 let canMove = true
 
 let entityToPlay
 let scheduler;
-
+let fieldScheduler;
 menuScene.setup = () => {
 	be.input_press_create("X", be.KEY.SPACE);
 
 	be.asset_load_image("player_anim_walk", "assets/player_walk.png");
 	be.asset_load_image("enemy_anim_walk", "assets/enemy_walk.png");
 	be.asset_load_image("icon", "assets/icon.png");
-	
-	setup_playable_entity("Player", "player_anim_walk", "PlayerWalk", 100);
-	setup_playable_entity("Enemy", "enemy_anim_walk", "EnemyWalk", 200);
-
-	entityToPlay = be.entity_get("Player");
-
-	scheduler = new Scheduler();
-	scheduler.finish = () => {
-		console.log("[INFO] CHANGE ENTITY TO PLAY")
-		if (entityToPlay.get_name() === "Player") {
-			entityToPlay = be.entity_get("Enemy");
-		} else if (entityToPlay.get_name() === "Enemy") {
-			entityToPlay = be.entity_get("Player");
-		}
-		canMove = true;
-	}
-
 
 	for (let i = 0; i < CARD_AMOUNT; i += 1) {
 		const card = be.entity_create(`card${i}`);
@@ -106,6 +98,45 @@ menuScene.setup = () => {
 		);
 	}
 
+	setup_playable_entity("Player", "player_anim_walk", "PlayerWalk", 100);
+	setup_playable_entity("Enemy", "enemy_anim_walk", "EnemyWalk", 200);
+
+	entityToPlay = be.entity_get("Player");
+
+	scheduler = new Scheduler();
+	fieldScheduler = new Scheduler();
+
+	scheduler.finish = () => {
+		const transfrom = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+		let fieldEffectPos = transfrom.pos.clone();
+		let fieldIndex = 0;
+
+		if (entityToPlay.get_name() === "Player") {
+			fieldIndex = gameData.playerFieldIdx;
+		} else if (entityToPlay.get_name() === "Enemy") {
+			fieldIndex = gameData.enemyFieldIdx;
+		}
+		const fieldMultiplier = gameData.field[fieldIndex];
+
+
+		console.log("BEFORE : ",gameData);
+		// console.log(fieldMultiplier);
+		fieldEffectPos.x += BASE_DISTANCE * fieldMultiplier;
+		fieldScheduler.start( () => ( move(transfrom, fieldEffectPos, 1) ) );
+		manipulate_field_index(fieldMultiplier);
+		console.log("AFTER : ", gameData);
+	}
+
+	fieldScheduler.finish = () => {
+		console.log("[INFO] CHANGE ENTITY TO PLAY")
+		if (entityToPlay.get_name() === "Player") {
+			entityToPlay = be.entity_get("Enemy");
+		} else if (entityToPlay.get_name() === "Enemy") {
+			entityToPlay = be.entity_get("Player");
+		}
+		canMove = true;
+	}
+
 }
 
 
@@ -118,6 +149,8 @@ function setup_playable_entity(entityName, spriteName, animName, yPos) {
 
 	be.component_add(entity, be.COMPONENT_TYPE.SPRITE);
 	be.sprite_set(entity.spriteIdx, spriteName);
+	const sprite = be.component_get(entity.get_id(), be.COMPONENT_TYPE.SPRITE);
+	sprite.flipH = true;
 
 	be.component_add(entity, be.COMPONENT_TYPE.ANIMATION);
 	be.animation_set_sprite(entity.animationIdx, entity.spriteIdx);
@@ -134,9 +167,6 @@ function setup_playable_entity(entityName, spriteName, animName, yPos) {
 
 // logic for inputs or what will happen if an input happenning
 menuScene.input = () => {
-	if (be.is_key_pressed("X")) {
-		be.camera_movement(new be.Vector2(10, 0));
-	}
 	// if (be.is_key_pressed("X")) {
 	// 	if (canMove === true) {
 	// 		canMove = false
@@ -154,12 +184,11 @@ menuScene.input = () => {
 
 // used for game logic such as movement, physics, enemies, etc. 
 menuScene.update = (dt) => {
-	// console.log(dt);
-
 	if (canMove === true) {
 		check_button_pressed();
 	}
 	scheduler.tick(dt);
+	fieldScheduler.tick(dt);
 };
 
 
@@ -170,7 +199,7 @@ function check_button_pressed() {
 			card.set_active(false);
 			canMove = false;
 
-			console.log(card.get_id());
+			console.log("Card ID : ",card.get_id());
 			use_card(card.get_id());
 			break;
 		}
@@ -179,12 +208,37 @@ function check_button_pressed() {
 }
 
 function use_card(cardId) {
+	const multiplier = cardId + 1;
+
+	manipulate_field_index(multiplier);
+
 	const cardTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
 	let goal = cardTransform.pos.clone();
-	goal.x += BASE_DISTANCE * (cardId + 1);
+	goal.x += BASE_DISTANCE * multiplier;
 	scheduler.start( () => ( move(cardTransform, goal, 1) ) );
 }
 
+
+function manipulate_field_index(multiplier) {
+	if (entityToPlay.get_name() === "Player") {
+		if (gameData.playerFieldIdx + multiplier < gameData.field.length) {
+			gameData.playerFieldIdx += multiplier;
+		} else if (gameData.playerFieldIdx + multiplier < 0)  {
+			gameData.playerFieldIdx = 0;
+		} else {
+			gameData.playerFieldIdx = gameData.field.length - 1;
+		}
+
+	} else if (entityToPlay.get_name() === "Enemy") {
+		if (gameData.enemyFieldIdx + multiplier < gameData.field.length) {
+			gameData.enemyFieldIdx += multiplier;
+		} else if (gameData.enemyFieldIdx + multiplier < 0)  {
+			gameData.enemyFieldIdx = 0;
+		} else {
+			gameData.enemyFieldIdx = gameData.field.length - 1;
+		}
+	}
+}
 
 function* move(entityTransform, to, duration) {
   let t = 0;
