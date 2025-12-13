@@ -29,12 +29,13 @@ class Scheduler {
 	} 
 }
 
-const SCENE_WIDTH = 800;
-const SCENE_HEIGHT = 600;
+const SCENE_WIDTH = 1280;
+const SCENE_HEIGHT = 720;
 
 // TODO:
-// - implement assets
 // - reset and win-lose condition
+// - make it looks decent 
+// - support sound
 // - main menu (optional) and exit
 
 be.canvas_setup("canvas", SCENE_WIDTH, SCENE_HEIGHT); // assigning canvas, context, and its size 
@@ -46,18 +47,17 @@ be.scene_change("Game"); // change to the scene as the current scene.
 const CARD_AMOUNT = 3
 const CARD_SIZE = 64
 const CARD_GAP = 10;
-const CARD_X_OFFSET = (SCENE_WIDTH / 2) - ((CARD_SIZE) * CARD_AMOUNT) / 2
+const CARD_X_OFFSET = (SCENE_WIDTH / 2) - (CARD_SIZE * CARD_AMOUNT) / 2
 const CARD_Y_OFFSET = SCENE_HEIGHT - CARD_SIZE - 30
 
 const BLOCK_POSITION_OFFSET = 10;
-const TEXT_POSITION_OFFSET = 25;
 
 const MOVE_TIME = 0.1
 const BASE_DISTANCE = 60.0
 
-const START_X_POS = 100.0
-const PLAYER_Y_POS = 100.0
-const ENEMY_Y_POS = 300.0
+const PLAYER_Y_POS = SCENE_HEIGHT * 0.25;
+const TEXT_Y_POS = SCENE_HEIGHT * 0.4;
+const ENEMY_Y_POS = SCENE_HEIGHT * 0.5;
 
 const gameData = {
 	field : [
@@ -68,6 +68,7 @@ const gameData = {
 	playerFieldIdx: 0,
 	enemyFieldIdx: 0
 }
+const START_X_POS = (SCENE_WIDTH / 2.0) - (gameData.field.length * BASE_DISTANCE) / 2;
 
 let multiplier = 0;
 let canMove = true
@@ -84,7 +85,7 @@ game.setup = () => {
 		text.font = "16px 'Segoe UI'";
 		text.tint = be.COLOR.RED;
 		text.pos.x = START_X_POS + (BASE_DISTANCE * i);
-		text.pos.y = (ENEMY_Y_POS - PLAYER_Y_POS) + TEXT_POSITION_OFFSET;
+		text.pos.y = TEXT_Y_POS;
 
 		const effect = gameData.field[i];
 		if (effect < 0) {
@@ -96,9 +97,9 @@ game.setup = () => {
 		
 	}
 
-	be.asset_load_image("player_anim_walk", "assets/player_walk.png");
-	be.asset_load_image("enemy_anim_walk", "assets/enemy_walk.png");
-	be.asset_load_image("icon", "assets/icon.png");
+	be.asset_load_image("player_anim_walk", "assets/player_walk.png", 210, 43);
+	be.asset_load_image("enemy_anim_walk", "assets/enemy_walk.png",210, 43);
+	// be.asset_load_image("icon", "assets/icon.png");
 
 	for (let i = 0; i < CARD_AMOUNT; i += 1) {
 		const card = be.entity_create(`card${i}`);

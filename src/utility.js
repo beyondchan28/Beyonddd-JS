@@ -103,15 +103,17 @@ export function draw_image(sprite) {
 		ctx.save();
 		ctx.translate(sprite.pos.x, sprite.pos.y);
 		ctx.scale(-1, 1);
-		ctx.drawImage(sprite.image, 
+		ctx.drawImage(
+			sprite.image, 
 			sprite.spos.x, sprite.spos.y, 
 			sprite.ssize.x, sprite.ssize.y, 
 			0, 0, 
 			-sprite.size.x, sprite.size.y
 		);
 		ctx.restore();
-	} else if (!sprite.flipH) {		
-		ctx.drawImage(sprite.image, 
+	} else if (!sprite.flipH) {	
+		ctx.drawImage(
+			sprite.image, 
 			sprite.spos.x, sprite.spos.y, 
 			sprite.ssize.x, sprite.ssize.y, 
 			sprite.pos.x, sprite.pos.y, 

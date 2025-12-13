@@ -613,10 +613,13 @@ export function animation_setup(animIdx, name, frameCount, speed) {
 }
 
 
-
-export function asset_load_image(name, src) {
-	let img = new Image();
+export function asset_load_image(name, src, width, height) {
+	const img = new Image();
+	img.onload = () => {};
 	img.src = src;
+	img.width = width;
+	img.height = height;
+	// console.log(img.height);
 	settings.assetImageMap.set(name, img);
 	return img;
 }
@@ -897,7 +900,7 @@ export function canvas_setup(canvas, width, height) {
 export function init() {
 	currScene.setup();
 	// quad_tree_setup();
-	camera_setup();
+	// camera_setup();
 	window.requestAnimationFrame(update);
 }
 
