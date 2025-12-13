@@ -471,6 +471,12 @@ class Entity {
 	get_name() {
 		return this.name;
 	}
+	is_active() {
+		return this.active;
+	}
+	set_active(b) {
+		this.active = b;
+	}
 }
 
 class InputKey {
@@ -532,6 +538,7 @@ class EngineSettings {
 		this.assetImageMap = new Map();
 
 		this.currentScene = null;
+		this.mouse_position = new Vector2();
 	}
 }
 
@@ -1061,6 +1068,11 @@ function update(timeStamp) {
 	window.requestAnimationFrame(update);
 }
 
+// document.addEventListener("mousemove", (event) => {
+	// setting.mouse_position.set(event.clientX, event.clientY);
+// 	mouse_detect_in_bounding_boxes(event);
+// })
+
 //WARNING: might had weird behaviour if there is same name
 document.addEventListener("keydown", (event) => {
 	for (let inp of settings.inputMap.values()) {
@@ -1077,45 +1089,6 @@ document.addEventListener("keyup", (event) => {
 		}		
 	}
 });
-
-function mouse_detect_in_bounding_boxes(event) {
-	const currSceneBB = currScene.cBoundingBoxes;
-	for (let bbS of currSceneBB) {
-		if (bbS.is_active() && bbS.collisionType === COLLISION_TYPE.STATIC) {
-			const entBBS = entity_get_by_id(bbS.userId);
-			const cT = currScene.cTransforms[entBBS.transformIdx];
-			const cBB = currScene.cBoundingBoxes[entBBS.boundingBoxIdx];
-
-			const leftPos = cT.pos.x;
-			const rightPos = cT.pos.x + cBB.size.x;
-			const topPos = cT.pos.y;
-			const botPos = cT.pos.y + cBB.size.y;
-
-			const rect = canvas_get().getBoundingClientRect();
-			const mousePosX = event.clientX - rect.left;
-			const mousePosY = event.clientY - rect.top;
-
-			const isMouseInside = (
-				mousePosX >= leftPos &&
-				mousePosX <= rightPos &&
-				mousePosY >= topPos &&
-				mousePosY <= botPos
-			);
-			if (event.type == "click" && isMouseInside) {
-				console.log(entBBS.get_id());
-			}
-
-		}
-	}
-}
-
-// document.addEventListener("mousemove", (event) => {
-// 	mouse_detect_in_bounding_boxes(event);
-// })
-
-document.addEventListener("click", (event) => {
-	mouse_detect_in_bounding_boxes(event);
-})
 
 /* 
 	NOTE: 

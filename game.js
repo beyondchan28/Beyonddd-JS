@@ -22,9 +22,8 @@ const CARD_X_OFFSET = (SCENE_WIDTH / 2) - ((CARD_SIZE) * CARD_AMOUNT) / 2
 const CARD_Y_OFFSET = SCENE_HEIGHT - CARD_SIZE - 30
 
 const MOVE_TIME = 0.1
-const BASE_DISTANCE = 200.0
+const BASE_DISTANCE = 10.0
 
-let goal = new be.Vector2(BASE_DISTANCE, 0);
 let multiplier = 0;
 let canMove = true
 
@@ -44,9 +43,6 @@ menuScene.setup = () => {
 	entityToPlay = be.entity_get("Player");
 
 	scheduler = new Scheduler();
-	const entityTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-	scheduler.start( () => ( move(entityTransform, goal, 2) ) );	
-
 	scheduler.finish = () => {
 		console.log("[INFO] CHANGE ENTITY TO PLAY")
 		if (entityToPlay.get_name() === "Player") {
@@ -54,16 +50,13 @@ menuScene.setup = () => {
 		} else if (entityToPlay.get_name() === "Enemy") {
 			entityToPlay = be.entity_get("Player");
 		}
-		const entityTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-		goal.y = entityTransform.pos.y;
-		multiplier += 1;
-		goal.x = BASE_DISTANCE * multiplier;
-		scheduler.start( () => ( move(entityTransform, goal, 2) ) );
+		canMove = true;
 	}
 
 
 	for (let i = 0; i < CARD_AMOUNT; i += 1) {
-		const card = be.entity_create(`card${i}`)
+		const card = be.entity_create(`card${i}`);
+		card.set_active(false);
 
 		be.component_add(card, be.COMPONENT_TYPE.TRANSFORM);
 		const cardT = be.component_get(
@@ -89,79 +82,130 @@ menuScene.setup = () => {
 
 // logic for inputs or what will happen if an input happenning
 menuScene.input = () => {
-	if (be.is_key_pressed("X")) {
-		if (canMove === true) {
-			canMove = false
-			console.log("[INFO] Move Pause")
-		} else {
-			canMove = true
-			console.log("[INFO] Move Resume")
-		}
-	}
+	// if (be.is_key_pressed("X")) {
+	// 	if (canMove === true) {
+	// 		canMove = false
+	// 		console.log("[INFO] Move Pause")
+	// 	} else {
+	// 		canMove = true
+	// 		console.log("[INFO] Move Resume")
+	// 	}
+	// }
 	// console.log("pressed  : ",be.is_key_pressed("X"));
 	// console.log("down     : ", be.is_key_down("XX"));
 	// console.log("released : ", be.is_key_released("XXX"));
 };
 
 class Scheduler {
-  constructor() {
-    this.coroutines = new Set();
-    this.before_start = () => {
-  		// console.log("Tween Start");
-    }
-    this.finish = () => {
-  		console.log("Tween Finish");
-  	}
-  }
+	constructor() {
+		this.coroutines = new Set();
+		this.before_start = () => {
+			console.log("Tween Start");
+		};
+		this.finish = () => {
+			console.log("Tween Finish");
+		};
+	}
 
-  start(generator) {
-  	this.before_start();
-  	const co = generator();
-    this.coroutines.add(co);
-    return co;
-  }
+	start(generator) {
+		this.before_start();
+		const co = generator();
+		this.coroutines.add(co);
+		return co;
+	}
 
-  tick(dt) {
-    for (const co of [...this.coroutines]) {
-      const { done } = co.next(dt);
-      if (done) {
-        this.coroutines.delete(co);
-        this.finish();
-      }
-    }
-  }
-
-  
+	tick(dt) {
+		for (const co of [...this.coroutines]) {
+			const { done } = co.next(dt);
+			if (done) {
+				this.coroutines.delete(co);
+				this.finish();
+			}
+		}
+	} 
 }
+// class Tween
+
 
 // used for game logic such as movement, physics, enemies, etc. 
 menuScene.update = (dt) => {
 	// console.log(dt);
-	scheduler.tick(dt);
 
 	if (canMove === true) {
-		const entityTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-		// console.log(goal);
-
-		
-
-
-		// multiplier += 1;
-		// goal = BASE_DISTANCE * multiplier;
-
-		// move_entity(entityTransform, goal);
-		// if ( is_reach_goal_position(entityTransform.pos.x, goal) === true ) {
-		// 	console.log("[INFO] CHANGE ENTITY TO PLAY")
-		// 	if (entityToPlay.get_name() === "Player") {
-		// 		entityToPlay = be.entity_get("Enemy");
-		// 	} else if (entityToPlay.get_name() === "Enemy") {
-		// 		entityToPlay = be.entity_get("Player");
-		// 	}
-		// 	multiplier += 1;
-		// 	goal = BASE_DISTANCE * multiplier;
-		// }
+		check_button_pressed();
 	}
+	scheduler.tick(dt);
 };
+
+
+function check_button_pressed() {
+	for (let i = 0; i < CARD_AMOUNT; i += 1) {
+		const card = be.entity_get(`card${i}`)
+		if (card.is_active() === true) {
+			card.set_active(false);
+			canMove = false;
+
+			console.log(card.get_id());
+			use_card(card.get_id());
+			break;
+		}
+	}
+	
+}
+
+
+function mouse_detect_in_bounding_boxes(event) {
+	const currSceneBB = be.scene_get_current().cBoundingBoxes;
+	for (let bbS of currSceneBB) {
+		if (bbS.is_active() && bbS.collisionType === be.COLLISION_TYPE.STATIC) {
+			console.log(bbS.get_user());
+			const entBBS = be.entity_get_by_id(bbS.userId);
+			const cT = be.scene_get_current().cTransforms[entBBS.transformIdx];
+			const cBB = be.scene_get_current().cBoundingBoxes[entBBS.boundingBoxIdx];
+
+			const leftPos = cT.pos.x;
+			const rightPos = cT.pos.x + cBB.size.x;
+			const topPos = cT.pos.y;
+			const botPos = cT.pos.y + cBB.size.y;
+
+			const rect = be.canvas_get().getBoundingClientRect();
+			const mousePosX = event.clientX - rect.left;
+			const mousePosY = event.clientY - rect.top;
+
+			const isMouseInside = (
+				mousePosX >= leftPos &&
+				mousePosX <= rightPos &&
+				mousePosY >= topPos &&
+				mousePosY <= botPos
+			);
+			if (event.type == "click" && isMouseInside) {
+				entBBS.set_active(true);
+			}
+			else {
+				if (entBBS.is_active() === true)
+				{
+					entBBS.set_active(false);
+				}
+			}
+
+		}
+	}
+}
+
+
+
+document.addEventListener("click", (event) => {
+	if (canMove === true) {
+		mouse_detect_in_bounding_boxes(event);
+	}
+})
+
+function use_card(cardId) {
+	const cardTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+	let goal = cardTransform.pos.clone();
+	goal.x += BASE_DISTANCE * (cardId + 1);
+	scheduler.start( () => ( move(cardTransform, goal, 1) ) );
+}
 
 
 
@@ -170,8 +214,9 @@ function* move(entityTransform, to, duration) {
   while (t < duration) {
     t += yield; // yield dt
     const p = Math.min(t / duration, 1);
-    entityTransform.pos.x = entityTransform.pos.x + (to.x - entityTransform.pos.x) * p;
-    entityTransform.pos.y = entityTransform.pos.y + (to.y - entityTransform.pos.y) * p;
+    console.log(yield);
+    entityTransform.pos.x = entityTransform.pos.x + (to.x - entityTransform.pos.x) * t;
+    entityTransform.pos.y = entityTransform.pos.y + (to.y - entityTransform.pos.y) * t;
   }
 }
 
