@@ -15,11 +15,11 @@ const menuScene = be.scene_create("Menu"); // creating scene (with GUI-only type
 be.scene_change("Menu"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
-const BUTTON_AMOUNT = 3
-const BUTTON_SIZE = 64
-const BUTTON_GAP = 10;
-const BUTTON_X_OFFSET = (SCENE_WIDTH / 2) - ((BUTTON_SIZE) * BUTTON_AMOUNT) / 2
-const BUTTON_Y_OFFSET = SCENE_HEIGHT - BUTTON_SIZE - 30
+const CARD_AMOUNT = 3
+const CARD_SIZE = 64
+const CARD_GAP = 10;
+const CARD_X_OFFSET = (SCENE_WIDTH / 2) - ((CARD_SIZE) * CARD_AMOUNT) / 2
+const CARD_Y_OFFSET = SCENE_HEIGHT - CARD_SIZE - 30
 
 const MOVE_TIME = 0.1
 const BASE_DISTANCE = 200.0
@@ -34,16 +34,9 @@ let scheduler;
 menuScene.setup = () => {
 	be.input_press_create("X", be.KEY.SPACE);
 
-	// be.input_down_create("XX", be.KEY.SPACE);
-	// be.input_release_create("XXX", be.KEY.SPACE);
-
 	be.asset_load_image("player_anim_walk", "assets/player_walk.png");
 	be.asset_load_image("enemy_anim_walk", "assets/enemy_walk.png");
 	be.asset_load_image("icon", "assets/icon.png");
-
-	for (let i = 0; i < BUTTON_AMOUNT; i += 1) {
-		const button = be.entity_create(`button${i}`);
-	}
 	
 	setup_playable_entity("Player", "player_anim_walk", "PlayerWalk", 100);
 	setup_playable_entity("Enemy", "enemy_anim_walk", "EnemyWalk", 200);
@@ -55,6 +48,7 @@ menuScene.setup = () => {
 	scheduler.start( () => ( move(entityTransform, goal, 2) ) );	
 
 	scheduler.finish = () => {
+		console.log("[INFO] CHANGE ENTITY TO PLAY")
 		if (entityToPlay.get_name() === "Player") {
 			entityToPlay = be.entity_get("Enemy");
 		} else if (entityToPlay.get_name() === "Enemy") {
@@ -64,30 +58,29 @@ menuScene.setup = () => {
 		goal.y = entityTransform.pos.y;
 		multiplier += 1;
 		goal.x = BASE_DISTANCE * multiplier;
-		console.log(goal);
 		scheduler.start( () => ( move(entityTransform, goal, 2) ) );
 	}
 
 
-	for (let i = 0; i < BUTTON_AMOUNT; i += 1) {
-		const button = be.entity_get(`button${i}`)
+	for (let i = 0; i < CARD_AMOUNT; i += 1) {
+		const card = be.entity_create(`card${i}`)
 
-		be.component_add(button, be.COMPONENT_TYPE.TRANSFORM);
-		const buttonT = be.component_get(
-			button.get_id(), be.COMPONENT_TYPE.TRANSFORM
+		be.component_add(card, be.COMPONENT_TYPE.TRANSFORM);
+		const cardT = be.component_get(
+			card.get_id(), be.COMPONENT_TYPE.TRANSFORM
 		);
 
 		
-		buttonT.pos.x = BUTTON_SIZE * i + BUTTON_X_OFFSET + (BUTTON_GAP * i);
-		buttonT.pos.y = BUTTON_Y_OFFSET;
+		cardT.pos.x = CARD_SIZE * i + CARD_X_OFFSET + (CARD_GAP * i);
+		cardT.pos.y = CARD_Y_OFFSET;
 
-		be.component_add(button, be.COMPONENT_TYPE.SPRITE);
-		// be.sprite_set(button.spriteIdx, "icon");
+		be.component_add(card, be.COMPONENT_TYPE.SPRITE);
+		// be.sprite_set(card.spriteIdx, "icon");
 
-		be.component_add(button, be.COMPONENT_TYPE.BOUNDING_BOX);
+		be.component_add(card, be.COMPONENT_TYPE.BOUNDING_BOX);
 		be.bounding_box_set(
-			button.boundingBoxIdx, 
-			new be.Vector2(BUTTON_SIZE, BUTTON_SIZE), 
+			card.boundingBoxIdx, 
+			new be.Vector2(CARD_SIZE, CARD_SIZE), 
 			be.COLLISION_TYPE.STATIC
 		);
 	}
@@ -114,7 +107,7 @@ class Scheduler {
   constructor() {
     this.coroutines = new Set();
     this.before_start = () => {
-  		console.log("Tween Start");
+  		// console.log("Tween Start");
     }
     this.finish = () => {
   		console.log("Tween Finish");
