@@ -1,5 +1,4 @@
 import * as be from "./src/beyonddd.js";
-import * as util from "./src/utility.js";
 
 class Scheduler {
 	constructor() {
@@ -242,24 +241,6 @@ game.update = (dt) => {
 	}
 	scheduler.tick(dt);
 	fieldScheduler.tick(dt);
-
-	for (let j = 0; j < 2; j += 1) {
-		for (let i = 0; i < gameData.field.length; i += 1) {
-			const block = be.entity_get(`block${i}${j}`);
-			const transform = be.component_get(block.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-			const ctx = util.context_get();
-			ctx.font = "25px Arial";
-			ctx.fillStyle = "black";
-			ctx.fillText("FPS: ", transform.pos.x, transform.pos.y);
-
-			// util.draw_text(
-			// 	"24px Arial",
-			// 	"XDXDXDXD",
-			// 	transform.pos,
-			// 	be.COLOR.WHITE
-			// );
-		}
-	}
 };
 
 
