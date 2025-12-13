@@ -1,4 +1,5 @@
 import * as be from "./src/beyonddd.js";
+import * as util from "./src/utility.js";
 
 class Scheduler {
 	constructor() {
@@ -33,13 +34,14 @@ const SCENE_WIDTH = 800;
 const SCENE_HEIGHT = 600;
 
 // TODO:
-// - running field trap
 // - implement assets
+// - reset and win-lose condition
 // - main menu (optional) and exit
 
 be.canvas_setup("canvas", SCENE_WIDTH, SCENE_HEIGHT); // assigning canvas, context, and its size 
 const menuScene = be.scene_create("Menu"); // creating scene (with GUI-only type of components)
-be.scene_change("Menu"); // change to the scene as the current scene.
+const game = be.scene_create("Game"); // creating scene (with GUI-only type of components)
+be.scene_change("Game"); // change to the scene as the current scene.
 
 // running before the game start. used for setup entities, components, inputs etc. 
 const CARD_AMOUNT = 3
@@ -48,8 +50,15 @@ const CARD_GAP = 10;
 const CARD_X_OFFSET = (SCENE_WIDTH / 2) - ((CARD_SIZE) * CARD_AMOUNT) / 2
 const CARD_Y_OFFSET = SCENE_HEIGHT - CARD_SIZE - 30
 
+const BLOCK_POSITION_OFFSET = 10;
+const TEXT_POSITION_OFFSET = 25;
+
 const MOVE_TIME = 0.1
-const BASE_DISTANCE = 30.0
+const BASE_DISTANCE = 60.0
+
+const START_X_POS = 100.0
+const PLAYER_Y_POS = 100.0
+const ENEMY_Y_POS = 300.0
 
 const gameData = {
 	field : [
@@ -67,8 +76,26 @@ let canMove = true
 let entityToPlay
 let scheduler;
 let fieldScheduler;
-menuScene.setup = () => {
+game.setup = () => {
 	be.input_press_create("X", be.KEY.SPACE);
+
+
+	for (let i = 0; i < gameData.field.length; i += 1) {
+		const text = be.component_create(be.COMPONENT_TYPE.TEXT);
+		text.font = "16px 'Segoe UI'";
+		text.tint = be.COLOR.RED;
+		text.pos.x = START_X_POS + (BASE_DISTANCE * i);
+		text.pos.y = (ENEMY_Y_POS - PLAYER_Y_POS) + TEXT_POSITION_OFFSET;
+
+		const effect = gameData.field[i];
+		if (effect < 0) {
+			text.text = `${Math.abs(effect)}\nLEFT`
+		} else {
+			text.text = `${effect}\nRIGHT`
+		}
+
+		
+	}
 
 	be.asset_load_image("player_anim_walk", "assets/player_walk.png");
 	be.asset_load_image("enemy_anim_walk", "assets/enemy_walk.png");
@@ -96,10 +123,11 @@ menuScene.setup = () => {
 			new be.Vector2(CARD_SIZE, CARD_SIZE), 
 			be.COLLISION_TYPE.STATIC
 		);
+
 	}
 
-	setup_playable_entity("Player", "player_anim_walk", "PlayerWalk", 100);
-	setup_playable_entity("Enemy", "enemy_anim_walk", "EnemyWalk", 200);
+	setup_playable_entity("Player", "player_anim_walk", "PlayerWalk", PLAYER_Y_POS);
+	setup_playable_entity("Enemy", "enemy_anim_walk", "EnemyWalk", ENEMY_Y_POS);
 
 	entityToPlay = be.entity_get("Player");
 
@@ -137,6 +165,28 @@ menuScene.setup = () => {
 		canMove = true;
 	}
 
+	for (let j = 0; j < 2; j += 1){
+		let yPos = 0;
+		if (j === 0) {
+			yPos = PLAYER_Y_POS;
+		} else {
+			yPos = ENEMY_Y_POS;
+		}
+
+		for (let i = 0; i < gameData.field.length; i += 1) {
+			const block = be.entity_create(`block${i}${j}`);
+			be.component_add(block, be.COMPONENT_TYPE.TRANSFORM);
+			const blockT = be.component_get(block.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+			blockT.pos.x = START_X_POS + (BASE_DISTANCE *  i) - BLOCK_POSITION_OFFSET;
+			blockT.pos.y = yPos - BLOCK_POSITION_OFFSET;
+			be.component_add(block, be.COMPONENT_TYPE.BOUNDING_BOX);
+			be.bounding_box_set(
+				block.boundingBoxIdx, 
+				new be.Vector2(BASE_DISTANCE, BASE_DISTANCE), 
+				be.COLLISION_TYPE.STATIC
+			);
+		}
+	}
 }
 
 
@@ -144,7 +194,7 @@ function setup_playable_entity(entityName, spriteName, animName, yPos) {
 	const entity = be.entity_create(entityName);
 	be.component_add(entity, be.COMPONENT_TYPE.TRANSFORM);
 	const entityT = be.component_get(entity.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-	entityT.pos.x = 100;
+	entityT.pos.x = START_X_POS;
 	entityT.pos.y = yPos;
 
 	be.component_add(entity, be.COMPONENT_TYPE.SPRITE);
@@ -156,17 +206,20 @@ function setup_playable_entity(entityName, spriteName, animName, yPos) {
 	be.animation_set_sprite(entity.animationIdx, entity.spriteIdx);
 	be.animation_setup(entity.animationIdx, animName, 6, 10);
 
-	be.component_add(entity, be.COMPONENT_TYPE.BOUNDING_BOX);
-	be.bounding_box_set(
-		entity.boundingBoxIdx, 
-		new be.Vector2(210/6, 43), 
-		be.COLLISION_TYPE.KINEMATIC
-	);
+	// be.component_add(entity, be.COMPONENT_TYPE.BOUNDING_BOX);
+	// be.bounding_box_set(
+	// 	entity.boundingBoxIdx, 
+	// 	new be.Vector2(210/6, 43), 
+	// 	be.COLLISION_TYPE.KINEMATIC
+	// );
 }
 
 
 // logic for inputs or what will happen if an input happenning
-menuScene.input = () => {
+game.input = () => {
+	if (be.is_key_pressed("X")) {
+		be.scene_change("Menu")
+	}
 	// if (be.is_key_pressed("X")) {
 	// 	if (canMove === true) {
 	// 		canMove = false
@@ -183,12 +236,30 @@ menuScene.input = () => {
 
 
 // used for game logic such as movement, physics, enemies, etc. 
-menuScene.update = (dt) => {
+game.update = (dt) => {
 	if (canMove === true) {
 		check_button_pressed();
 	}
 	scheduler.tick(dt);
 	fieldScheduler.tick(dt);
+
+	for (let j = 0; j < 2; j += 1) {
+		for (let i = 0; i < gameData.field.length; i += 1) {
+			const block = be.entity_get(`block${i}${j}`);
+			const transform = be.component_get(block.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+			const ctx = util.context_get();
+			ctx.font = "25px Arial";
+			ctx.fillStyle = "black";
+			ctx.fillText("FPS: ", transform.pos.x, transform.pos.y);
+
+			// util.draw_text(
+			// 	"24px Arial",
+			// 	"XDXDXDXD",
+			// 	transform.pos,
+			// 	be.COLOR.WHITE
+			// );
+		}
+	}
 };
 
 

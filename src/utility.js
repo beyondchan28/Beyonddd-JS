@@ -47,8 +47,8 @@ export function calculate_FPS(dt) {
 	// oldTimeStamp = ts;
 
 	fps = Math.round(1 / dt);
-	ctx.fillStyle = "white";
-	ctx.fillRect(0, canvas.height, 200, 100);
+	// ctx.fillStyle = "white";
+	// ctx.fillRect(0, canvas.height, 200, 100);
 	ctx.font = "25px Arial";
 	ctx.fillStyle = "black";
 	ctx.fillText("FPS: " + fps, canvas.width - 100, 30);
@@ -77,10 +77,15 @@ export function draw_circle(center, radius, outLineCol, fillCol) {
 	ctx.fill();
 }
 
-export function draw_text(font, text, pos, col) {
-	ctx.font = font;
-	ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${col.a})`;
-	ctx.fillText(text, pos.x, pos.y);
+export function draw_text(text) {
+	ctx.font = text.font;
+	ctx.fillStyle = `rgba(${text.tint.r}, ${text.tint.g}, ${text.tint.b}, ${text.tint.a})`;
+	// ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+	text.text.split("\n").forEach((line, i) => {
+    	ctx.fillText(line, text.pos.x, text.pos.y + i * 16);
+  	});
+	// ctx.fillText(text.text, text.pos.x, text.pos.y);
 }
 
 export function draw_rect(pos, size, col) {

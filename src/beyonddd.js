@@ -658,6 +658,17 @@ export function bounding_box_set(bbId, size, collType) {
 }
 
 
+export function component_create(compType) {
+	switch (compType) {
+		case COMPONENT_TYPE.TEXT:
+			const t = new Text();
+			currScene.cTexts.push(t);
+			return t;
+		default:
+			console.error("wrong component type.");
+	}
+}
+
 export function component_add(ent, compType) {
 	switch (compType) {
 		case COMPONENT_TYPE.TRANSFORM:
@@ -997,6 +1008,15 @@ function draw() {
 		}
 	}
 
+	if (currScene.cTexts.length !== 0) {		
+		for (let t of currScene.cTexts) {
+			if (t.is_active()) {
+				util.draw_text(t);
+			}
+		}
+	}
+
+
 	if (settings.isDrawCollisionShape) {
 		for (let bb of currScene.cBoundingBoxes) {
 			if (bb.is_active) {
@@ -1057,7 +1077,7 @@ function update(timeStamp) {
 	if (is_draw_image()) {
 		util.clear_background(COLOR.LIGHT_BLUE);
 		draw();
-		util.context_get().restore(); // related to camera/canvas movement/translate implementation this
+		// util.context_get().restore(); // related to camera/canvas movement/translate implementation this
 	}
 	
 	if (is_show_fps()) {
