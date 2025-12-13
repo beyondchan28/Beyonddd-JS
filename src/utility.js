@@ -39,6 +39,7 @@ export function context_get() {
 export function canvas_set_translate(pos) {
 	ctx.save();
 	ctx.translate(pos.x, pos.y);
+	ctx.restore();
 }
 
 export function calculate_FPS(dt) {

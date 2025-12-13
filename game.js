@@ -1,12 +1,40 @@
 import * as be from "./src/beyonddd.js";
 
+class Scheduler {
+	constructor() {
+		this.coroutines = new Set();
+		this.before_start = () => {
+			console.log("Tween Start");
+		};
+		this.finish = () => {
+			console.log("Tween Finish");
+		};
+	}
+
+	start(generator) {
+		this.before_start();
+		const co = generator();
+		this.coroutines.add(co);
+		return co;
+	}
+
+	tick(dt) {
+		for (const co of [...this.coroutines]) {
+			const { done } = co.next(dt);
+			if (done) {
+				this.coroutines.delete(co);
+				this.finish();
+			}
+		}
+	} 
+}
+
 const SCENE_WIDTH = 800;
 const SCENE_HEIGHT = 600;
 
 // TODO:
 // - camera movement
 // - running field trap
-// - click card to move
 // - implement assets
 // - main menu (optional) and exit
 
@@ -80,8 +108,35 @@ menuScene.setup = () => {
 
 }
 
+
+function setup_playable_entity(entityName, spriteName, animName, yPos) {
+	const entity = be.entity_create(entityName);
+	be.component_add(entity, be.COMPONENT_TYPE.TRANSFORM);
+	const entityT = be.component_get(entity.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+	entityT.pos.x = 100;
+	entityT.pos.y = yPos;
+
+	be.component_add(entity, be.COMPONENT_TYPE.SPRITE);
+	be.sprite_set(entity.spriteIdx, spriteName);
+
+	be.component_add(entity, be.COMPONENT_TYPE.ANIMATION);
+	be.animation_set_sprite(entity.animationIdx, entity.spriteIdx);
+	be.animation_setup(entity.animationIdx, animName, 6, 10);
+
+	be.component_add(entity, be.COMPONENT_TYPE.BOUNDING_BOX);
+	be.bounding_box_set(
+		entity.boundingBoxIdx, 
+		new be.Vector2(210/6, 43), 
+		be.COLLISION_TYPE.KINEMATIC
+	);
+}
+
+
 // logic for inputs or what will happen if an input happenning
 menuScene.input = () => {
+	if (be.is_key_pressed("X")) {
+		be.camera_movement(new be.Vector2(10, 0));
+	}
 	// if (be.is_key_pressed("X")) {
 	// 	if (canMove === true) {
 	// 		canMove = false
@@ -95,36 +150,6 @@ menuScene.input = () => {
 	// console.log("down     : ", be.is_key_down("XX"));
 	// console.log("released : ", be.is_key_released("XXX"));
 };
-
-class Scheduler {
-	constructor() {
-		this.coroutines = new Set();
-		this.before_start = () => {
-			console.log("Tween Start");
-		};
-		this.finish = () => {
-			console.log("Tween Finish");
-		};
-	}
-
-	start(generator) {
-		this.before_start();
-		const co = generator();
-		this.coroutines.add(co);
-		return co;
-	}
-
-	tick(dt) {
-		for (const co of [...this.coroutines]) {
-			const { done } = co.next(dt);
-			if (done) {
-				this.coroutines.delete(co);
-				this.finish();
-			}
-		}
-	} 
-}
-// class Tween
 
 
 // used for game logic such as movement, physics, enemies, etc. 
@@ -153,12 +178,28 @@ function check_button_pressed() {
 	
 }
 
+function use_card(cardId) {
+	const cardTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
+	let goal = cardTransform.pos.clone();
+	goal.x += BASE_DISTANCE * (cardId + 1);
+	scheduler.start( () => ( move(cardTransform, goal, 1) ) );
+}
+
+
+function* move(entityTransform, to, duration) {
+  let t = 0;
+  while (t < duration) {
+    t += yield; // yield dt
+    const p = Math.min(t / duration, 1);
+    entityTransform.pos.x = be.lerp(entityTransform.pos.x, to.x, t);
+    entityTransform.pos.y = be.lerp(entityTransform.pos.y, to.y, t);
+  }
+}
 
 function mouse_detect_in_bounding_boxes(event) {
 	const currSceneBB = be.scene_get_current().cBoundingBoxes;
 	for (let bbS of currSceneBB) {
 		if (bbS.is_active() && bbS.collisionType === be.COLLISION_TYPE.STATIC) {
-			console.log(bbS.get_user());
 			const entBBS = be.entity_get_by_id(bbS.userId);
 			const cT = be.scene_get_current().cTransforms[entBBS.transformIdx];
 			const cBB = be.scene_get_current().cBoundingBoxes[entBBS.boundingBoxIdx];
@@ -200,57 +241,6 @@ document.addEventListener("click", (event) => {
 	}
 })
 
-function use_card(cardId) {
-	const cardTransform = be.component_get(entityToPlay.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-	let goal = cardTransform.pos.clone();
-	goal.x += BASE_DISTANCE * (cardId + 1);
-	scheduler.start( () => ( move(cardTransform, goal, 1) ) );
-}
-
-
-
-function* move(entityTransform, to, duration) {
-  let t = 0;
-  while (t < duration) {
-    t += yield; // yield dt
-    const p = Math.min(t / duration, 1);
-    console.log(yield);
-    entityTransform.pos.x = entityTransform.pos.x + (to.x - entityTransform.pos.x) * t;
-    entityTransform.pos.y = entityTransform.pos.y + (to.y - entityTransform.pos.y) * t;
-  }
-}
-
-
-function setup_playable_entity(entityName, spriteName, animName, yPos) {
-	const entity = be.entity_create(entityName);
-	be.component_add(entity, be.COMPONENT_TYPE.TRANSFORM);
-	const entityT = be.component_get(entity.get_id(), be.COMPONENT_TYPE.TRANSFORM);
-	entityT.pos.x = 100;
-	entityT.pos.y = yPos;
-
-	be.component_add(entity, be.COMPONENT_TYPE.SPRITE);
-	be.sprite_set(entity.spriteIdx, spriteName);
-
-	be.component_add(entity, be.COMPONENT_TYPE.ANIMATION);
-	be.animation_set_sprite(entity.animationIdx, entity.spriteIdx);
-	be.animation_setup(entity.animationIdx, animName, 6, 10);
-
-	be.component_add(entity, be.COMPONENT_TYPE.BOUNDING_BOX);
-	be.bounding_box_set(
-		entity.boundingBoxIdx, 
-		new be.Vector2(210/6, 43), 
-		be.COLLISION_TYPE.KINEMATIC
-	);
-}
-
-function move_entity(entityTransform, goal) {
-	entityTransform.pos.x = be.lerp(entityTransform.pos.x, goal, MOVE_TIME);
-}
-
-function is_reach_goal_position(entityXPos, goal) {
-	// console.log(Math.ceil(entityTransform.pos.x))	
-	return Math.ceil(entityXPos) >= goal;
-}
 
 
 window.onload = be.init; // entry point or game running
