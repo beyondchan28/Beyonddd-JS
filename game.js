@@ -67,8 +67,8 @@ const ENEMY_Y_POS = SCENE_HEIGHT * 0.5;
 
 const gameData = {
 	field : [
-		0, 11, 2, 0, -1,
-	 -3, 0, -1, 1, 0
+		0, 11, 2, -1, -1,
+	 -3, 2, -1, 1, 0
 	],
 	playerStartPos: new be.Vector2(),
 	enemyStartPos: new be.Vector2(),
@@ -99,6 +99,16 @@ finishText.tint = be.COLOR.RED;
 finishText.pos.x = SCENE_WIDTH / 2 - 325;
 finishText.pos.y = SCENE_HEIGHT / 2 - 50;
 finishText.set_active(false);	
+
+const sounds = new Map();
+
+sounds.set("button", new Audio("assets/button.ogg"));
+sounds.set("change_entity", new Audio("assets/change_entity.ogg"));
+sounds.set("walk", new Audio("assets/walk.ogg"));
+sounds.set("win", new Audio("assets/win.ogg"));
+
+// const buttonSound = new Audio("assets/button.ogg");
+// buttonSound.volume = 0.5;
 
 game.setup = () => {
 	be.input_press_create("X", be.KEY.SPACE);
@@ -199,12 +209,8 @@ game.setup = () => {
 			fieldMultiplier = gameData.field.length - 1 - fieldIndex ;
 		}
 		manipulate_field_index(fieldMultiplier);
-
-		console.log("BEFORE : ",gameData);
-		// console.log(fieldMultiplier);
 		fieldEffectPos.x += BASE_DISTANCE * fieldMultiplier;
 		fieldScheduler.start( () => ( move(transfrom, fieldEffectPos, 1) ) );
-		console.log("AFTER : ", gameData);
 	}
 
 	fieldScheduler.finish = () => {
@@ -215,8 +221,10 @@ game.setup = () => {
 		{
 			finishText.set_active(true);
 			canMove = true;
+			sounds.get("win").play();
 		} else {
 			console.log("[INFO] CHANGE ENTITY TO PLAY")
+			sounds.get("change_entity").play();
 			be.animation_change(entityToPlay, entityToPlay.get_name() + "Idle");
 
 			if (entityToPlay.get_name() === "Player") {
@@ -432,6 +440,7 @@ function* move(entityTransform, to, duration) {
     entityTransform.pos.x = be.lerp(entityTransform.pos.x, to.x, t);
     entityTransform.pos.y = be.lerp(entityTransform.pos.y, to.y, t);
   }
+  sounds.get("walk").play();
 }
 
 function mouse_detect_in_bounding_boxes(event) {
@@ -459,6 +468,7 @@ function mouse_detect_in_bounding_boxes(event) {
 			);
 			if (event.type == "click" && isMouseInside) {
 				entBBS.set_active(true);
+				sounds.get("button").play();
 			}
 			else {
 				if (entBBS.is_active() === true)
