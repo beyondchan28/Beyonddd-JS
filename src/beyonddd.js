@@ -2,6 +2,8 @@
 	This script includes all the APIs for the engine.
 */
 
+// trying new editor
+
 import * as util from "./utility.js";
 
 const INPUT_TYPE = {
@@ -10,7 +12,7 @@ const INPUT_TYPE = {
     DOWN:    2,
 }
 
-const INPUT_STATE = {
+const INPUT_STATE =
     PRESSED:  0,
     RELEASED: 1,
     NONE:     2,
