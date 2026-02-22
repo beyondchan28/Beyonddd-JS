@@ -5,6 +5,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Chandra Gunawan - Game Developer</title>
 	<link rel="stylesheet" href="style.css">
+	<script src="./wasm_exec.js"></script>
+	<script>
+		const go = new Go();
+		WebAssembly.instantiateStreaming(fetch("beyonddd.wasm"), go.importObject).then( (result) => {
+			go.run(result.instance);
+		} );
+
+	</script>
 </head>
 <body>
 	<div class="container">
@@ -25,13 +33,6 @@
 
 	<!-- import javascript here -->
 	<!-- <script type="module" src="game.js"></script> -->
-	<script>
-		const go = new Go();
-		WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then( (result) => {
-			go.run(result.instance);
-		} );
-
-	</script>
+	
 	<!-- <script type="module" src="./src/editor.js"></script> -->
-</body>
-</html>
+</body></html>
