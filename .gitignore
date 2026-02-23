@@ -3,3 +3,6 @@
 /src/grid.js
 /boiler_plate_game.js
 /save_file.json
+
+*.wasm
+*.exe

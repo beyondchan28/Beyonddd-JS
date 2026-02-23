@@ -1,16 +1,23 @@
 package main
 
 import (
-	"fmt"
+	"syscall/js"
 )
 
 type ComponentType uint8
 const (
 	TRANSFORM ComponentType = iota
 	BOUNDING_BOX
+	SPRITE
 )
 
+// type ComponentBuilder struct {
+// 	transfor *Transform
+// 	boundingBox *BoundingBox
+// }
+
 type Component interface {
+	// create() ComponentBuilder
 	getType() ComponentType
 }
 
@@ -23,21 +30,27 @@ type Transform struct {
 	Property
 	position Vec2
 	rotation float64
-	scale Vec2
+	scale    Vec2
 }
 
 type BoundingBox struct {
 	Property
-	size Vec2
+	size     Vec2
 	halfSize Vec2
 }
 
+type Image js.Value
+type Sprite struct {
+	Property
+	image Image
+}
 
-// func (t *Transform) create() {
-// 	fmt.Println("Transform created")
+
+// func (t *Transform) create() ComponentBuilder {
+// 	return
 // }
-// func (b *BoundingBox) create() {
-// 	fmt.Println("BoundingBox created")
+// func (b *BoundingBox) create() ComponentBuilder {
+// 	fmt.Println("HECK")
 // }
 
 func (bb *BoundingBox) getType() ComponentType {
@@ -47,42 +60,23 @@ func (t *Transform) getType() ComponentType {
 	return TRANSFORM
 }
 
+func (s *Sprite) getType() ComponentType {
+	return SPRITE
+}
+
 func componentCreate(ct ComponentType) Component {
 	switch ct {
 		case TRANSFORM:
 			return &Transform{}
 		case BOUNDING_BOX:
 			return &BoundingBox{}
+		case SPRITE:
+			sprite := Sprite{}
+			// sprite.image =
+			return &sprite
 		default:
 			panic("[ERROR] invalid component type")
 	}
-}
-
-
-func printPos(t Transform) {
-	t.position.x += 1
-	fmt.Println("Fuck : ",t.position)
-}
-
-func main() {
-	pos1 := Vec2{x: 10.0, y: 10.0}
-	pos2 := Vec2{x: 20.0, y: 20.0}
-
-	dot := pos1.dot(&pos2)
-
-	fmt.Println(dot)
-	fmt.Println(pos1)
-	fmt.Println(pos2)
-
-	c1 := componentCreate(TRANSFORM)
-	c2 := componentCreate(BOUNDING_BOX)
-
-	t := Transform{}
-	t.position = Vec2{10, 10}
-	printPos(t)
-	fmt.Println(t.position)
-	fmt.Printf("type: %v\n", c1.getType())
-	fmt.Printf("type: %v\n", c2.getType())
 }
 
 
