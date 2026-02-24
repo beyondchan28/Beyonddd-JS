@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"html/template"
+	"log"
 	"os"
 	"slices"
 )
@@ -11,7 +13,7 @@ type Flag uint8
 
 const (
 	TITLE Flag = iota
-	SUBTITLE
+	CHAPTER
 	SECTION
 	BLOCKQUOTE
 	CODE
@@ -26,8 +28,8 @@ type PageMap map[Flag][]int //
 type PageData struct {
 	pageMapArray []PageMap
 	texts []string
-	newLineIndex []int // texts index to know add new line
 	keys []Flag
+	newLineIndex []int // texts index to know add new line
 }
 
 func (pd *PageData) addData(flag string) {
@@ -35,8 +37,8 @@ func (pd *PageData) addData(flag string) {
 	switch flag {
 		case "title":
 			currentFlag = TITLE
-		case "subtitle":
-			currentFlag = SUBTITLE
+		case "chapter":
+			currentFlag = CHAPTER
 		case "section":
 			currentFlag = SECTION
 		case "paragraph":
@@ -52,7 +54,7 @@ func (pd *PageData) addData(flag string) {
 		case "code":
 			currentFlag = CODE
 		default:
-			panic("[ERROR] Flag is not valid")
+			panic("[ERROR] Flag is not valid: " + flag)
 	}
 	newPageMap := PageMap{}
 	pd.keys = append(pd.keys, currentFlag)
@@ -66,7 +68,7 @@ func (pd *PageData) generateTag(flag Flag, indexes []int) string {
 		case TITLE:
 			openTag = "<h1>"
 			closeTag = "</h1>"
-		case SUBTITLE:
+		case CHAPTER:
 			openTag = "<h2>"
 			closeTag = "</h2>"
 		case SECTION:
@@ -111,7 +113,7 @@ func (pd *PageData) generateTag(flag Flag, indexes []int) string {
 	return openTag + text + closeTag
 }
 
-func (pd *PageData) ReadXDFile(path string) {
+func (pd *PageData) ReadXDFileNative(path string) {
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Println("Error when opening xd file : ", err)
@@ -150,6 +152,46 @@ func (pd *PageData) ReadXDFile(path string) {
 	fmt.Println("[INFO] Index to addnewlines: ", pd.newLineIndex)
 }
 
+func (pd *PageData) ReadXDFileWASM(path string) {
+	file, err := os.Open(path)
+	if err != nil {
+		fmt.Println("Error when opening xd file : ", err)
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading xd file : ", err)
+		return
+	}
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		pd.texts = append(pd.texts, line)
+	}
+
+	for index, text := range pd.texts {
+		if len(text) != 0 && text[0] == '[' {
+			flag := text[1 : len(text)-1]
+			pd.addData(flag)
+		} else if len(text) == 0  {
+			pd.newLineIndex = append(pd.newLineIndex, index)
+		} else {
+			lastIndex := len(pd.pageMapArray) - 1
+			lastKey := pd.keys[len(pd.keys) -1]
+			pd.pageMapArray[lastIndex][lastKey] = append(pd.pageMapArray[lastIndex][lastKey], index)
+		}
+	}
+
+	fmt.Println("[INFO] Total texts    line : ", len(pd.texts))
+	fmt.Println("[INFO] Total pageData data : ", len(pd.pageMapArray))
+	fmt.Println("[INFO] Total newlines      : ", len(pd.newLineIndex))
+	fmt.Println("[INFO] Index to addnewlines: ", pd.newLineIndex)
+}
+
+
 func (pd *PageData) GenerateHTML() string {
 	var result string
 	for _, pageData := range pd.pageMapArray {
@@ -157,6 +199,17 @@ func (pd *PageData) GenerateHTML() string {
 			result += pd.generateTag(key, val)
 		}
 	}
-
 	return result
+}
+
+func (pd *PageData) InsertGeneratedHTML(htmlFilePath string) {
+	generated := pd.GenerateHTML()
+	template, err := template.ParseFiles(htmlFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = template.Execute(os.Stdout, generated)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

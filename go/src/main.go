@@ -6,7 +6,8 @@ import (
 
 func main() {
 	pd := PageData{}
-	pd.ReadXDFile("./pages/page.xd")
+	pd.ReadXDFileNative("./pages/page.xd")
+	// pd.InsertGeneratedHTML("index.html")
 	pageHTML := pd.GenerateHTML()
 
 	fmt.Println("generated HTML : ")
