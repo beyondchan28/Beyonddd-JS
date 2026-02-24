@@ -39,10 +39,23 @@ type BoundingBox struct {
 	halfSize Vec2
 }
 
-type Image js.Value
 type Sprite struct {
 	Property
-	image Image
+	image js.Value
+	position Vec2
+	size Vec2
+	haflSize Vec2
+	sourcePosition Vec2
+	sourceSize Vec2
+	flipHorizontal bool
+	usedByAnimation bool
+}
+
+type Text struct {
+	font string
+	text string
+	position Vec2
+	tint Color
 }
 
 
