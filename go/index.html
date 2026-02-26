@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chandra Gunawan - Game Developer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chandra Gunawan - Game Developer</title>
   <link rel="stylesheet" href="style.css">
   <script src="./wasm_exec.js"></script>
   <script>
-		const go = new Go();
-		WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then( (result) => {
-			go.run(result.instance);
-		} );
+	  const go = new Go();
+	  WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then( (result) => {
+		  go.run(result.instance);
+	  } );
   </script>
 </head>
 
@@ -22,57 +22,28 @@
 
 <div class="container">
 
-    <!-- LEFT SIDEBAR -->
-    <aside class="sidebar">
-        <h3>About Me</h3>
-        <p>Short bio or profile information goes here.</p>
-
-        <h3 style="margin-top:20px;">Categories</h3>
-        <ul>
-            <li>Web Design</li>
-            <li>Development</li>
-            <li>Technology</li>
-        </ul>
-    </aside>
-
-    <!-- MAIN CONTENT -->
     <main class="main-content">
 
         <div class="post-header" id="title">
-            <h1>How to Create a Responsive Blog Layout</h1>
+            <h1>How to Create a Clean Blog Layout</h1>
             <div class="post-meta" id="date">
-                Published on February 26, 2026 • 6 min read
+                Published on February 26, 2026 • 5 min read
             </div>
         </div>
 
-        <div class="post-body" id="body">
-
-        </div>
+        <div class="post-body" id="body"> </div>
 
         <div class="post-footer" id="footer">
-            Tags: CSS, Flexbox, Grid, Responsive Design
+            Tags: CSS, Flexbox, Responsive Design
         </div>
 
     </main>
 
-    <!-- RIGHT SIDEBAR -->
-    <aside class="sidebar">
-        <h3>Recent Posts</h3>
-        <ul>
-            <li>CSS Grid vs Flexbox</li>
-            <li>Responsive Design Tips</li>
-            <li>Modern UI Patterns</li>
-        </ul>
-
-        <h3 style="margin-top:20px;">Newsletter</h3>
-        <p>Subscribe for updates.</p>
-    </aside>
-
 </div>
 
+
+</body>
 <footer>
     © 2026 My Blog | All Rights Reserved
 </footer>
-
-</body>
 </html>

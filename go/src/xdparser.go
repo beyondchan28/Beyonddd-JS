@@ -152,7 +152,15 @@ func (pd *PageData) addTag(flag Flag, indexes []int) {
 		text = pd.texts[textIndex]
 	} else {
 		for _, textIndex:= range indexes {
+
+
 			text += pd.texts[textIndex]
+			if flag == CODE {
+				text += "\n"
+			}
+			if slices.Contains(pd.newLineIndex, textIndex + 1) {
+				text += "\n"
+			}
 		}
 	}
 	tag.inner = text
