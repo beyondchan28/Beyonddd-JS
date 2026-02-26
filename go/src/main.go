@@ -1,18 +1,16 @@
 package main
 
-import (
-	"fmt"
-)
+// import (
+// 	"fmt"
+// )
 
 func main() {
-	pd := PageData{}
-	pd.ReadXDFileNative("./pages/page.xd")
-	// pd.InsertGeneratedHTML("index.html")
-	pageHTML := pd.GenerateHTML()
-
-	fmt.Println("generated HTML : ")
-	fmt.Println(pageHTML)
-
+	go func() {
+		pd := PageData{}
+		pd.ReadXDFileWASM("./src/pages/page.xd")
+		pd.InsertGeneratedHTML()
+	}()
+	select {}
 	// engine := Engine{}
 	// engine.ready()
 	//
