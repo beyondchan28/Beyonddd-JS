@@ -159,7 +159,7 @@ func (pd *PageData) addTag(flag Flag, indexes []int) {
 
 	doc := js.Global().Get("document")
 	element := doc.Call("createElement", tag.kind[0])
-	page := doc.Call("getElementById", "page")
+	page := doc.Call("getElementById", "body")
 	page.Call("appendChild", element)
 
 	switch flag {
