@@ -3,41 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beyond The Screen</title>
+<title>Chandra Gunawan - Game Developer</title>
   <link rel="stylesheet" href="style.css">
-    <script src="./wasm_exec.js"></script>
-    <script>
-        const go = new Go();
-        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then( (result) => {
-            go.run(result.instance);
-        } );
-    </script>
+  <script src="./wasm_exec.js"></script>
+  <script>
+	  const go = new Go();
+	  WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then( (result) => {
+		  go.run(result.instance);
+	  } );
+  </script>
 </head>
 
 <body>
 
 <header>
-    <nav class="navbar">
-      <div class="logo">Beyond The Screen</div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="blog.html">Blog</a></li>
-      </ul>
-    </nav>
-  </header>
+    <h2>My Blog</h2>
+</header>
 
 <div class="container">
 
     <main class="main-content">
 
         <div class="post-header" id="title">
+<!--         title goes here -->
             <div class="post-meta" id="date">
+<!--                 Published on February 26, 2026 • 5 min read -->
             </div>
         </div>
 
-        <div class="post-body" id="body">
-            <h2></h2>
-        </div>
+        <div class="post-body" id="body"> </div>
 
         <div class="post-footer" id="footer">
 <!--             Tags: CSS, Flexbox, Responsive Design -->

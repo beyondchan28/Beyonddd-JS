@@ -69,7 +69,6 @@ func (pd *PageData) addData(flag string) {
 		panic("[ERROR] Flag is not valid: " + flag)
 	}
 
-	fmt.Println("flag : ", flag)
 	newPageMap := PageMap{}
 	pd.keys = append(pd.keys, currentFlag)
 	pd.pageMapArray = append(pd.pageMapArray, newPageMap)
@@ -216,12 +215,13 @@ func (pd *PageData) addTag(flag Flag, indexes []int) {
 
 		element.Call("appendChild", input)
 		element.Call("appendChild", doc.Call("createTextNode", " "+tag.inner))
+	case LIST:
+		element.Set("innerHTML", tag.inner)
+		body.Call("appendChild", element)
 	case CODE:
-		element.Set("textContent", tag.inner)
 		body.Call("appendChild", element)
 
 		code := doc.Call("createElement", tag.kind[1])
-		fmt.Println("HELLOOOO")
 		tag.kind = append(tag.kind, "pre")
 		tag.kind = append(tag.kind, "code")
 		code.Set("textContent", tag.inner)
@@ -246,6 +246,7 @@ func (pd *PageData) ReadXDFileWASM(path string) {
 	defer response.Body.Close()
 
 	pd.readLine(response.Body)
+	fmt.Println("[INFO] XD file ", path, "loaded")
 }
 
 func (pd *PageData) readLine(reader io.Reader) {
@@ -258,7 +259,6 @@ func (pd *PageData) readLine(reader io.Reader) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		fmt.Println("line : ", line)
 		pd.texts = append(pd.texts, line)
 	}
 
@@ -278,10 +278,10 @@ func (pd *PageData) readLine(reader io.Reader) {
 		}
 	}
 
-	fmt.Println("[INFO] Total texts    line : ", len(pd.texts))
-	fmt.Println("[INFO] Total pageData data : ", len(pd.pageMapArray))
-	fmt.Println("[INFO] Total newlines      : ", len(pd.newLineIndex))
-	fmt.Println("[INFO] Index to addnewlines: ", pd.newLineIndex)
+	// fmt.Println("[INFO] Total texts    line : ", len(pd.texts))
+	// fmt.Println("[INFO] Total pageData data : ", len(pd.pageMapArray))
+	// fmt.Println("[INFO] Total newlines      : ", len(pd.newLineIndex))
+	// fmt.Println("[INFO] Index to addnewlines: ", pd.newLineIndex)
 }
 
 func (pd *PageData) ReadXDFileNative(path string) {
