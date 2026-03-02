@@ -5,7 +5,7 @@ Welcome to My Blog
 Blog about programming, game development, and everything in between.
 
 [chapter]
-About
+Hello there...
 
 [paragraph]
 My name is Chandra Gunawan.
@@ -20,13 +20,16 @@ Mostly experienced as a game programmer/developer.
 Making not only games, but also trying to write my own game engine (also used as thesis for my undergraduate degree).
 
 [paragraph]
-Also funding a couple indie game studios. Mostly programming the game all by myself in Godot Engine.
+Also founding indie game studios here and there. Most of the game are made with Godot Engine <3
 
 [paragraph]
-Currently trying to migrate to be a Backend Developer in Golang.
+Currently in a way to switch myself to be a Golang Developer.
+
+[paragraph]
+This blog made with Golang and compiled down to WASM with my own flavour of Markdown file called XD.
 
 [section]
-My Socials
+Here's where you can find me
 
 [list]
 Email     : <a href="mailto:chandragunawan.work@gmail.com">Send mail to me</a>

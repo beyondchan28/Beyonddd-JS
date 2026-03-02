@@ -1,6 +1,9 @@
 package main
 
-// TODO: create list for blog page and it must be loaded up based on how much the pages currently are
+import (
+	"fmt"
+	"syscall/js"
+)
 
 type Blog struct {
 	front       PageData
@@ -8,29 +11,42 @@ type Blog struct {
 	currentPage string
 }
 
-var blog Blog
+func (b *Blog) setup() {
+	window := js.Global().Get("window")
+	b.currentPage = (window.Get("location")).Get("pathname").String()
+	fmt.Println("currentPage : ", b.currentPage)
 
-func setupBlog() {
-	blog = Blog{}
-	blog.front.ReadXDFileWASM("./pages/front.xd")
-	blog.front.InsertGeneratedHTML()
+	switch b.currentPage {
+	case "/index.html":
+		b.front.ReadXDFileWASM("./pages/front.xd")
+		b.front.InsertGeneratedHTML()
+		// case "/blog.html":
+		// TODO: create list for blog page and it must be loaded up based on how much the pages currently are
 
-	// NOTE: Set new blog page here
-	addNewBlogPage("page")
-	addNewBlogPage("page")
-	addNewBlogPage("page")
+	}
 }
 
-func addNewBlogPage(filename string) {
+func (b *Blog) addPage(filename string) {
 	blogDir := "./pages/blogs/"
 	page := PageData{}
 	page.ReadXDFileWASM(blogDir + filename + ".xd")
-	blog.pages = append(blog.pages, page)
+	b.pages = append(b.pages, page)
 }
 
 func main() {
-	go func() {
-		setupBlog()
-	}()
+	b := &Blog{}
+	b.setup()
+
+	// NOTE: Set new blog page here
+	b.addPage("page")
+	b.addPage("page")
+	b.addPage("page")
+
+	// go func() {
+	// 	window := js.Global().Get("window")
+	// 	loc := window.Get("location")
+	// 	fmt.Println(loc.Get("pathname"))
+	// 	setupBlog()
+	// }()
 	select {}
 }
