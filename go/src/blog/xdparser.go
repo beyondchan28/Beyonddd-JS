@@ -306,17 +306,9 @@ func (pd *PageData) GenerateHTML() string {
 }
 
 func (pd *PageData) InsertGeneratedHTML() {
-	// var result string
-
 	for _, pageData := range pd.pageMapArray {
 		for key, val := range pageData {
 			pd.addTag(key, val)
-			// result += pd.generateTagAsString(key, val)
-
 		}
 	}
-	// fmt.Println(result)
-	// doc := js.Global().Get("document")
-	// page := doc.Call("getElementById", "page")
-	// page.Set("innerHTMl", result)
 }

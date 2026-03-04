@@ -2,13 +2,19 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"strconv"
 	"syscall/js"
 )
 
+// TODO: Auto generate HTML files for all the page and then remove WASM entirely
+
 type Blog struct {
-	front       PageData
-	pages       []PageData
-	currentPage string
+	front         PageData
+	pages         []PageData
+	currentPage   string
+	clickPage     js.Func
+	clickedPageId string
 }
 
 func (b *Blog) setup() {
@@ -26,25 +32,30 @@ func (b *Blog) setup() {
 		b.front.ReadXDFileWASM("./pages/front.xd")
 		b.front.InsertGeneratedHTML()
 	case "/blog.html":
-		for _, pageData := range b.pages {
+		for idx, pageData := range b.pages {
+			pageId := idx
 			var titleId int
 			var dateId int
 			for _, pageMap := range pageData.pageMapArray {
 				if v, ok := pageMap[TITLE]; ok {
 					titleId = v[0]
-					fmt.Println("v is: ", v)
 				} else if v, ok := pageMap[DATE]; ok {
 					dateId = v[0]
 				}
 			}
-			b.generateBlogList(pageData.texts[titleId], pageData.texts[dateId])
+			b.generateBlogList(pageId, pageData.texts[titleId], pageData.texts[dateId])
 		}
-		// TODO: create list for blog page and it must be loaded up based on how much the pages currently are
-
+	case "/page.html":
+		fmt.Println("Page id: ", b.clickedPageId)
+		pageId, err := strconv.Atoi(b.clickedPageId)
+		if err != nil {
+			log.Fatal("failed to convert string to integer : ", err) // Handle potential errors
+		}
+		b.pages[pageId].InsertGeneratedHTML()
 	}
 }
 
-func (b *Blog) generateBlogList(title, date string) {
+func (b *Blog) generateBlogList(pageId int, title, date string) {
 	fmt.Println(title)
 	fmt.Println(date)
 	doc := js.Global().Get("document")
@@ -53,8 +64,26 @@ func (b *Blog) generateBlogList(title, date string) {
 	blogItem.Set("className", "blog-item")
 
 	link := doc.Call("createElement", "a")
-	link.Set("href", "/")
+	link.Set("id", pageId)
+	// link.Set("href", "/page.html")
 	link.Set("textContent", title)
+	link.Call("addEventListener", "click",
+		js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			event := args[0]
+			event.Call("preventDefault")
+			fmt.Println(link.Get("id"))
+			b.clickedPageId = link.Get("id").String()
+
+			// (js.Global().Get("window").Get("location")).Call("assign", "/page.html")
+			// fmt.Println("Page id: ", b.clickedPageId)
+			// pageId, err := strconv.Atoi(b.clickedPageId)
+			// if err != nil {
+			// 	log.Fatal("failed to convert string to integer : ", err) // Handle potential errors
+			// }
+			// b.pages[pageId].InsertGeneratedHTML()
+			return nil
+		}),
+	)
 
 	blogTitle := doc.Call("createElement", "div")
 	blogTitle.Set("className", "blog-title")
@@ -78,9 +107,14 @@ func (b *Blog) addPage(filename string) {
 	b.pages = append(b.pages, page)
 }
 
-func main() {
-	b := &Blog{}
+var b Blog
+
+func init() {
+	// b := &Blog{}
 	b.setup()
+}
+
+func main() {
 
 	// go func() {
 	// 	window := js.Global().Get("window")
