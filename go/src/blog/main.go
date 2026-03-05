@@ -2,125 +2,124 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"strconv"
-	"syscall/js"
+	"os"
 )
 
-// TODO: Auto generate HTML files for all the page and then remove WASM entirely
+const Head string = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond The Screen</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
-type Blog struct {
-	front         PageData
-	pages         []PageData
-	currentPage   string
-	clickPage     js.Func
-	clickedPageId string
-}
+<body>
+<header>
+<nav class="navbar">
+<div class="logo">Beyond The Screen</div>
+<ul class="nav-links">
+<li><a href="/">Home</a></li>
+<li><a href="blog.html">Blog</a></li>
+</ul>
+</nav>
+</header>
 
-func (b *Blog) setup() {
-	window := js.Global().Get("window")
-	b.currentPage = (window.Get("location")).Get("pathname").String()
-	fmt.Println("currentPage : ", b.currentPage)
+<div class="container">
+`
 
-	// NOTE: Set new blog page here
-	b.addPage("page")
-	b.addPage("page")
-	b.addPage("page")
+const Foot string = `</div>
+</body>
+<footer>
+© 2026 My Blog | All Rights Reserved
+</footer>
+</html>`
 
-	switch b.currentPage {
-	case "/":
-		b.front.ReadXDFileWASM("./pages/front.xd")
-		b.front.InsertGeneratedHTML()
-	case "/blog.html":
-		for idx, pageData := range b.pages {
-			pageId := idx
-			var titleId int
-			var dateId int
-			for _, pageMap := range pageData.pageMapArray {
-				if v, ok := pageMap[TITLE]; ok {
-					titleId = v[0]
-				} else if v, ok := pageMap[DATE]; ok {
-					dateId = v[0]
-				}
-			}
-			b.generateBlogList(pageId, pageData.texts[titleId], pageData.texts[dateId])
-		}
-	case "/page.html":
-		fmt.Println("Page id: ", b.clickedPageId)
-		pageId, err := strconv.Atoi(b.clickedPageId)
-		if err != nil {
-			log.Fatal("failed to convert string to integer : ", err) // Handle potential errors
-		}
-		b.pages[pageId].InsertGeneratedHTML()
+const Main string = ` <main class="main-content">
+
+<div class="post-header" id="title">
+%s
+<div class="post-meta" id="date">
+%s
+</div>
+</div>
+
+<div class="post-body" id="body">
+%s
+</div>
+
+<div class="post-footer" id="footer">
+%s
+</div>
+
+</main>`
+
+const BlogList string = `<ul class="blog-list" id="blog-list"> %s </ul>`
+
+func writeHTML(content, fileName string) {
+	saveDir := "./pages/blogsHTML/"
+	html := Head + content + Foot
+	err := os.WriteFile(saveDir+fileName, []byte(html), 0644)
+	if err != nil {
+		panic(err)
 	}
 }
 
-func (b *Blog) generateBlogList(pageId int, title, date string) {
-	fmt.Println(title)
-	fmt.Println(date)
-	doc := js.Global().Get("document")
-	blogList := doc.Call("getElementById", "blog-list")
-	blogItem := doc.Call("createElement", "li")
-	blogItem.Set("className", "blog-item")
-
-	link := doc.Call("createElement", "a")
-	link.Set("id", pageId)
-	// link.Set("href", "/page.html")
-	link.Set("textContent", title)
-	link.Call("addEventListener", "click",
-		js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			event := args[0]
-			event.Call("preventDefault")
-			fmt.Println(link.Get("id"))
-			b.clickedPageId = link.Get("id").String()
-
-			// (js.Global().Get("window").Get("location")).Call("assign", "/page.html")
-			// fmt.Println("Page id: ", b.clickedPageId)
-			// pageId, err := strconv.Atoi(b.clickedPageId)
-			// if err != nil {
-			// 	log.Fatal("failed to convert string to integer : ", err) // Handle potential errors
-			// }
-			// b.pages[pageId].InsertGeneratedHTML()
-			return nil
-		}),
-	)
-
-	blogTitle := doc.Call("createElement", "div")
-	blogTitle.Set("className", "blog-title")
-	blogTitle.Call("appendChild", link)
-
-	blogDate := doc.Call("createElement", "div")
-	blogDate.Set("className", "published-date")
-	blogDate.Set("textContent", date)
-
-	blogItem.Call("appendChild", blogTitle)
-	blogItem.Call("appendChild", blogDate)
-
-	blogList.Call("appendChild", blogItem)
-
-}
-
-func (b *Blog) addPage(filename string) {
+func addPage(pg *[]PageData, filename string) {
 	blogDir := "./pages/blogs/"
 	page := PageData{}
-	page.ReadXDFileWASM(blogDir + filename + ".xd")
-	b.pages = append(b.pages, page)
-}
-
-var b Blog
-
-func init() {
-	// b := &Blog{}
-	b.setup()
+	page.ReadXDFileNative(blogDir + filename + ".xd")
+	*pg = append(*pg, page)
 }
 
 func main() {
+	// NOTE: Generate index HTML
+	front := PageData{}
+	front.ReadXDFileNative("./pages/front.xd")
 
-	// go func() {
-	// 	window := js.Global().Get("window")
-	// 	loc := window.Get("location")
-	// 	fmt.Println(loc.Get("pathname"))
-	// 	setupBlog()
-	// }()
-	select {}
+	title, date, body, footer := front.GenerateHTML()
+	frontContent := fmt.Sprintf(Main, title, date, body, footer)
+
+	writeHTML(frontContent, "index.html")
+
+	//NOTE: Prepare Blog page
+	var pages []PageData
+	addPage(&pages, "page")
+	addPage(&pages, "page")
+	addPage(&pages, "page")
+
+	for idx, pg := range pages {
+		fileName := fmt.Sprintf("page%d.html", idx)
+		fmt.Println(fileName)
+		title, date, body, footer := pg.GenerateHTML()
+		content := fmt.Sprintf(Main, title, date, body, footer)
+		writeHTML(content, fileName)
+	}
+
+	//NOTE: Create blogPage list
+	var blogPageList string
+
+	for idx, pg := range pages {
+		pageId := idx
+		var titleId int
+		var dateId int
+		for _, pageMap := range pg.pageMapArray {
+			if v, ok := pageMap[TITLE]; ok {
+				titleId = v[0]
+			} else if v, ok := pageMap[DATE]; ok {
+				dateId = v[0]
+			}
+		}
+
+		link := fmt.Sprintf(`<a href="page%d.html">%s</a>`, pageId, pg.texts[titleId])
+		blogTitle := fmt.Sprintf(`<div class="blog-title">%s</div>`, link)
+		blogDate := fmt.Sprintf(`<div class="published-date">%s</div>`, pg.texts[dateId])
+		blogItem := fmt.Sprintf(`<li class="blog-item">%s%s</li>`, blogTitle, blogDate)
+
+		blogPageList += blogItem
+	}
+
+	blogContent := fmt.Sprintf(BlogList, blogPageList)
+	writeHTML(blogContent, "blog.html")
+
 }
